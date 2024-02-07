@@ -1,0 +1,10 @@
+/*
+    Configuration de EJS
+*/
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+/*
+    Importation de Bootstrap
+*/
+app.use("/js", express.static(__dirname + "/node_modules/bootstrap/dist/js"));
+app.use("/css", express.static(__dirname + "/node_modules/bootstrap/dist/css"));
