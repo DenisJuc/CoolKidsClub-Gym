@@ -1,0 +1,32 @@
+<%- include ("../partials/header.ejs") %>
+
+<a href="/event/add" class="btn btn-success">Ajouter évènement</a>
+
+<h2>Liste des événements :</h2>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Location</th>
+          </tr>
+        </thead>
+        <% items.forEach(function(item){ %>
+        <tbody>
+          <tr>
+            <th scope="row"><%= item.E_ID %></th>
+            <td><%= item.E_NAME %></td>
+            <td><%= item.E_DESC %></td>
+            <td><%= item.E_LOCATION %></td>
+            <td><a href="/event/edit/<%= item.E_ID %>" class="btn btn-success" style="background-color: green;">Edit</a></td>
+            <td><a href="/event/delete/<%= item.E_ID %>" class="btn btn-success" style="background-color: red;">Delete</a></td>
+
+            
+          </tr>
+        </tbody>
+        <% }); %>
+      </table>
+
+<%- include ("../partials/footer.ejs") %>

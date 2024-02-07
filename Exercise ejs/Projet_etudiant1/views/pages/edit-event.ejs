@@ -1,0 +1,37 @@
+<%- include ("../partials/header.ejs") %>
+<% console.log(items);%>
+<form action="/event/edit/<%= items[0].E_ID %>" method="post" style="padding-top: 10px;padding-left: 75px; padding-right: 75px;">
+    <input name="e_id" value="<%= items[0].E_ID %>" hidden>
+    <div class="row mb-3">
+        <label for="E_NAME" class="col-sm-2 col-form-label">Nom</label>
+        <div class="col-sm-10">
+            <input type="text" id="E_NAME" name="e_name" class="form-control" value="<%= items[0].E_NAME %>">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="E_START_DATE" class="col-sm-2 col-form-label">Date début</label>
+        <div class="col-sm-10">
+            <input type="date" id="E_START_DATE" name="e_start_date" class="form-control" value="<%= items[0].E_START_DATE %>">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="E_END_DATE" class="col-sm-2 col-form-label">Date de fin</label>
+        <div class="col-sm-10">
+            <input type="date" id="E_END_DATE" name="e_end_date" class="form-control" value="<%= items[0].E_START_END %>">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="E_DESC" class="col-sm-2 col-form-label">Description</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" name="e_desc" id="E_DESC" rows="3"><%= items[0].E_DESC %></textarea>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="E_LOCATION" class="col-sm-2 col-form-label">Emplacement</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" name="e_location" id="E_LOCATION" rows="3"><%= items[0].E_LOCATION %></textarea>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+</form>
+<%- include ("../partials/footer.ejs") %>
