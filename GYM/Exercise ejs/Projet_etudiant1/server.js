@@ -29,6 +29,7 @@ app.set("view engine", "ejs");
 */
 app.use("/js", express.static(__dirname + "/node_modules/bootstrap/dist/js"));
 app.use("/css", express.static(__dirname + "/node_modules/bootstrap/dist/css"));
+app.use(express.static(__dirname + "/Images"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -127,13 +128,10 @@ app.get("/event/delete/:id", function (req, res) {
     });
 });
 
+
 app.get("/event/connect", function (req,res){
         res.render("pages/connexion", {
           siteTitle: "Connexion",
           pageTitle: "Connectez-vous",
         });
 });
-
-
-
-
