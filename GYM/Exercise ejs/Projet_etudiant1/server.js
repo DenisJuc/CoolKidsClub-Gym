@@ -47,6 +47,7 @@ con.connect(function(err) {
     if (err) throw err;
     console.log("connected!");
 });
+
 /*
     Description des routes
 */
@@ -128,5 +129,9 @@ app.get("/event/delete/:id", function (req, res) {
 });
 
 
-
-
+app.get("/event/connect", function (req,res){
+        res.render("pages/connexion", {
+          siteTitle: "Connexion",
+          pageTitle: "Connectez-vous",
+        });
+});
