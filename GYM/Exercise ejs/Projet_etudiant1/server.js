@@ -135,3 +135,9 @@ app.get("/event/connect", function (req,res){
           pageTitle: "Connectez-vous",
         });
 });
+app.get("/event/creationCompte", function (req,res){
+    res.render("pages/CreationCompte", {
+      siteTitle: "Créer Compte",
+      pageTitle: "Créer Compte",
+    });
+});
