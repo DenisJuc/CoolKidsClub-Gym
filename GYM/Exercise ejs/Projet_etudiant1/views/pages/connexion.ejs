@@ -1,39 +1,104 @@
 <%- include ("../partials/header.ejs") %>
-<div class="container">
+  <div class="container">
     <div class="alert alert-warning alert-dismissible
-    fade in" role="alert"> 
-   <button type="button" class="close" data-dismiss=
-      "alert" aria-label="Close"> 
-     <span aria-hidden="true">&times;</span> 
-   </button> 
-</div> 
-
-
-<div class="titre">SE CONNECTER</div>
-<style>
-    .titre{
-        font-size: larger;
-    }
-</style>
-
-<form>
-    <div class="form-group">
-      <label for="exampleInputEmail1">Email address</label>
-      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-      <small  id="emailHelp" class="form-text text-muted">On ne va jamais partager vos informations.</small>
+    fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
-    <div  class="form-group">
-      <label for="exampleInputPassword1">Mot de pass</label>
-      <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Khand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/24894dcb25.js" crossorigin="anonymous"></script>
+
+    <style>
+      body {
+        background-color: #41455D;
+      }
+
+      .form-control {
+        border-radius: 0;
+      }
+
+      .items_page {
+        font-family: 'Khand';
+        flex-direction: column;
+
+        color: #FFFFFF;
+      }
+
+      .titre {
+        font-size: 64px;
+        text-align: center;
+        margin-top: -30px;
+      }
+
+      .coordonnees {
+        font-size: 32px;
+      }
+
+      .custom-inputs {
+        background-color: #D9D9D9;
+        width: 489px;
+        height: 35px;
+        border: none;
+        display: block;
+      }
+
+      .custom_butt {
+        margin-left: 550px;
+      }
+
+      /*
+      .btn-primary {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        */
+    </style>
+
+    <div class=items_page>
+      <div class="titre">SE CONNECTER AU LAB</div>
+
+
+      <form>
+        <div class="form-group">
+          <label style="margin-top: 100px;" class="coordonnees" for="exampleInputEmail1">Utilisateur</label>
+          <input class="custom-inputs" type="email" class="form-control" id="exampleInputEmail1"
+            aria-describedby="emailHelp">
+        </div>
+
+        <!-- <button type="submit" class="btn btn-primary">Connecter</button> -->
+        <div class="custom_butt">
+          <svg>
+            <circle cx="100" cy="100" r="23" fill="#D9D9D9"/>
+            <i style="margin-left: -213px; color: black; 
+                      margin-top: 50px !important" class="fa-solid fa-arrow-right fa-xl"></i>
+          </svg>
+        </div>
+
+        <div class="form-group">
+          <label  class="coordonnees" for="exampleInputPassword1">Mot de passe</label>
+          <input class="custom-inputs" type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="form-group form-check">
+        </div>
+
+
+      </form>
     </div>
-    <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="exampleCheck1">
-      <label class="form-check-label" for="exampleCheck1">Révéler le mot de passe</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Connecter</button>
-  </form>
 
 
 
-</div>
-<% include ../partials/footer %>
+
+  </div>
+  <% include ("../partials/footer") %>
