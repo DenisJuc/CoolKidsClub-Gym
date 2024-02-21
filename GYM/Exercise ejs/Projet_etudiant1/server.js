@@ -141,3 +141,9 @@ app.get("/event/creationCompte", function (req,res){
       pageTitle: "Créer Compte",
     });
 });
+app.get("/event/boutique", function (req,res){
+    res.render("pages/boutique", {
+      siteTitle: "Boutique",
+      pageTitle: "Boutique",
+    });
+});
