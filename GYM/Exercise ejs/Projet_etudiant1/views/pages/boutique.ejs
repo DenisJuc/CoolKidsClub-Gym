@@ -6,21 +6,79 @@
 		font-family: 'Krona One';
         background-color: #41455D;
 	}
+  .boite {
+  transition-duration: 0.5s;
+}
+
+.boite:hover,
+.boite.hover-effect {
+  transform: translateY(-5px) scale(1.03);
+}
+
+.boite::after {
+  transform: translateY(-5px) scale(1.0);
+}
 	</style>
 	</head>
     <div style="margin-top: 70px;">
         <div>
-    <div class="d-flex justify-content-start position-absolute translate-middle" style="top: 170px;left: 100px;">
-        <button type="button" style="border-radius: 8px;" class="btn btn-light"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
-          </svg> Filtrer & Trier</button>
+          <div class="container">
+            <div class="d-flex justify-content-start position-absolute translate-middle" style="top: 170px;left: 100px;">
+              <button id="filterButton" type="button" style="border-radius: 8px;" class="btn btn-light">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+                </svg> Filtrer & Trier
+              </button>
+            </div>
+            <div id="checkboxList" style="display: none;position: absolute; top: 200px; left: 10px;color: white;">
+              <label>
+                Couleur:
+                <select>
+                    <option value="noir">Noir</option>
+                    <option value="rouge">Rouge</option>
+                    <option value="bleu">Bleu</option>
+                    <option value="jaune">Jaune</option>
+                </select>
+            </label><br>
+            <label>
+              Sexe:
+              <select>
+                  <option value="male">Male</option>
+                  <option value="femme">femme</option>
+                  <option value="genreX">X</option> 
+              </select>
+          </label><br>
+          <label>
+            Taille:
+            <select>
+                <option value="small">S</option>
+                <option value="medium">M</option>
+                <option value="large">L</option>
+                <option value="xlarge">XL</option>  
+            </select>
+        </label><br>
+        <label>
+          Poids:
+          <select>
+              <option value="2.5">2.5kg</option>
+              <option value="5">5kg</option>
+              <option value="10">10kg</option>
+              <option value="15">15kg</option>
+              <option value="20">20kg</option>
+              <option value="30">30kg</option>    
+          </select>
+      </label><br>
+                <label>
+                    Prix: <span id="priceRange">0</span> - 100$ <br>
+                    <input type="range" min="0" max="100" value="0" oninput="updatePriceRange(this.value)">
+                </label><br>
+            </div>
         </div>
-    </div>
     <div class="d-flex justify-content-end">
-        <div class="d-flex align-items-end ">
-         <div class="p-2"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
-         <div class="p-2"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
-         <div class="p-2"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
+        <div class="d-flex align-items-end">
+         <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
+         <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
+         <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
         </div>
     </div>
     <div class="d-flex flex-row-reverse bd-highlight">
@@ -37,9 +95,9 @@
 
     <div class="d-flex justify-content-end">
         <div class="d-flex align-items-end ">
-         <div class="p-2"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
-         <div class="p-2"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
-         <div class="p-2"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
+         <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
+         <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
+         <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
         </div>
     </div>
 
@@ -55,3 +113,13 @@
     </div>
 
 <%- include ("../partials/footer") %>
+<script>
+  document.getElementById('filterButton').addEventListener('click', function() {
+var checkboxList = document.getElementById('checkboxList');
+checkboxList.style.display = checkboxList.style.display === 'none' ? 'block' : 'none';
+});
+function updatePriceRange(value) {
+        document.getElementById('priceRange').innerText = value;
+    }
+    
+</script>
