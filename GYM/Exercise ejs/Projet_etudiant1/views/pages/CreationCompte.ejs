@@ -1,5 +1,10 @@
-<%- include ("../partials/header.ejs") %>
 
+<%- include ("../partials/header.ejs") %>
+<style>
+    .titre{
+        font-size: large;
+    }
+</style>
 <div class="container"> 
 
         <div class="alert alert-warning alert-dismissible
@@ -13,11 +18,6 @@
     <form>
 
         <div class="titre">CRÉER COMPTE</div>
-        <style>
-            .titre{
-                font-size: large;
-            }
-        </style>
 
     </form>
 
@@ -39,4 +39,4 @@
   </form> 
 </div> 
 
- <% include ../partials/footer %>
+ <%- include ("../partials/footer") %>
