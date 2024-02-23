@@ -18,6 +18,14 @@
 .boite::after {
   transform: translateY(-5px) scale(1.0);
 }
+.style-trier {
+            background-color: #4F5268; /* Fond blanc pour les étiquettes */
+            padding: 5px; /* Ajouter un peu d'espacement autour du texte */
+            margin-bottom: 5px; /* Ajouter un peu d'espacement entre chaque étiquette */
+            display: block; /* Afficher chaque étiquette sur une nouvelle ligne */
+            border-radius: 5px;
+        }
+        
 	</style>
 	</head>
     <div style="margin-top: 70px;">
@@ -30,52 +38,70 @@
                 </svg> Filtrer & Trier
               </button>
             </div>
-            <div id="checkboxList" style="display: none;position: absolute; top: 200px; left: 10px;color: white;">
+            <div id="checkboxList" style="display: none;position: absolute; top: 200px; left: 10px;color: white;"> 
+              <div class="style-trier">
+          <div class="category-wrapper">
+              <h2>Vêtements</h2>
+              <!-- Options de filtrage spécifiques aux vêtements (si nécessaire) -->
+              <div>
+                <label>
+                  Couleur:
+                  <select>
+                      <option value="noir">Noir</option>
+                      <option value="rouge">Rouge</option>
+                      <option value="bleu">Bleu</option>
+                      <option value="jaune">Jaune</option>
+                  </select>
+              </label><br>
               <label>
-                Couleur:
+                Sexe:
                 <select>
-                    <option value="noir">Noir</option>
-                    <option value="rouge">Rouge</option>
-                    <option value="bleu">Bleu</option>
-                    <option value="jaune">Jaune</option>
+                    <option value="male">Male</option>
+                    <option value="femme">Femme</option>
+                    <option value="genreX">X</option> 
                 </select>
             </label><br>
             <label>
-              Sexe:
+              Taille:
               <select>
-                  <option value="male">Male</option>
-                  <option value="femme">Femme</option>
-                  <option value="genreX">X</option> 
+                  <option value="small">S</option>
+                  <option value="medium">M</option>
+                  <option value="large">L</option>
+                  <option value="xlarge">XL</option>  
               </select>
           </label><br>
+                  <label>
+                      Prix: <span id="priceRange">0</span> - 100$ <br>
+                      <input type="range" min="0" max="100" value="0" oninput="updatePriceRange(this.value)">
+                  </label><br>
+              </div>
+          </div>
+          
+          <div class="category-wrapper">
+              <h2>Équipements</h2>
+              <!-- Options de filtrage spécifiques aux équipements (si nécessaire) -->
+              <div>
           <label>
-            Taille:
+            Poids:
             <select>
-                <option value="small">S</option>
-                <option value="medium">M</option>
-                <option value="large">L</option>
-                <option value="xlarge">XL</option>  
+                <option value="2.5">2.5kg</option>
+                <option value="5">5kg</option>
+                <option value="10">10kg</option>
+                <option value="15">15kg</option>
+                <option value="20">20kg</option>
+                <option value="30">30kg</option>    
             </select>
         </label><br>
-        <label>
-          Poids:
-          <select>
-              <option value="2.5">2.5kg</option>
-              <option value="5">5kg</option>
-              <option value="10">10kg</option>
-              <option value="15">15kg</option>
-              <option value="20">20kg</option>
-              <option value="30">30kg</option>    
-          </select>
-      </label><br>
-                <label>
-                    Prix: <span id="priceRange">0</span> - 100$ <br>
-                    <input type="range" min="0" max="100" value="0" oninput="updatePriceRange(this.value)">
-                </label><br>
-            </div>
+                  <label>
+                      Prix: <span id="priceRange2">0</span> - 100$ <br>
+                      <input type="range" min="0" max="100" value="0" oninput="updatePriceRange2(this.value)">
+                  </label><br>
+              </div>
+            </div>  
+          </div>
         </div>
     <div class="d-flex justify-content-end">
-        <div class="d-flex align-items-end">
+        <div class="d-flex align-items-end" style="margin-right:-70px;">
          <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
          <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
          <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;" src="/icon.png"/></div>
@@ -120,6 +146,9 @@ checkboxList.style.display = checkboxList.style.display === 'none' ? 'block' : '
 });
 function updatePriceRange(value) {
         document.getElementById('priceRange').innerText = value;
+    }
+    function updatePriceRange2(value) {
+        document.getElementById('priceRange2').innerText = value;
     }
     
 </script>
