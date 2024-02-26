@@ -1,12 +1,69 @@
 
 <%- include ("../partials/header.ejs") %>
 <style>
-    .titre{
-        font-size: large;
-    }
-</style>
-<div class="container"> 
+    .titre {
+        font-size: 64px;
+        color: white;
+        font-family: 'Khand';
+        flex-direction: column;
+        text-align: center;
+        margin-top: -50px;
 
+    }
+
+    body {
+        background-color: #41455D;
+    }
+
+    .items_page {
+        font-family: 'Khand';
+        flex-direction: column;
+        color: #FFFFFF;
+        font-size: 32px;
+    }
+
+    .form-signin {
+        width: 55%; 
+        margin: -10; 
+    }
+
+    .form-control {
+        margin-bottom: 25px; 
+    }
+
+    .btn-primary {
+        background-color: grey; 
+        border-color: grey; 
+    }
+    .custom-inputs {
+        background-color: #D9D9D9;
+        width: 489px;
+        height: 35px;
+        border: none;
+        display: block;
+      }
+      .custom_butt {
+        margin-left: 650px;
+        margin-top: -500px; 
+      }
+      .column {
+        float: left;
+        width: 50%;
+        }
+
+
+        .row:after {
+         content: "";
+        display: table;
+         clear: both;
+}
+
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Khand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+<div class="container"> 
         <div class="alert alert-warning alert-dismissible
            fade in" role="alert"> 
           <button type="button" class="close" data-dismiss=
@@ -14,29 +71,90 @@
             <span aria-hidden="true">&times;</span> 
           </button> 
         </div> 
-
     <form>
 
-        <div class="titre">CRÉER COMPTE</div>
+        <div class="titre">SE JOINDRE AU LAB</div>
 
     </form>
 
-    <form>
-     <div class="form-signin"> 
-        <h2 class="form-signin-heading">Créer un compte</h2> 
-        <label for="inputEmail" class="sr-only">Address Courriel</label> 
-        <input type="email" id="email" name="email" class="form-
-            control" placeholder="Address Courriel" required=""> 
-     </div> 
+    <div class="row">
+        
+ 
+
+<div class="column">
+
+    <div class="items_page">
+
    
-     <div class="form-signin">
+        <form id="registrationForm">
+     <div class="form-signin"> 
+
+        
+        <label for="inputName" class="sr-only" style="margin-top: 100px;">Nom</label>
+        <input class="form-control" type="name" id="name" name="name" class="form-
+            control" placeholder="nom" required=""> 
+
+       <label for="inputPrenom" class="sr-only" >Prenom</label> 
+       <input class="form-control" type="prenom" id="prenom" name="prenom" class="form-
+           control" placeholder="prenom" required=""> 
+
+        <label for="inputEmail" class="sr-only">Address Courriel</label> 
+        <input class="form-control" type="email" id="email" name="email" class="form-
+            control" placeholder="Address Courriel" required=""> 
+            
+        <label for="inputNum" class="sr-only">Numéro de cellulaire</label> 
+        <input class="form-control" type="tel" id="num" name="num" class="form-
+                control" placeholder="number" pattern="[0-9]{10}" required=""> 
+                
         <label for="inputPassword" class="sr-only">Mot de passe</label> 
-        <input type="password" id="password" name="password"
+        <input class="form-control" type="password" id="password" name="password"
             class="form-control" placeholder="Mot de passe" required=""> 
+
+            <label for="inputVFPassword" class="sr-only">Verifier Mot de passe</label> 
+            <input class="form-control" type="VFpassword" id="VFpassword" name="VFpassword"
+                class="form-control" placeholder="Verifier Mot de passe"  required="">        
+             <button class="btn btn-lg btn-primary btn-block" type="submit">Créer compte</button>  
      </div>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Créer compte</button> 
+
+
+
+
+             <div class="column1">
+             <div class="custom_butt">
+                <svg>
+                  <circle cx="100" cy="100" r="23" fill="#D9D9D9" style="margin-top: -20px;"/>
+                </svg> 
+                <div>
+                    <img style="border-radius: 20x;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 50px; float: left;" src="/solarium.png" alt="muscle">
+                    <span style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px;" >Salle de bronzage, sauna et piscines incluses</span>
+                </div>
+                <div>
+                    <img style="border-radius: 16px;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 50px; float: left;" src="/wall-clock.png" alt="muscle">
+                    <span style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px;">Période d’essai de 7 jours, pas de frais d'annulation !</span>
+                </div>
+                <div style="margin-bottom:30px ;">
+                    <img style="border-radius: 16px;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 50px; float: left;" src="/muscle.png" alt="muscle">
+                    <span style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px; ">Suivi intégral privé de votre entrainement</span>
+                </div>
+              </div>
+
+     </div>
+    </div>
+     <script>
+        document.getElementById("registrationForm").onsubmit = function() {
+            var password = document.getElementById("password").value;
+            var VFpassword = document.getElementById("VFpassword").value;
+    
+            if (password !== VFpassword) {
+                alert("Les mots de passe ne correspondent pas.");
+                return false; 
+            }
+        };
+    </script>
+
+
     <br> 
   </form> 
 </div> 
-
+ </div>
  <%- include ("../partials/footer") %>
