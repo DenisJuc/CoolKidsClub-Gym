@@ -1,7 +1,59 @@
 <%- include ("../partials/header.ejs") %>
-<style>
-	body {
-		background-color: #41455D;
-	}
+<div class="container">
+    <div class="alert alert-warning alert-dismissible
+    fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+	<style>
+		body {
+		  background-color: #41455D;
+		}
+	
+		.form-control {
+		  border-radius: 0;
+		}
+	
+		.items_page {
+		  font-family: 'Khand';
+		  flex-direction: column;
+	
+		  color: #FFFFFF;
+		}
+	
+		.titre {
+		  font-size: 128px;
+		  text-align: left;
+		  margin-top: -3px;
+		}
+		.coordonnees {
+		  font-size: 32px;
+		}
+		.custom-inputs {
+		  background-color: #D9D9D9;
+		  width: 489px;
+		  height: 35px;
+		  border: none;
+		  display: block;
+		}
+		.custom_butt {
+		  margin-left: 550px;
+		}
 	</style>
+	<div class=items_page>
+		<a class="titre" aria-current="page" href="/event/abonnement">Abonnez-vous</a> <br>
+		
+		<a class="titre" href="/event/boutique">Boutique</a> <br>
+		<div class="titre">Pourquoi Peak Labs?</div> <br>
+		<div class="titre">Localisez-nous</div>
+	</div>
+	
+
+
+
+
+</div>
+
+
 <%- include ("../partials/footer.ejs") %>

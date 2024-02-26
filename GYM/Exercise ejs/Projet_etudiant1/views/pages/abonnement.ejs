@@ -1,15 +1,55 @@
 <%- include ("../partials/header.ejs") %>
 <div class="container">
-        <div class="alert alert-warning alert-dismissible
-        fade in" role="alert"> 
+    <div class="alert alert-warning alert-dismissible
+    fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+	<style>
+		body {
+		  background-color: #41455D;
+		}
+	
+		.form-control {
+		  border-radius: 0;
+		}
+	
+		.items_page {
+		  font-family: 'Khand';
+		  flex-direction: column;
+	
+		  color: #FFFFFF;
+		}
+	
+		.titre {
+		  font-size: 70px;
+		  text-align: left;
+		  margin-top: -8px;
+		}
+		.coordonnees {
+		  font-size: 32px;
+		}
+		.custom-inputs {
+		  background-color: #D9D9D9;
+		  width: 489px;
+		  height: 35px;
+		  border: none;
+		  display: block;
+		}
+		.custom_butt {
+		  margin-left: 550px;
+		}
+	</style>
+	<div class=items_page>
+		<div class="titre">Abonnement</div>
+	</div>
+	
 
-    <div class="titre">ABONNEMENT</div>
-    <style>
-    	body {
-    		background-color: rgba(8, 16, 46, 0.77);
-    	}
-    </style>
-    
-</div> 
+
+
+
+</div>
+
 
 <%- include ("../partials/footer.ejs") %>
