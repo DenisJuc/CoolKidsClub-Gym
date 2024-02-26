@@ -21,12 +21,20 @@
 	
 		  color: #FFFFFF;
 		}
-	
-		.titre {
-		  font-size: 70px;
-		  text-align: left;
-		  margin-top: -8px;
-		}
+		
+    	.titre {
+        	font-size: 70px;
+        	text-align: center;
+			margin-top: 50px;
+   		}
+
+		.abonnement-option {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    	}
+
 		.coordonnees {
 		  font-size: 32px;
 		}
@@ -37,21 +45,35 @@
 		  border: none;
 		  display: block;
 		}
-		.custom_butt {
-
-		  margin-left: 550px;
-		}
 	</style>
-	<div class=items_page>
-		<div class="titre">Abonnement</div> <br>
-		<button type="button" class="custom_butt" style="margin-top: -600px;">Confirmer</button></div>
+
+	<div class="items_page">
+	    <div class="titre" style="margin-left">Abonnement</div>
+	    <div class="abonnement-option">
+	        <div class="essai-gratuit" style="background: linear-gradient(to bottom, #FFC107, #FFECB3); color: black; padding: 20px; margin-top: 30px;">
+	            <h2>Essai gratuit</h2>
+	            <p>Cet abonnement vous donne accès à toutes les permissions qu'a l'abonnement standard, mais pour un temps limité.</p>
+	            <h3>0.00$</h3>
+	        </div>
+	        <div class="standard" style="background: linear-gradient(to bottom, #616161, #9E9E9E); color: white; padding: 20px; margin-top: 10px;">
+	            <h2>Standard</h2>
+	            <p>Cet abonnement vous donne accès au gym que vous sélectionnez, ainsi qu'un rabais sur certain de nos produits.</p>
+	            <h3>14.99$</h3>
+	        </div>
+	        <div class="peak" style="background: linear-gradient(to bottom, #00ACC1, #B2EBF2); color: white; padding: 20px; margin-top: 10px;">
+	            <h2>Peak</h2>
+	            <p>Cet abonnement vous donne accès à tout les gyms de Peak Labs, ainsi qu'un rabais de 10% sur tout nos produits.</p>
+	            <h3>35.99$</h3>
+	        </div> <br>
+			<div><button type="button" class="custom_butt" style="margin-top: 30px;background-color: lightgray; color: black;">Confirmer</button></div>
+	    </div>
 	</div>
-	
-
-
-
 
 </div>
 
 
 <%- include ("../partials/footer.ejs") %>
+
+
+
+
