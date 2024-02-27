@@ -1,0 +1,26 @@
+<%- include ("../partials/header.ejs") %>
+
+
+<style>
+	body {
+		background-color: #41455D;
+	}
+	</style>
+	<h2>Liste des événements :</h2>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Produit</th>
+          </tr>
+        </thead>
+        <% items.forEach(function(item){ %>
+        <tbody>
+          <tr>
+            <th scope="row"><%= item.E_IDPRODUIT %></th>
+          </tr>
+        </tbody>
+        <% }); %>
+      </table>
+
+<%- include ("../partials/footer.ejs") %>

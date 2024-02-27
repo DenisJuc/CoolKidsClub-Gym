@@ -52,7 +52,7 @@ con.connect(function(err) {
     Description des routes
 */
 app.get("/", function (req, res) {
-    con.query("SELECT * FROM e_events ORDER BY e_start_date DESC", function (err, result) {
+    con.query("SELECT * FROM e_compte", function (err, result) {
         if (err) throw err;
         res.render("pages/index", {
           siteTitle: "Application simple",
@@ -61,7 +61,7 @@ app.get("/", function (req, res) {
         });
     });
 });
-
+/*
 app.get("/event/add", function (req, res) {
     con.query("SELECT * FROM e_events ORDER BY e_start_date DESC", function (err, result) {
         if (err) throw err;
@@ -89,7 +89,7 @@ app.post("/event/add", function (req, res) {
 /*
     Permettre l'utilisation de body lors des POST request
 */
-
+/*
 app.get("/event/edit/:id", function (req, res) {
     const requete = "SELECT * FROM e_events WHERE e_id = ?";
     const parametres = [req.params.id];
@@ -127,7 +127,7 @@ app.get("/event/delete/:id", function (req, res) {
         res.redirect("/");
     });
 });
-
+*/
 
 app.get("/event/connect", function (req,res){
         res.render("pages/connexion", {
@@ -145,5 +145,15 @@ app.get("/event/boutique", function (req,res){
     res.render("pages/boutique", {
       siteTitle: "Boutique",
       pageTitle: "Boutique",
+    });
+});
+app.get("/event/panier", function (req, res) {
+    con.query("SELECT * FROM e_produit", function (err, result) {
+        if (err) throw err;
+        res.render("pages/panier", {
+          siteTitle: "Application simple",
+          pageTitle: "Liste d'événements",
+          items: result
+        });
     });
 });
