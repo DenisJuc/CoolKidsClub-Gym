@@ -52,7 +52,12 @@ con.connect(function(err) {
     Description des routes
 */
 
-
+app.get("/", function (req,res){
+    res.render("pages/index", {
+      siteTitle: "Index",
+      pageTitle: "index",
+    });
+});
 app.get("/event/connect", function (req,res){
         res.render("pages/connexion", {
           siteTitle: "Connexion",
