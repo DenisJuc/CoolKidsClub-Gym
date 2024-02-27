@@ -147,6 +147,12 @@ app.get("/event/boutique", function (req,res){
       pageTitle: "Boutique",
     });
 });
+app.get("/event/test", function (req,res){
+    res.render("pages/test", {
+      siteTitle: "Boutique",
+      pageTitle: "Boutique",
+    });
+});
 app.get("/event/abonnement", function (req,res){
     res.render("pages/abonnement", {
       siteTitle: "Abonnement",
