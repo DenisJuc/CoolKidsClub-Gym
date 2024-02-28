@@ -161,6 +161,18 @@ app.get("/event/abonnement", function (req,res){
 });
 app.post('/register', (req, res) => {
     const { name, prenom, email, num, password } = req.body;
+    // Email Checking
+const checkEmail = `SELECT * FROM e_compte WHERE E_COURRIEL = ?`;
+con.query(checkEmail, [email], (err, rows) => {
+    if (err) {
+        console.error(err);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    // If email already exists, send a response to the client
+    if (rows.length > 0) {
+        return res.status(400).json({ message: "L'address courriel est déjà inscrit" });
+    }
 
     // Insert
     const sql = `INSERT INTO e_compte (E_NOM, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?)`;
@@ -177,4 +189,5 @@ app.post('/register', (req, res) => {
             res.redirect('/success'); 
         }
     });
+});
 });
