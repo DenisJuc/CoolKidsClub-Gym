@@ -159,3 +159,22 @@ app.get("/event/abonnement", function (req,res){
       pageTitle: "Abonnement",
     });
 });
+app.post('/register', (req, res) => {
+    const { name, prenom, email, num, password } = req.body;
+
+    // Insert
+    const sql = `INSERT INTO e_compte (E_NOM, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?)`;
+    const values = [name, prenom, email, password, num];
+
+    // SQL QUERY
+    connection.query(sql, values, (err, result) => {
+        if (err) {
+            // Handle error
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        } else {
+
+            res.redirect('/success'); 
+        }
+    });
+});
