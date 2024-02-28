@@ -98,3 +98,47 @@ app.get("/event/panier", function (req, res) {
         });
     });
 });
+
+app.post('/event/panier', (req, res) => {
+    const productName = req.body.productName;
+    const price = req.body.price;
+    const categorie = req.body.categorie;
+    const quantite = req.body.quantite;
+
+    const selectSql = "SELECT * FROM e_produit WHERE E_NOM = ?";
+    con.query(selectSql, [productName], (selectErr, selectResult) => {
+        if (selectErr) {
+            console.error("Error checking existing product:", selectErr);
+            res.status(500).send("Error checking existing product");
+            return;
+        }
+
+        if (selectResult.length > 0) {
+            
+            const existingProductId = selectResult[0].E_IDPRODUIT;
+            const updateSql = "UPDATE e_produit SET E_QUANTITE = E_QUANTITE + 1 WHERE E_IDPRODUIT = ?";
+            con.query(updateSql, [existingProductId], (updateErr, updateResult) => {
+                if (updateErr) {
+                    console.error("Error updating quantity:", updateErr);
+                    res.status(500).send("Error updating quantity");
+                } else {
+                    console.log("Quantity updated successfully");
+                    res.redirect('/event/panier');
+                }
+            });
+        } else {
+            // Product doesn't exist, insert a new record
+            const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE) VALUES (?, ?, ?, ?)";
+            con.query(insertSql, [productName, price, categorie, quantite], (insertErr, insertResult) => {
+                if (insertErr) {
+                    console.error("Error inserting data:", insertErr);
+                    res.status(500).send("Error inserting data");
+                } else {
+                    console.log("Data inserted successfully");
+                    res.redirect('/event/panier');
+                }
+            });
+        }
+    });
+});
+

@@ -7,16 +7,22 @@
 	}
 	</style>
 
-    <table class="table table-dark table-striped">
+    <table class="table table-dark table-striped table-borderless">
         <thead>
           <tr>
             <th scope="col">Produit</th>
+            <th scope="col">Prix</th>
+            <th scope="col">Specifications</th>
+            <th scope="col">Quantité</th>
           </tr>
         </thead>
         <% items.forEach(function(item){ %>
         <tbody>
           <tr>
-            <th scope="row"><%= item.E_IDPRODUIT %></th>
+            <th scope="row"><%= item.E_NOM %></th>
+            <td><%= item.E_PRIX %> $</td>
+            <td><%= item.E_CATEGORIE === 'Equipement' ? item.E_CATEGORIE : 's' %></td>
+            <td><%= item.E_QUANTITE %></td>
           </tr>
         </tbody>
         <% }); %>
