@@ -45,10 +45,20 @@
         display: block;
       }
 
-      .custom_butt {
-        margin-left: 550px;
-      }
+      .custom_butt button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
 
+  .custom_butt button:hover svg circle {
+    fill: #CCCCCC;
+  }
+
+  .custom_butt button:hover svg i {
+    color: #0c0c0c;
+  }
       /*
       .btn-primary {
             background-color: #007bff;
@@ -72,32 +82,58 @@
 
       <form>
         <div class="form-group">
-          <label style="margin-top: 100px;" class="coordonnees" for="exampleInputEmail1">Utilisateur</label>
-          <input class="custom-inputs" type="email" class="form-control" id="exampleInputEmail1"
+          <label style="margin-top: 100px;" class="coordonnees" for="exampleInputEmail1">Adresse Courriel</label>
+          <input class="custom-inputs" type="email" class="form-control" id="exampleInputEmail1" placeholder="Courriel"
             aria-describedby="emailHelp">
         </div>
 
         <!-- <button type="submit" class="btn btn-primary">Connecter</button> -->
-        <div class="custom_butt">
-          <svg>
-            <circle cx="100" cy="100" r="23" fill="#D9D9D9"/>
-            <i style="margin-left: -213px; color: black; 
-                      margin-top: 50px !important" class="fa-solid fa-arrow-right fa-xl"></i>
-          </svg>
-        </div>
+
 
         <div class="form-group">
-          <label  class="coordonnees" for="exampleInputPassword1">Mot de passe</label>
-          <input class="custom-inputs" type="password" class="form-control" id="exampleInputPassword1">
+          <label style="margin-top: 50px;" class="coordonnees" for="exampleInputPassword1">Mot de passe</label>
+          <input class="custom-inputs" type="password" class="form-control" id="exampleInputPassword1" placeholder="Mot de passe">
         </div>
         <div class="form-group form-check">
         </div>
-
-
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label style="font-size: larger;" class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
+        </div>
       </form>
+      
+      <div class="custom_butt">
+        <button id="loginButton" type="button" class="btn btn-primary" style="background-color: transparent; border: none; color: inherit; cursor: pointer;" disabled>
+          <svg style="position: absolute; top:55.3%; left: 48.6%; transform: translateX(-50%);">
+            <circle cx="100" cy="100" r="23" fill="#D9D9D9"/>
+            <i style="position: absolute; margin-top: 24px; left: 46%; transform: translate(-50%, -50%); color: black;" class="fa-solid fa-arrow-right fa-xl"></i>
+          </svg>
+        </button>
+      </div>
     </div>
 
+    <script>
+      function checkInputs() {
+        var username = document.getElementById("exampleInputEmail1").value.trim();
+        var password = document.getElementById("exampleInputPassword1").value.trim();
+    
+        var loginButton = document.getElementById("loginButton");
+        if (username !== "" && password !== "") {
+          loginButton.disabled = false;
+        } else {
+          loginButton.disabled = true;
+        }
+      }
 
+      document.getElementById("exampleInputEmail1").addEventListener("input", checkInputs);
+      document.getElementById("exampleInputPassword1").addEventListener("input", checkInputs);
+    </script>
+
+    <div class="container mt-4 d-flex align-items-center">
+      <div style="color: white; margin-right: 15px;" class="mr-3">Pas de Compte?</div>
+      <button onclick="window.location.href='/event/creationCompte'" type="button" class="btn btn-dark">Créer un compte</button>
+    </div>
+    
 
 
   </div>
