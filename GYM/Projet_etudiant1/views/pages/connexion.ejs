@@ -59,21 +59,6 @@
   .custom_butt button:hover svg i {
     color: #0c0c0c;
   }
-      /*
-      .btn-primary {
-            background-color: #007bff;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        */
     </style>
 
     <div class=items_page>
@@ -85,9 +70,6 @@
           <label style="margin-top: 100px;" class="coordonnees" for="exampleInputEmail1">Adresse Courriel</label>
           <input class="custom-inputs" type="email" class="form-control" id="exampleInputEmail1" placeholder="Courriel"
             aria-describedby="emailHelp">
-        </div>
-
-        <!-- <button type="submit" class="btn btn-primary">Connecter</button> -->
 
 
         <div class="form-group">
@@ -100,11 +82,17 @@
           <input type="checkbox" class="form-check-input" id="exampleCheck1">
           <label style="font-size: larger;" class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
         </div>
+        <div>
+          <a  style="color: #FFFFFF; margin-left: -13px;" href="#" class="btn btn-link">
+            Mot de passe oublié?
+        </a>
+        </div>
+
       </form>
       
       <div class="custom_butt">
         <button id="loginButton" type="button" class="btn btn-primary" style="background-color: transparent; border: none; color: inherit; cursor: pointer;" disabled>
-          <svg style="position: absolute; top:55.3%; left: 48.6%; transform: translateX(-50%);">
+          <svg style="position: absolute; top:58.5%; left: 48.6%; transform: translateX(-50%);">
             <circle cx="100" cy="100" r="23" fill="#D9D9D9"/>
             <i style="position: absolute; margin-top: 24px; left: 46%; transform: translate(-50%, -50%); color: black;" class="fa-solid fa-arrow-right fa-xl"></i>
           </svg>
@@ -116,20 +104,38 @@
       function checkInputs() {
         var username = document.getElementById("exampleInputEmail1").value.trim();
         var password = document.getElementById("exampleInputPassword1").value.trim();
-    
         var loginButton = document.getElementById("loginButton");
-        if (username !== "" && password !== "") {
-          loginButton.disabled = false;
+    
+        var atIndex = username.indexOf("@");
+        var isValidEmail = atIndex > 0 && atIndex < username.length - 1;
+    
+        if (isValidEmail && password !== "") {
+          loginButton.removeAttribute("disabled");
         } else {
-          loginButton.disabled = true;
+          loginButton.setAttribute("disabled", "disabled");
         }
       }
+    
+      document.getElementById("exampleInputEmail1").addEventListener("input", function() {
+        checkInputs();
+        if (!this.value.includes('@') && this.value !== '') {
+          $(this).popover('show');
+        } else {
+          $(this).popover('hide');
+        }
+      });
+    
 
-      document.getElementById("exampleInputEmail1").addEventListener("input", checkInputs);
+      document.getElementById("exampleInputEmail1").addEventListener("focusout", function() {
+        $(this).popover('hide');
+      });
+    
       document.getElementById("exampleInputPassword1").addEventListener("input", checkInputs);
     </script>
+    
+    
 
-    <div class="container mt-4 d-flex align-items-center">
+    <div style="margin-left: -13px;" class="container mt-4 d-flex align-items-center">
       <div style="color: white; margin-right: 15px;" class="mr-3">Pas de Compte?</div>
       <button onclick="window.location.href='/event/creationCompte'" type="button" class="btn btn-dark">Créer un compte</button>
     </div>
