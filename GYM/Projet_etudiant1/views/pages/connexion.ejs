@@ -133,16 +133,34 @@
     
       document.getElementById("exampleInputPassword1").addEventListener("input", checkInputs);
 
-              // Your JavaScript code goes here
-        // For example, the code for handling the login button click event
-        function handleLogin() {
-            // Add your login logic here
-            console.log('Login button clicked');
-        }
+      document.getElementById("loginButton").addEventListener("click", function() {
+    // Retrieve email and password values
+    var email = document.getElementById("exampleInputEmail1").value.trim();
+    var password = document.getElementById("exampleInputPassword1").value.trim();
 
-        // Attach event listener to the login button
-        document.getElementById("loginButton").addEventListener("click", handleLogin);
-        
+    // Send AJAX request to server
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/event/connect", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    // Callback function for when the request completes
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // Redirect to index page if login is successful
+            window.location.href = "/";
+        } else {
+            // Display error message or handle the error as needed
+            console.error("Login failed:", xhr.responseText);
+            // For example, show an alert
+            alert("Login failed. Please check your email and password.");
+        }
+    };
+
+    // Prepare the request body
+    var data = JSON.stringify({ email: email, password: password });
+
+    // Send the request
+    xhr.send(data);
     </script>
     
     
