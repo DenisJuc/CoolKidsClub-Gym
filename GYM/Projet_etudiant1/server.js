@@ -51,10 +51,47 @@ con.connect(function(err) {
 /*
     Description des routes
 */
-app.get("/", function (req, res) {
-    con.query("SELECT * FROM e_events ORDER BY e_start_date DESC", function (err, result) {
+
+app.get("/", function (req,res){
+    res.render("pages/index", {
+      siteTitle: "Index",
+      pageTitle: "index",
+    });
+});
+app.get("/event/connect", function (req,res){
+        res.render("pages/connexion", {
+          siteTitle: "Connexion",
+          pageTitle: "Connectez-vous",
+        });
+});
+app.get("/event/creationCompte", function (req,res){
+    res.render("pages/CreationCompte", {
+      siteTitle: "Créer Compte",
+      pageTitle: "Créer Compte",
+    });
+});
+app.get("/event/boutique", function (req,res){
+    res.render("pages/boutique", {
+      siteTitle: "Boutique",
+      pageTitle: "Boutique",
+    });
+});
+app.get("/event/test", function (req,res){
+    res.render("pages/test", {
+      siteTitle: "Boutique",
+      pageTitle: "Boutique",
+    });
+});
+app.get("/event/abonnement", function (req,res){
+    res.render("pages/abonnement", {
+      siteTitle: "Abonnement",
+      pageTitle: "Abonnement",
+    });
+});
+app.get("/event/panier", function (req, res) {
+    con.query("SELECT * FROM e_produit", function (err, result) {
         if (err) throw err;
-        res.render("pages/index", {
+        res.render("pages/panier", {
           siteTitle: "Application simple",
           pageTitle: "Liste d'événements",
           items: result
@@ -62,72 +99,48 @@ app.get("/", function (req, res) {
     });
 });
 
-app.get("/event/add", function (req, res) {
-    con.query("SELECT * FROM e_events ORDER BY e_start_date DESC", function (err, result) {
-        if (err) throw err;
-        res.render("pages/add-event", {
-          siteTitle: "Application simple",
-          pageTitle: "Ajouter un nouvel événement",
-          items: result
-        });
-    });
-});
-app.post("/event/add", function (req, res) {
-    const requete = "INSERT INTO e_events (e_name, e_start_date, e_start_end, e_desc, e_location) VALUES (?, ?, ?, ?, ?)";
-    const parametres = [
-        req.body.e_name,
-        dateFormat(req.body.e_start_date, "yyyy-mm-dd"),
-        dateFormat(req.body.e_start_end, "yyyy-mm-dd"),
-        req.body.e_desc,
-        req.body.e_location
-    ];
-    con.query(requete, parametres, function (err, result) {
-        if (err) throw err;
-        res.redirect("/");
-    });
-});
-/*
-    Permettre l'utilisation de body lors des POST request
-*/
+app.post('/event/panier', (req, res) => {
+    const productName = req.body.productName;
+    const price = req.body.price;
+    const categorie = req.body.categorie;
+    const quantite = req.body.quantite;
 
-app.get("/event/edit/:id", function (req, res) {
-    const requete = "SELECT * FROM e_events WHERE e_id = ?";
-    const parametres = [req.params.id];
-    con.query(requete, parametres, function (err, result) {
-      if (err) throw err;
-      result[0].E_START_DATE = dateFormat(result[0].E_START_DATE, "yyyy-mm-dd");
-      result[0].E_START_END = dateFormat(result[0].E_START_END, "yyyy-mm-dd");
-      res.render("pages/edit-event.ejs", {
-        siteTitle: "Application simple",
-        pageTitle: "Editer événement : " + result[0].e_name,
-        items: result,
-      });
-    });
-});
-app.post("/event/edit/:id", function (req, res) {
-    const requete = "UPDATE e_events SET e_name = ?, e_start_date = ?, e_start_end = ?, e_desc = ?, e_location = ? WHERE e_id = ?";
-    const parametres = [
-        req.body.e_name,
-        req.body.e_start_date,
-        req.body.e_end_date,
-        req.body.e_desc,
-        req.body.e_location,
-        req.body.e_id
-    ];
-    console.log(parametres);
-    con.query(requete, parametres, function (err, result) {
-        if (err) throw err;
-        res.redirect("/");
-    });
-});
-app.get("/event/delete/:id", function (req, res) {
-    const requete = "DELETE FROM e_events WHERE e_id = ?";
-    con.query(requete, [req.params.id], function (err, result) {
-        if (err) throw err;
-        res.redirect("/");
-    });
-});
+    const selectSql = "SELECT * FROM e_produit WHERE E_NOM = ?";
+    con.query(selectSql, [productName], (selectErr, selectResult) => {
+        if (selectErr) {
+            console.error("Error checking existing product:", selectErr);
+            res.status(500).send("Error checking existing product");
+            return;
+        }
 
+        if (selectResult.length > 0) {
+            
+            const existingProductId = selectResult[0].E_IDPRODUIT;
+            const updateSql = "UPDATE e_produit SET E_QUANTITE = E_QUANTITE + 1 WHERE E_IDPRODUIT = ?";
+            con.query(updateSql, [existingProductId], (updateErr, updateResult) => {
+                if (updateErr) {
+                    console.error("Error updating quantity:", updateErr);
+                    res.status(500).send("Error updating quantity");
+                } else {
+                    console.log("Quantity updated successfully");
+                    res.redirect('/event/panier');
+                }
+            });
+        } else {
+            // Product doesn't exist, insert a new record
+            const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE) VALUES (?, ?, ?, ?)";
+            con.query(insertSql, [productName, price, categorie, quantite], (insertErr, insertResult) => {
+                if (insertErr) {
+                    console.error("Error inserting data:", insertErr);
+                    res.status(500).send("Error inserting data");
+                } else {
+                    console.log("Data inserted successfully");
+                    res.redirect('/event/panier');
+                }
+            });
+        }
+    });
+});
 
 app.get("/event/connect", function (req,res){
         res.render("pages/connexion", {
