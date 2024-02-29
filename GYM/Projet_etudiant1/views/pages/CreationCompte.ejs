@@ -109,7 +109,7 @@
             <label for="inputVFPassword" class="sr-only">Vérifier Mot de passe</label> 
             <input class="form-control" type="VFpassword" id="VFpassword" name="VFpassword"
                  placeholder="Vérifier Mot de passe"  required="">        
-             <button class="btn btn-lg btn-primary btn-block" type="submit">Créer compte</button>  
+             <button class="btn btn-dark" type="submit" >Créer compte</button>  
      </div>
 
 
@@ -131,16 +131,63 @@
 
      </div>
     </div>
-     <script>
-        document.getElementById("registrationForm").onsubmit = function() {
-            var password = document.getElementById("password").value;
-            var VFpassword = document.getElementById("VFpassword").value;
-    
-            if (password !== VFpassword) {
-                alert("Les mots de passe ne correspondent pas.");
-                return false; 
-            }
-        };
+    <script>
+// Soumission du formulaire
+document.getElementById("registrationForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+
+    // Récupérer les données du formulaire
+    var formData = new FormData(this);
+
+    // Convertir les données du formulaire en objet JSON
+    var jsonData = {};
+    formData.forEach((value, key) => {
+        jsonData[key] = value;
+    });
+
+    // Envoyer les données du formulaire via une requête AJAX
+    fetch("/event/creationCompte", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            // S'il y a une erreur dans la réponse, afficher le message d'erreur
+            return response.json().then(data => {
+                showError(data.message);
+            });
+        }
+        // Rediriger vers la page de connexion si tout se passe bien
+        window.location.href = "/event/connect";
+    })
+    .catch(error => {
+        // En cas d'erreur dans la requête AJAX
+        console.error("Erreur lors de la soumission du formulaire :", error);
+        showError("Une erreur s'est produite. Veuillez réessayer.");
+    });
+});
+
+// Fonction pour afficher le message d'erreur
+function showError(message) {
+    // Afficher le message dans une fenêtre d'alerte
+    alert(message);
+}
+
+// Vérification côté client que les mots de passe correspondent
+document.getElementById("registrationForm").onsubmit = function(event) {
+    var password = document.getElementById("password").value;
+    var VFpassword = document.getElementById("VFpassword").value;
+
+    if (password !== VFpassword) {
+        // Si les mots de passe ne correspondent pas, afficher un message pop-up
+        showError("Les mots de passe ne correspondent pas.");
+        event.preventDefault(); // Annuler la soumission du formulaire
+    }
+};
+
     </script>
 
 

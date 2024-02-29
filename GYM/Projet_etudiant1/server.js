@@ -172,35 +172,36 @@ app.get("/event/abonnement", function (req,res){
       pageTitle: "Abonnement",
     });
 });
-app.post('/register', (req, res) => {
-    const { name, prenom, email, num, password } = req.body;
-    // Email Checking
-const checkEmail = `SELECT * FROM e_compte WHERE E_COURRIEL = ?`;
-con.query(checkEmail, [email], (err, rows) => {
-    if (err) {
-        console.error(err);
-        return res.status(500).send('Internal Server Error');
-    }
+app.post('/event/creationCompte', (req, res) => {
+    const { name, prénom, email, num, password } = req.body;
 
-    // If email already exists, send a response to the client
-    if (rows.length > 0) {
-        return res.status(400).json({ message: "L'address courriel est déjà inscrit" });
-    }
-
-    // Insert
-    const sql = `INSERT INTO e_compte (E_NOM, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?)`;
-    const values = [name, prenom, email, password, num];
-
-    // SQL QUERY
-    connection.query(sql, values, (err, result) => {
-        if (err) {
-            // Handle error
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-        } else {
-
-            res.redirect('/success'); 
+    // Vérifier si l'email existe déjà dans la base de données
+    const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
+    con.query(checkEmailQuery, [email], (checkErr, checkResult) => {
+        if (checkErr) {
+            console.error("Erreur lors de la vérification de l'email :", checkErr);
+            return res.status(500).send("Erreur interne du serveur");
         }
+
+        // Si l'email existe déjà, envoyer une réponse au client
+        if (checkResult.length > 0) {
+            return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
+        }
+
+        // Si l'email n'existe pas encore, procéder à l'insertion dans la base de données
+        const insertQuery = `INSERT INTO e_compte (E_NOM, E_LOCATION, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?, ?)`;
+        const values = [name, " ", prénom, email, password, num];
+
+        // Exécuter la requête d'insertion
+        con.query(insertQuery, values, (insertErr, insertResult) => {
+            if (insertErr) {
+                console.error("Erreur lors de l'insertion des données :", insertErr);
+                return res.status(500).send("Erreur interne du serveur");
+            }
+            console.log("Données insérées avec succès");
+            res.redirect('/event/connect');
+        });
     });
 });
-});
+
+
