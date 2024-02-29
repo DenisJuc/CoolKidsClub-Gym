@@ -203,5 +203,25 @@ app.post('/event/creationCompte', (req, res) => {
         });
     });
 });
+app.post('/event/connect'), (req, res) => {
+    const { email, password} = req.body;
 
+    const verif_si_existe = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
+    
+    con.query(verif_si_existe, [email], (checkErr, checkResult) => {
+        if (checkErr) {
+            console.error("Erreur lors de la vérification de l'email :", checkErr);
+            return res.status(500).send("Erreur interne du serveur");
+        }
+
+        // Si l'email existe déjà, envoyer une réponse au client
+        if (checkResult.length > 0) {
+            res.redirect('/')
+            return;
+        }
+
+        // Si l'email n'existe pas encore, procéder à l'insertion dans la base de données
+        res.redirect('/event/connect')
+    });
+}
 
