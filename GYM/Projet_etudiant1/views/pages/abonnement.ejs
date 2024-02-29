@@ -1,79 +1,110 @@
-<%- include ("../partials/header.ejs") %>
+<%- include("../partials/header.ejs") %>
+
+
 <div class="container">
-    <div class="alert alert-warning alert-dismissible
-    fade in" role="alert">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+  <div class="items_page">
+    <div class="titre">Abonnement</div>
+    <div class="abonnement-option">
+      <div id="essai-gratuit" class="subscription-option" onclick="selectOption('essai-gratuit')" style="background: linear-gradient(to bottom, #FFC107, #FFECB3);">
+        <h2>Essai gratuit</h2>
+        <p>Cet abonnement vous donne accès à toutes les permissions qu'a l'abonnement standard, mais pour un temps limité.</p>
+        <h3>0.00$</h3>
+      </div>
+      <div id="standard" class="subscription-option" onclick="selectOption('standard')" style="background: linear-gradient(to bottom, #616161, #9E9E9E);">
+        <h2>Standard</h2>
+        <p>Cet abonnement vous donne accès au gym que vous sélectionnez, ainsi qu'un rabais sur certain de nos produits.</p>
+        <h3>14.99$</h3>
+      </div>
+      <div id="peak" class="subscription-option" onclick="selectOption('peak')" style="background: linear-gradient(to bottom, #00ACC1, #B2EBF2);">
+        <h2>Peak</h2>
+        <p>Cet abonnement vous donne accès à tout les gyms de Peak Labs, ainsi qu'un rabais de 10% sur tout nos produits.</p>
+        <h3>35.99$</h3>
+      </div>
     </div>
-	<style>
-		body {
-		  background-color: #41455D;
-		}
-	
-		.form-control {
-		  border-radius: 0;
-		}
-	
-		.items_page {
-		  font-family: 'Khand';
-		  flex-direction: column;
-	
-		  color: #FFFFFF;
-		}
-		
-    	.titre {
-        	font-size: 70px;
-        	text-align: center;
-			margin-top: 50px;
-   		}
-
-		.abonnement-option {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    	}
-
-		.coordonnees {
-		  font-size: 32px;
-		}
-		.custom-inputs {
-		  background-color: #D9D9D9;
-		  width: 489px;
-		  height: 35px;
-		  border: none;
-		  display: block;
-		}
-	</style>
-
-	<div class="items_page">
-	    <div class="titre" style="margin-left">Abonnement</div>
-	    <div class="abonnement-option">
-	        <div class="essai-gratuit" style="background: linear-gradient(to bottom, #FFC107, #FFECB3); color: black; padding: 20px; margin-top: 30px;">
-	            <h2>Essai gratuit</h2>
-	            <p>Cet abonnement vous donne accès à toutes les permissions qu'a l'abonnement standard, mais pour un temps limité.</p>
-	            <h3>0.00$</h3>
-	        </div>
-	        <div class="standard" style="background: linear-gradient(to bottom, #616161, #9E9E9E); color: white; padding: 20px; margin-top: 10px;">
-	            <h2>Standard</h2>
-	            <p>Cet abonnement vous donne accès au gym que vous sélectionnez, ainsi qu'un rabais sur certain de nos produits.</p>
-	            <h3>14.99$</h3>
-	        </div>
-	        <div class="peak" style="background: linear-gradient(to bottom, #00ACC1, #B2EBF2); color: white; padding: 20px; margin-top: 10px;">
-	            <h2>Peak</h2>
-	            <p>Cet abonnement vous donne accès à tout les gyms de Peak Labs, ainsi qu'un rabais de 10% sur tout nos produits.</p>
-	            <h3>35.99$</h3>
-	        </div> <br>
-			<div><button type="button" class="custom_butt" style="margin-top: 30px;background-color: lightgray; color: black;">Confirmer</button></div>
-	    </div>
-	</div>
-
+    <button type="button" class="custom_butt" onclick="unselectOptions()">Confirmer</button>
+  </div>
 </div>
 
 
-<%- include ("../partials/footer.ejs") %>
+<script>
+  let selectedOption = null;
+  
+  function selectOption(optionId) {
+    if(selectedOption) {
+      document.getElementById(selectedOption).classList.remove('selected');
+    }
+    selectedOption = optionId;
+    document.getElementById(optionId).classList.add('selected');
+  }
+
+  function unselectOptions() {
+    if(selectedOption) {
+      document.getElementById(selectedOption).classList.remove('selected');
+      selectedOption = null;
+    }
+  }
+</script>
+
+<style>
+  body {
+    background-color: #41455D;
+    font-family: 'Krona One';
+  }
 
 
+  .items_page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
+  .titre {
+    font-size: 70px;
+    font-family: 'Khand', sans-serif;
+    text-align: center;
+    color: #FFFFFF;
+    margin-top: 50px;
+  }
 
+  .abonnement-option {
+    width: 100%;
+    font-family: 'Khand', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .subscription-option {
+    color: black;
+    padding: 20px;
+    font-family: 'Khand', sans-serif;
+    margin-top: 10px;
+    transition: transform 0.3s ease, border 0.3s ease;
+    cursor: pointer;
+    border-radius: 15px;
+  }
+
+  .subscription-option:hover {
+    transform: scale(1.05);
+  }
+
+  .selected {
+    border: 3px solid yellow;
+  }
+
+  .custom_butt {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    font-size: 20px;
+    margin-top: 30px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .custom_butt:hover {
+    background-color: #333;
+  }
+</style>
+<%- include("../partials/footer.ejs") %>
