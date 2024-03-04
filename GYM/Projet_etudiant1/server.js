@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 /*
     Connect to server
 */
-const server = app.listen(4000, function() {
+const server = app.listen(4000, function () {
     console.log("serveur fonctionne sur 4000... ! ");
 });
 /*
@@ -43,7 +43,7 @@ const con = mysql.createConnection({
     database: "mybd"
 });
 
-con.connect(function(err) {
+con.connect(function (err) {
     if (err) throw err;
     console.log("connected!");
 });
@@ -52,49 +52,49 @@ con.connect(function(err) {
     Description des routes
 */
 
-app.get("/", function (req,res){
+app.get("/", function (req, res) {
     res.render("pages/index", {
-      siteTitle: "Index",
-      pageTitle: "index",
+        siteTitle: "Index",
+        pageTitle: "index",
     });
 });
-app.get("/event/connect", function (req,res){
-        res.render("pages/connexion", {
-          siteTitle: "Connexion",
-          pageTitle: "Connectez-vous",
-        });
+app.get("/event/connect", function (req, res) {
+    res.render("pages/connexion", {
+        siteTitle: "Connexion",
+        pageTitle: "Connectez-vous",
+    });
 });
-app.get("/event/creationCompte", function (req,res){
+app.get("/event/creationCompte", function (req, res) {
     res.render("pages/CreationCompte", {
-      siteTitle: "Créer Compte",
-      pageTitle: "Créer Compte",
+        siteTitle: "Créer Compte",
+        pageTitle: "Créer Compte",
     });
 });
-app.get("/event/boutique", function (req,res){
+app.get("/event/boutique", function (req, res) {
     res.render("pages/boutique", {
-      siteTitle: "Boutique",
-      pageTitle: "Boutique",
+        siteTitle: "Boutique",
+        pageTitle: "Boutique",
     });
 });
-app.get("/event/test", function (req,res){
+app.get("/event/test", function (req, res) {
     res.render("pages/test", {
-      siteTitle: "Boutique",
-      pageTitle: "Boutique",
+        siteTitle: "Boutique",
+        pageTitle: "Boutique",
     });
 });
-app.get("/event/abonnement", function (req,res){
+app.get("/event/abonnement", function (req, res) {
     res.render("pages/abonnement", {
-      siteTitle: "Abonnement",
-      pageTitle: "Abonnement",
+        siteTitle: "Abonnement",
+        pageTitle: "Abonnement",
     });
 });
 app.get("/event/panier", function (req, res) {
     con.query("SELECT * FROM e_produit", function (err, result) {
         if (err) throw err;
         res.render("pages/panier", {
-          siteTitle: "Application simple",
-          pageTitle: "Liste d'événements",
-          items: result
+            siteTitle: "Application simple",
+            pageTitle: "Liste d'événements",
+            items: result
         });
     });
 });
@@ -114,7 +114,7 @@ app.post('/event/panier', (req, res) => {
         }
 
         if (selectResult.length > 0) {
-            
+
             const existingProductId = selectResult[0].E_IDPRODUIT;
             const updateSql = "UPDATE e_produit SET E_QUANTITE = E_QUANTITE + 1 WHERE E_IDPRODUIT = ?";
             con.query(updateSql, [existingProductId], (updateErr, updateResult) => {
@@ -142,34 +142,41 @@ app.post('/event/panier', (req, res) => {
     });
 });
 
-app.get("/event/connect", function (req,res){
-        res.render("pages/connexion", {
-          siteTitle: "Connexion",
-          pageTitle: "Connectez-vous",
-        });
+app.get("/event/connect", function (req, res) {
+    res.render("pages/connexion", {
+        siteTitle: "Connexion",
+        pageTitle: "Connectez-vous",
+    });
 });
-app.get("/event/creationCompte", function (req,res){
+app.get("/event/creationCompte", function (req, res) {
     res.render("pages/CreationCompte", {
-      siteTitle: "Créer Compte",
-      pageTitle: "Créer Compte",
+        siteTitle: "Créer Compte",
+        pageTitle: "Créer Compte",
     });
 });
-app.get("/event/boutique", function (req,res){
+app.get("/event/boutique", function (req, res) {
     res.render("pages/boutique", {
-      siteTitle: "Boutique",
-      pageTitle: "Boutique",
+        siteTitle: "Boutique",
+        pageTitle: "Boutique",
     });
 });
-app.get("/event/test", function (req,res){
+app.get("/event/test", function (req, res) {
     res.render("pages/test", {
-      siteTitle: "Boutique",
-      pageTitle: "Boutique",
+        siteTitle: "Boutique",
+        pageTitle: "Boutique",
     });
 });
-app.get("/event/abonnement", function (req,res){
+app.get("/event/abonnement", function (req, res) {
     res.render("pages/abonnement", {
-      siteTitle: "Abonnement",
-      pageTitle: "Abonnement",
+        siteTitle: "Abonnement",
+        pageTitle: "Abonnement",
+    });
+});
+app.get("/event/detail", function (req, res) {
+    res.render("pages/detail", {
+        siteTitle: "Details",
+        pageTitle: "Details",
+        userDetails: result[0],
     });
 });
 app.post('/event/creationCompte', (req, res) => {
@@ -203,25 +210,45 @@ app.post('/event/creationCompte', (req, res) => {
         });
     });
 });
-app.post('/event/connect'), (req, res) => {
-    const { email, password} = req.body;
+app.post('/event/connect', (req, res) => {
+    const { email, password } = req.body;
 
-    const verif_si_existe = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
-    
-    con.query(verif_si_existe, [email], (checkErr, checkResult) => {
-        if (checkErr) {
-            console.error("Erreur lors de la vérification de l'email :", checkErr);
-            return res.status(500).send("Erreur interne du serveur");
+    const verifyUserQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_PASSWORD = ?";
+    con.query(verifyUserQuery, [email, password], (err, result) => {
+        if (err) {
+            console.error("Error verifying user:", err);
+            return res.status(500).send("Internal Server Error");
         }
 
-        // Si l'email existe déjà, envoyer une réponse au client
-        if (checkResult.length > 0) {
-            res.redirect('/')
+        if (result.length > 0) {
+            // Login successful
+            // Here you might want to store user session or generate a JWT token
+            res.redirect('/'); // Redirect to homepage or wherever you want to redirect after successful login
+        } else {
+            // Login failed
+            console.error("Login failed for email:", email);
+            res.status(401).send("Login failed. Please check your email and password.");
+        }
+    });
+});
+
+
+app.get("/event/detail", function (req, res) {
+    // IDENTIFIER LE GARS LOGGED IN
+    const loggedInUserId = req.session.userId; // POUR STORE L'ID DANS LA SESSION
+
+    // Cherche l'user dans le BD
+    const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+    con.query(userDetailsQuery, [loggedInUserId], (err, result) => {
+        if (err) {
+            console.error("Error fetching user details:", err);
+            res.status(500).send("Internal Server Error");
             return;
         }
 
-        // Si l'email n'existe pas encore, procéder à l'insertion dans la base de données
-        res.redirect('/event/connect')
+        if (result.length === 0) {
+            res.status(404).send("User not found");
+            return;
+        }
     });
-}
-
+});
