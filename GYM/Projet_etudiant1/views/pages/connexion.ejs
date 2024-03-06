@@ -105,6 +105,7 @@
     </div>
 
     <script>
+
       function checkInputs() {
         var username = document.getElementById("exampleInputEmail1").value.trim();
         var password = document.getElementById("exampleInputPassword1").value.trim();
@@ -129,7 +130,6 @@
         }
       });
 
-
       document.getElementById("exampleInputEmail1").addEventListener("focusout", function () {
         $(this).popover('hide');
       });
@@ -137,34 +137,35 @@
       document.getElementById("exampleInputPassword1").addEventListener("input", checkInputs);
 
       document.getElementById("loginButton").addEventListener("click", function () {
-        // Retrieve email and password values
         var email = document.getElementById("exampleInputEmail1").value.trim();
         var password = document.getElementById("exampleInputPassword1").value.trim();
 
-        // Send AJAX request to server
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/event/connect", true);
         xhr.setRequestHeader("Content-Type", "application/json");
 
-        // Callback function for when the request completes
         xhr.onload = function () {
           if (xhr.status === 200) {
-            // Redirect to index page if login is successful
             window.location.href = "/";
           } else {
-            // Display error message or handle the error as needed
             console.error("Login failed:", xhr.responseText);
-            // For example, show an alert
-            alert("Login failed. Please check your email and password.");
+            alert("La connexion a échoué. Veuillez vérifier votre email et votre mot de passe.");
           }
         };
 
-        // Prepare the request body
         var data = JSON.stringify({ email: email, password: password });
-
-        // Send the request
         xhr.send(data);
       });
+
+      function handleEnterKey(event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          document.getElementById("loginButton").click();
+        }
+      }
+
+      document.getElementById("exampleInputEmail1").addEventListener("keypress", handleEnterKey);
+      document.getElementById("exampleInputPassword1").addEventListener("keypress", handleEnterKey);
     </script>
 
 
