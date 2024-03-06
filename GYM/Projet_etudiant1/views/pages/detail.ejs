@@ -57,6 +57,21 @@
             display: table;
             clear: both;
         }
+
+        .card {
+            margin-bottom: 20px;
+            /* Adjust margin to provide spacing between cards */
+        }
+
+        .card-body {
+            padding: 20px;
+            /* Adjust padding for better spacing within the card */
+        }
+
+        .btn-info {
+            width: 100%;
+            margin-bottom: 10px;
+        }
     </style>
 
     <link href="https://fonts.googleapis.com/css2?family=Khand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -73,7 +88,6 @@
 
 
         <div class="row">
-
 
             <div class="col-md-8">
                 <div class="card mb-3">
@@ -123,30 +137,41 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <form action="/update-details" method="post">
-                                    <input type="hidden" name="userId" value="<%= userDetails.E_ID %>">
-                                    <label for="name">Nom:</label>
-                                    <input type="text" id="name" name="name" value="<%= userDetails.E_NOM %>">
-                                    <label for="prenom">Prénom:</label>
-                                    <input type="text" id="prenom" name="prenom" value="<%= userDetails.E_PRENOM %>">
-                                    <label for="email">Courriel:</label>
-                                    <input type="email" id="email" name="email" value="<%= userDetails.E_COURRIEL %>">
-                                    <label for="num">Mobile:</label>
-                                    <input type="text" id="num" name="num" value="<%= userDetails.E_NUMBER %>">
-                                    <label for="password">Mot De Passe:</label>
-                                    <input type="password" id="password" name="password"
-                                        value="<%= userDetails.E_PASSWORD %>">
-                                    <button type="submit" class="btn btn-info">Modifier</button>
-                                </form>
-                            </div>
-                            <div class="col-sm-12">
-                                <a class="btn btn-info " target="__blank" href="/logout">Deconnect</a>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <form action="/update-details" method="post">
+                                <input type="hidden" name="userId" value="<%= userDetails.E_ID %>">
+                                <label for="name">Nom:</label>
+                                <input type="text" id="name" name="name" value="<%= userDetails.E_NOM %>">
+                                <label for="prenom">Prénom:</label>
+                                <input type="text" id="prenom" name="prenom" value="<%= userDetails.E_PRENOM %>">
+                                <label for="email">Courriel:</label>
+                                <input type="email" id="email" name="email" value="<%= userDetails.E_COURRIEL %>">
+                                <label for="num">Mobile:</label>
+                                <input type="text" id="num" name="num" value="<%= userDetails.E_NUMBER %>">
+                                <label for="password">Mot De Passe:</label>
+                                <input type="password" id="password" name="password"
+                                    value="<%= userDetails.E_PASSWORD %>">
+                                <button type="submit" class="btn btn-info">Modifier</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <a class="btn btn-info" target="__blank" href="/logout">Deconnect</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-info" target="__blank" href="/logout">Détruit compte</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <%- include("../partials/footer.ejs") %>
