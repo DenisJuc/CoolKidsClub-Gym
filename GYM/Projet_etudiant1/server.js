@@ -13,6 +13,14 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Configure session middleware
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true
+}));
+
+
 /*
     Connect to server
 */
@@ -56,6 +64,7 @@ app.get("/", function (req, res) {
     res.render("pages/index", {
         siteTitle: "Index",
         pageTitle: "index",
+        user: req.session.user
     });
 });
 app.get("/event/connect", function (req, res) {
@@ -176,7 +185,7 @@ app.get("/event/detail", function (req, res) {
     res.render("pages/detail", {
         siteTitle: "Details",
         pageTitle: "Details",
-        userDetails: result[0],
+        userDetails: req.session.user,
     });
 });
 app.post('/event/creationCompte', (req, res) => {
@@ -219,11 +228,15 @@ app.post('/event/connect', (req, res) => {
             console.error("Error verifying user:", err);
             return res.status(500).send("Internal Server Error");
         }
+        console.log("Result:", result);
 
         if (result.length > 0) {
             // Login successful
-            // Here you might want to store user session or generate a JWT token
-            res.redirect('/'); // Redirect to homepage or wherever you want to redirect after successful login
+            req.session.user = result[0];// Store user ID in session
+
+            console.log("User inserted in session:", req.session.user);
+            res.redirect('/event/detail'); // Redirect to homepage or wherever you want to redirect after successful login
+            return req.session.user;
         } else {
             // Login failed
             console.error("Login failed for email:", email);
@@ -233,22 +246,33 @@ app.post('/event/connect', (req, res) => {
 });
 
 
-app.get("/event/detail", function (req, res) {
-    // IDENTIFIER LE GARS LOGGED IN
-    const loggedInUserId = req.session.userId; // POUR STORE L'ID DANS LA SESSION
+app.get("/event/detail", (req, res) => {
+    console.log("kinda in");
+    const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
 
-    // Cherche l'user dans le BD
+    if (!loggedInUserId) {
+        res.redirect('/event/connect'); // Redirect to login page if user is not logged in
+        return;
+    }
+
     const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
-    con.query(userDetailsQuery, [loggedInUserId], (err, result) => {
+    con.query(userDetailsQuery, [loggedInUserId], (err, userDetails) => {
         if (err) {
             console.error("Error fetching user details:", err);
             res.status(500).send("Internal Server Error");
             return;
         }
 
-        if (result.length === 0) {
+        if (userDetails.length === 0) {
             res.status(404).send("User not found");
             return;
         }
+
+        res.render("pages/detail", {
+            siteTitle: "Details",
+            pageTitle: "Details",
+            userDetails: req.session.user, // Using userDetails instead of req.session.user
+        });
     });
 });
+

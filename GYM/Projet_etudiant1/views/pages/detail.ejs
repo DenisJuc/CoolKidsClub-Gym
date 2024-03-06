@@ -1,4 +1,4 @@
-<%- include ("../partials/header.ejs") %>
+<%- include("../partials/header.ejs") %>
     <style>
         .titre {
             font-size: 64px;
@@ -7,7 +7,6 @@
             flex-direction: column;
             text-align: center;
             margin-top: -50px;
-
         }
 
         body {
@@ -53,7 +52,6 @@
             width: 50%;
         }
 
-
         .row:after {
             content: "";
             display: table;
@@ -63,69 +61,76 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Khand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-
     <div class="container">
-        <div class="alert alert-warning alert-dismissible
-           fade in" role="alert">
+        <div class="alert alert-warning alert-dismissible fade in" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <form>
 
-            <div class="titre">SE JOINDRE AU LAB</div>
+        <div class="titre">SE JOINDRE AU LAB</div>
 
-        </form>
+
 
         <div class="row">
 
 
-
-            <div class="col-6">
-
-                <div class="items_page">
-
-
-                    <div>
-                        <p>Nom: <%= userDetails.E_NOM %>
-                        </p>
-                        <p>Prénom: <%= userDetails.E_PRENOM %>
-                        </p>
-                        <p>Prénom: <%= userDetails.E_COURRIEL %>
-                        </p>
-                        <p>Prénom: <%= userDetails.E_NUMBER %>
-                        </p>
-
-
-
-                        <div class="custom_butt">
-                            <div>
-                                <img style="border-radius: 20x;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 60px; float: left;"
-                                    src="/solarium.png" alt="muscle">
-                                <span
-                                    style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px;">Salle
-                                    de bronzage, sauna et piscines incluses</span>
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Nom</h6>
                             </div>
-                            <div>
-                                <img style="border-radius: 16px;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 60px; float: left;"
-                                    src="/wall-clock.png" alt="muscle">
-                                <span
-                                    style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px;">Période
-                                    d’essai de 7 jours, pas de frais d'annulation !</span>
+                            <div class="col-sm-9 text-secondary">
+                                <%= userDetails.E_NOM %>
                             </div>
-                            <div style="margin-bottom:30px ;">
-                                <img style="border-radius: 16px;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 60px; float: left;"
-                                    src="/muscle.png" alt="muscle">
-                                <span
-                                    style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px; ">Suivi
-                                    intégral privé de votre entrainement</span>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Prenom</h6>
                             </div>
-
+                            <div class="col-sm-9 text-secondary">
+                                <%= userDetails.E_PRENOM %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Courriel</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= userDetails.E_COURRIEL %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Mobile</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= userDetails.E_NUMBER %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Mot De Pass</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= userDetails.E_PASSWORD%>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a class="btn btn-info " target="__blank"
+                                    href="https://www.bootdey.com/snippets/view/profile-edit-data-and-skills">Modifier</a>
+                            </div>
                         </div>
                     </div>
-
-                    <br>
-                    </form>
                 </div>
             </div>
-            <%- include ("../partials/footer") %>
+        </div>
+        <%- include("../partials/footer.ejs") %>
