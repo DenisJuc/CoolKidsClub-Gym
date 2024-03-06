@@ -64,37 +64,42 @@ app.get("/", function (req, res) {
     res.render("pages/index", {
         siteTitle: "Index",
         pageTitle: "index",
-        user: req.session.user
+        userDetails: req.session.user,
     });
 });
 app.get("/event/connect", function (req, res) {
     res.render("pages/connexion", {
         siteTitle: "Connexion",
         pageTitle: "Connectez-vous",
+        userDetails: req.session.user,
     });
 });
 app.get("/event/creationCompte", function (req, res) {
     res.render("pages/CreationCompte", {
         siteTitle: "Créer Compte",
         pageTitle: "Créer Compte",
+        userDetails: req.session.user,
     });
 });
 app.get("/event/boutique", function (req, res) {
     res.render("pages/boutique", {
         siteTitle: "Boutique",
         pageTitle: "Boutique",
+        userDetails: req.session.user,
     });
 });
 app.get("/event/test", function (req, res) {
     res.render("pages/test", {
         siteTitle: "Boutique",
         pageTitle: "Boutique",
+        userDetails: req.session.user,
     });
 });
 app.get("/event/abonnement", function (req, res) {
     res.render("pages/abonnement", {
         siteTitle: "Abonnement",
         pageTitle: "Abonnement",
+        userDetails: req.session.user,
     });
 });
 app.get("/event/panier", function (req, res) {
@@ -103,8 +108,16 @@ app.get("/event/panier", function (req, res) {
         res.render("pages/panier", {
             siteTitle: "Application simple",
             pageTitle: "Liste d'événements",
+            userDetails: req.session.user,
             items: result
         });
+    });
+});
+app.get("/event/detail", function (req, res) {
+    res.render("pages/detail", {
+        siteTitle: "Details",
+        pageTitle: "Details",
+        userDetails: req.session.user,
     });
 });
 
@@ -151,43 +164,7 @@ app.post('/event/panier', (req, res) => {
     });
 });
 
-app.get("/event/connect", function (req, res) {
-    res.render("pages/connexion", {
-        siteTitle: "Connexion",
-        pageTitle: "Connectez-vous",
-    });
-});
-app.get("/event/creationCompte", function (req, res) {
-    res.render("pages/CreationCompte", {
-        siteTitle: "Créer Compte",
-        pageTitle: "Créer Compte",
-    });
-});
-app.get("/event/boutique", function (req, res) {
-    res.render("pages/boutique", {
-        siteTitle: "Boutique",
-        pageTitle: "Boutique",
-    });
-});
-app.get("/event/test", function (req, res) {
-    res.render("pages/test", {
-        siteTitle: "Boutique",
-        pageTitle: "Boutique",
-    });
-});
-app.get("/event/abonnement", function (req, res) {
-    res.render("pages/abonnement", {
-        siteTitle: "Abonnement",
-        pageTitle: "Abonnement",
-    });
-});
-app.get("/event/detail", function (req, res) {
-    res.render("pages/detail", {
-        siteTitle: "Details",
-        pageTitle: "Details",
-        userDetails: req.session.user,
-    });
-});
+
 app.post('/event/creationCompte', (req, res) => {
     const { name, prénom, email, num, password } = req.body;
 
@@ -273,6 +250,18 @@ app.get("/event/detail", (req, res) => {
             pageTitle: "Details",
             userDetails: req.session.user, // Using userDetails instead of req.session.user
         });
+    });
+});
+
+app.get('/logout', (req, res) => {
+    // Clear the user's session
+    req.session.destroy(err => {
+        if (err) {
+            console.error("Error destroying session:", err);
+            res.status(500).send("Internal Server Error");
+            return;
+        }
+        res.redirect('/'); // Redirect to the homepage after logout
     });
 });
 
