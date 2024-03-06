@@ -298,6 +298,7 @@ app.post('/update-details', (req, res) => {
     console.log("Generated SQL query:", updateQuery);
     console.log("Update values:", updateValues);
 
+
     con.query(updateQuery, updateValues, (err, result) => {
         if (err) {
             console.error("Error updating user details:", err);
@@ -311,10 +312,14 @@ app.post('/update-details', (req, res) => {
                 return res.status(500).send("Error fetching updated user details");
             }
 
+            req.session.user = userDetails[0];
+
+
             res.render("pages/detail", {
                 siteTitle: "Details",
                 pageTitle: "Details",
-                userDetails: userDetails[0],
+
+                userDetails: req.session.user,
             });
         });
     });
