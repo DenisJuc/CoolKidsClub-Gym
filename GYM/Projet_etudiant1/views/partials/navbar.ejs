@@ -19,11 +19,9 @@
 		</button>
 		<div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
 			<div class="navbar-nav">
-				<a class="nav-link active d-flex align-items-center" href="/event/boutique">Boutique</a>
 				<% if (userDetails) { %>
-					<a class="nav-link active text-decoration-underline d-flex align-items-center" aria-current="page"
-						href="/event/detail">
-						<%= userDetails.E_NOM %>
+					<a class="nav-link active text-decoration-underline d-flex align-items-center" aria-current="page">
+						Bienvenue <%= userDetails.E_NOM %> !!
 					</a>
 					<% } else { %>
 						<a class="nav-link active text-decoration-underline d-flex align-items-center"
@@ -31,6 +29,8 @@
 							Se Connecter au Lab
 						</a>
 						<% } %>
+							<a class="nav-link active d-flex align-items-center" href="/event/boutique">Boutique</a>
+
 							<a class="nav-link active d-flex align-items-center" href="#">en</a>
 							<a class="nav-link active d-flex align-items-center" href="#">fr</a>
 							<a class="nav-link active" href="/event/panier">
@@ -41,9 +41,15 @@
 										d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
 								</svg>
 							</a>
-							<a class="nav-link active d-flex align-items-center" href="/event/creationCompte"
-								tabindex="-1" aria-disabled="true"><img src="/user-solid.png" alt=""
-									style="filter: brightness(0%);" width="40px"></a>
+							<% if (userDetails) { %>
+								<a class="nav-link active d-flex align-items-center" href="/event/detail" tabindex="-1"
+									aria-disabled="true"><img src="/user-solid.png" alt=""
+										style="filter: brightness(0%);" width="40px"></a>
+								<% } else { %>
+									<a class="nav-link active d-flex align-items-center" href="/event/creationCompte"
+										tabindex="-1" aria-disabled="true"><img src="/user-solid.png" alt=""
+											style="filter: brightness(0%);" width="40px"></a>
+									<% } %>
 			</div>
 		</div>
 	</div>

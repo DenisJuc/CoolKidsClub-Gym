@@ -166,7 +166,7 @@ app.post('/event/panier', (req, res) => {
 
 
 app.post('/event/creationCompte', (req, res) => {
-    const { name, prénom, email, num, password } = req.body;
+    const { nom, prénom, email, num, password } = req.body;
 
     // Vérifier si l'email existe déjà dans la base de données
     const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
@@ -183,7 +183,7 @@ app.post('/event/creationCompte', (req, res) => {
 
         // Si l'email n'existe pas encore, procéder à l'insertion dans la base de données
         const insertQuery = `INSERT INTO e_compte (E_NOM, E_LOCATION, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?, ?)`;
-        const values = [name, " ", prénom, email, password, num];
+        const values = [nom, " ", prénom, email, password, num];
 
         // Exécuter la requête d'insertion
         con.query(insertQuery, values, (insertErr, insertResult) => {
@@ -212,7 +212,7 @@ app.post('/event/connect', (req, res) => {
             req.session.user = result[0];// Store user ID in session
 
             console.log("User inserted in session:", req.session.user);
-            res.redirect('/event/detail'); // Redirect to homepage or wherever you want to redirect after successful login
+            res.redirect('/event/detail');
             return req.session.user;
         } else {
             // Login failed
@@ -228,7 +228,7 @@ app.get("/event/detail", (req, res) => {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
 
     if (!loggedInUserId) {
-        res.redirect('/event/connect'); // Redirect to login page if user is not logged in
+        res.redirect('/event/connect');
         return;
     }
 
@@ -248,20 +248,74 @@ app.get("/event/detail", (req, res) => {
         res.render("pages/detail", {
             siteTitle: "Details",
             pageTitle: "Details",
-            userDetails: req.session.user, // Using userDetails instead of req.session.user
+            userDetails: req.session.user,
         });
     });
 });
 
 app.get('/logout', (req, res) => {
-    // Clear the user's session
+    // Detruit la session
     req.session.destroy(err => {
         if (err) {
-            console.error("Error destroying session:", err);
+            console.error("ERREUR:", err);
             res.status(500).send("Internal Server Error");
             return;
         }
-        res.redirect('/'); // Redirect to the homepage after logout
+        res.redirect('/'); // Revas dans la page d'acceuil
     });
 });
 
+app.post('/update-details', (req, res) => {
+    const userId = req.body.userId;
+    const updatedDetails = req.body;
+    delete updatedDetails.userId;
+
+    let updateQuery = "UPDATE e_compte SET ";
+    const updateValues = [];
+    for (const key in updatedDetails) {
+        if (updatedDetails.hasOwnProperty(key)) {
+            // capitalize
+            const capitalizedKey = key.toUpperCase();
+            // change les trucs car sa bug
+            if (capitalizedKey === 'NAME') {
+                updateQuery += `E_NOM = ?, `;
+            } else if (capitalizedKey === 'EMAIL') {
+                updateQuery += `E_COURRIEL = ?, `;
+            } else if (capitalizedKey === 'NUM') {
+                updateQuery += `E_NUMBER = ?, `;
+
+            } else {
+                updateQuery += `E_${capitalizedKey} = ?, `;
+            }
+
+            updateValues.push(updatedDetails[key]);
+        }
+    }
+    updateQuery = updateQuery.slice(0, -2);
+    updateQuery += " WHERE E_ID = ?";
+    updateValues.push(userId);
+
+    console.log("Generated SQL query:", updateQuery);
+    console.log("Update values:", updateValues);
+
+    con.query(updateQuery, updateValues, (err, result) => {
+        if (err) {
+            console.error("Error updating user details:", err);
+            return res.status(500).send("Error updating user details");
+        }
+
+        const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+        con.query(userDetailsQuery, [userId], (err, userDetails) => {
+            if (err) {
+                console.error("Error fetching updated user details:", err);
+                return res.status(500).send("Error fetching updated user details");
+            }
+
+            res.render("pages/detail", {
+                siteTitle: "Details",
+                pageTitle: "Details",
+                userDetails: userDetails[0],
+            });
+        });
+    });
+});
