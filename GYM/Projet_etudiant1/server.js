@@ -102,17 +102,6 @@ app.get("/event/abonnement", function (req, res) {
         userDetails: req.session.user,
     });
 });
-app.get("/event/panier", function (req, res) {
-    con.query("SELECT * FROM e_produit", function (err, result) {
-        if (err) throw err;
-        res.render("pages/panier", {
-            siteTitle: "Application simple",
-            pageTitle: "Liste d'événements",
-            userDetails: req.session.user,
-            items: result
-        });
-    });
-});
 app.get("/event/detail", function (req, res) {
     res.render("pages/detail", {
         siteTitle: "Details",
@@ -126,44 +115,80 @@ app.post('/event/panier', (req, res) => {
     const price = req.body.price;
     const categorie = req.body.categorie;
     const quantite = req.body.quantite;
+    const userId = req.session.user ? req.session.user.E_ID : null; // Retrieve logged-in user's ID
 
-    const selectSql = "SELECT * FROM e_produit WHERE E_NOM = ?";
-    con.query(selectSql, [productName], (selectErr, selectResult) => {
-        if (selectErr) {
-            console.error("Error checking existing product:", selectErr);
-            res.status(500).send("Error checking existing product");
-            return;
-        }
+    const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, ?, ?, ?)";
+    const values = [productName, price, categorie, quantite, userId];
 
-        if (selectResult.length > 0) {
-
-            const existingProductId = selectResult[0].E_IDPRODUIT;
-            const updateSql = "UPDATE e_produit SET E_QUANTITE = E_QUANTITE + 1 WHERE E_IDPRODUIT = ?";
-            con.query(updateSql, [existingProductId], (updateErr, updateResult) => {
-                if (updateErr) {
-                    console.error("Error updating quantity:", updateErr);
-                    res.status(500).send("Error updating quantity");
-                } else {
-                    console.log("Quantity updated successfully");
-                    res.redirect('/event/panier');
-                }
-            });
+    con.query(insertSql, values, (insertErr, insertResult) => {
+        if (insertErr) {
+            console.error("Error inserting data:", insertErr);
+            res.status(500).send("Error inserting data");
         } else {
-            // Product doesn't exist, insert a new record
-            const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE) VALUES (?, ?, ?, ?)";
-            con.query(insertSql, [productName, price, categorie, quantite], (insertErr, insertResult) => {
-                if (insertErr) {
-                    console.error("Error inserting data:", insertErr);
-                    res.status(500).send("Error inserting data");
-                } else {
-                    console.log("Data inserted successfully");
-                    res.redirect('/event/panier');
-                }
-            });
+            console.log("Data inserted successfully");
+            res.redirect('/event/panier');
         }
     });
 });
 
+app.get("/event/panier", function (req, res) {
+    const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
+
+    if (!loggedInUserId) {
+        res.redirect('/event/connect');
+        return;
+    }
+    con.query("SELECT * FROM e_produit WHERE E_USER_ID = ?", [loggedInUserId], function (err, result) {
+        if (err) throw err;
+        res.render("pages/panier", {
+            siteTitle: "Application simple",
+            pageTitle: "Liste d'événements",
+            userDetails: req.session.user,
+            items: result
+        });
+    });
+});
+
+app.post('/delete-item/:productId', (req, res) => {
+    const productId = req.params.productId;
+
+    // Quantité de produit
+    con.query("SELECT E_QUANTITE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (selectErr, selectResult) => {
+        if (selectErr) {
+            console.error("Error retrieving product quantity:", selectErr);
+            return res.status(500).send("Error retrieving product quantity");
+        }
+
+        if (selectResult.length === 0) {
+            // Product not found
+            return res.status(404).send("Product not found");
+        }
+
+        const currentQuantity = selectResult[0].E_QUANTITE;
+
+        if (currentQuantity > 1) {
+            //si il y a plus que 1 produit
+            con.query("UPDATE e_produit SET E_QUANTITE = E_QUANTITE - 1 WHERE E_IDPRODUIT = ?", [productId], (updateErr, updateResult) => {
+                if (updateErr) {
+                    console.error("Error updating product quantity:", updateErr);
+                    return res.status(500).send("Error updating product quantity");
+                }
+                console.log("Product quantity decreased successfully");
+                res.redirect('/event/panier'); // Redirect to the cart page after updating the quantity
+            });
+        } else {
+            // Si c'est 1, on delete le produit
+            con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
+                if (deleteErr) {
+                    console.error("Error deleting product:", deleteErr);
+                    return res.status(500).send("Error deleting product");
+                }
+                console.log("Product deleted successfully");
+                res.redirect('/event/panier'); // Redirect to the cart page after deleting the product
+            });
+        }
+    });
+});
 
 app.post('/event/creationCompte', (req, res) => {
     const { nom, prénom, email, num, password } = req.body;
