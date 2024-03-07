@@ -60,12 +60,12 @@
 
         .card {
             margin-bottom: 20px;
-            /* Adjust margin to provide spacing between cards */
+
         }
 
         .card-body {
             padding: 20px;
-            /* Adjust padding for better spacing within the card */
+
         }
 
         .btn-info {
@@ -168,7 +168,9 @@
                         <a class="btn btn-info" target="__blank" href="/logout">Deconnect</a>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-info" target="__blank" href="/logout">Détruit compte</a>
+                        <form action="/delete-account" method="post">
+                            <button type="submit" class="btn btn-info">Détruit compte</button>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -36,147 +36,161 @@
       .coordonnees {
         font-size: 32px;
       }
-
-      .custom-inputs {
-        background-color: #D9D9D9;
-        width: 489px;
-        height: 35px;
-        border: none;
-        display: block;
+      .card{
+        margin-top: -75px;
       }
-
-      .custom_butt button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-      }
-
-      .custom_butt button:hover svg circle {
-        fill: #CCCCCC;
-      }
-
-      .custom_butt button:hover svg i {
-        color: #0c0c0c;
+      .conteneur{
+        /* height: 350px;
+        width: 100%; */
       }
     </style>
 
-    <div class=items_page>
-      <div class="titre">SE CONNECTER AU LAB</div>
+  <section class="h-100 gradient-form">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-xl-10">
+          <div class="card rounded-3 text-black gradient-custom-2">
+            <div class="row g-0">
+              <div class="col-lg-6">
+                <div class="card-body p-md-5 mx-md-4">
+  
+                  <div class="text-center">
+                    <img src="/gym-website-logo-without-a-person-upscaled.png"
+                      style="width: 185px;" alt="logo">
+                    <h4 class="mt-1 mb-5 pb-1">SE CONNECTER AU LAB</h4>
+                  </div>
+  
+                  <form class="conteneur" method="post" action="/event/connect">
+                    <p>Veuillez vous connecter</p>
+  
+                    <div class="form-outline mb-4">
+                      <input type="email" id="exampleInputEmail1" class="form-control"
+                        placeholder="Adresse Courriel" />
+                      <label class="form-label" for="form2Example11"></label>
+                    </div>
+  
+                    <div class="form-outline mb-4">
+                      <input type="password" id="exampleInputPassword1" class="form-control" placeholder="Mot de passe"/>
+                      <label class="form-label" for="form2Example22"></label>
+                    </div>
+                    
+                    <style>
+                      .form-check-input:checked{
+                        border-color: #FFFFFF;
+                      }
+                      .form-check-input:not(:checked) {
+                        border-color: #000;
+                      }
 
-
-      <form method="post" action="/event/connect">
-        <div class="form-group">
-          <label style="margin-top: 100px;" class="coordonnees" for="exampleInputEmail1">Adresse Courriel</label>
-          <input class="custom-inputs" type="email" class="form-control" id="exampleInputEmail1" placeholder="Courriel"
-            aria-describedby="emailHelp">
-
-
-          <div class="form-group">
-            <label style="margin-top: 50px;" class="coordonnees" for="exampleInputPassword1">Mot de passe</label>
-            <input class="custom-inputs" type="password" class="form-control" id="exampleInputPassword1"
-              placeholder="Mot de passe">
+                    </style>
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                      <label style="border-color: #000; font-size: medium" class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
+                    </div>
+                      <button style="height: 35px;" disabled="" id="loginButton" class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button">Connexion</button>
+                      <a style="font-size: small;" class="text-muted" href="#">Mot de passe oublié?</a>
+                    </div>
+  
+                    <div class="d-flex align-items-center justify-content-center pb-4">
+                      <p class="mb-0 me-2">Pas de Compte?</p>
+                      <button onclick="window.location.href='/event/creationCompte'" type="button" class="btn btn-outline-secondary">Créer un compte</button>
+                    </div>
+  
+                  </form>
+  
+                </div>
+              </div>
+              </div>
+              
+            </div>
           </div>
-          <div class="form-group form-check">
-          </div>
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label style="font-size: larger;" class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
-          </div>
-          <div>
-            <a style="color: #FFFFFF; margin-left: -13px;" href="#" class="btn btn-link">
-              Mot de passe oublié?
-            </a>
-          </div>
-
-      </form>
-
-      <div class="custom_butt">
-        <button id="loginButton" type="button" class="btn btn-primary"
-          style="background-color: transparent; border: none; color: inherit; cursor: pointer;" disabled>
-          <svg style="position: absolute; top:59%; left: 48.6%; transform: translateX(-50%);">
-            <circle cx="100" cy="100" r="23" fill="#D9D9D9" />
-            <i style="position: absolute; margin-top: 24px; left: 46%; transform: translate(-50%, -50%); color: black;"
-              class="fa-solid fa-arrow-right fa-xl"></i>
-          </svg>
-        </button>
+        </div>
       </div>
-
     </div>
+  </section>
 
-    <script>
+  <style>
+    .gradient-custom-2 {
 
-      function checkInputs() {
-        var username = document.getElementById("exampleInputEmail1").value.trim();
-        var password = document.getElementById("exampleInputPassword1").value.trim();
-        var loginButton = document.getElementById("loginButton");
+      
+      background: hsla(221, 36%, 47%, 1);
 
-        var atIndex = username.indexOf("@");
-        var isValidEmail = atIndex > 0 && atIndex < username.length - 1;
+background: linear-gradient(180deg, hsla(221, 36%, 47%, 1) 0%, hsla(220, 78%, 29%, 1) 100%);
 
-        if (isValidEmail && password !== "") {
-          loginButton.removeAttribute("disabled");
-        } else {
-          loginButton.setAttribute("disabled", "disabled");
-        }
+background: -moz-linear-gradient(180deg, hsla(221, 36%, 47%, 1) 0%, hsla(220, 78%, 29%, 1) 100%);
+
+background: -webkit-linear-gradient(180deg, hsla(221, 36%, 47%, 1) 0%, hsla(220, 78%, 29%, 1) 100%);
+
+filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#4D69A4", endColorstr="#103783", GradientType=1 );
+}
+  </style>
+
+<script>
+
+  function checkInputs() {
+    var username = document.getElementById("exampleInputEmail1").value.trim();
+    var password = document.getElementById("exampleInputPassword1").value.trim();
+    var loginButton = document.getElementById("loginButton");
+
+    var atIndex = username.indexOf("@");
+    var isValidEmail = atIndex > 0 && atIndex < username.length - 1;
+
+    if (isValidEmail && password !== "") {
+      loginButton.removeAttribute("disabled");
+    } else {
+      loginButton.setAttribute("disabled", "disabled");
+    }
+  }
+
+  document.getElementById("exampleInputEmail1").addEventListener("input", function () {
+    checkInputs();
+    if (!this.value.includes('@') && this.value !== '') {
+      $(this).popover('show');
+    } else {
+      $(this).popover('hide');
+    }
+  });
+
+  document.getElementById("exampleInputEmail1").addEventListener("focusout", function () {
+    $(this).popover('hide');
+  });
+
+  document.getElementById("exampleInputPassword1").addEventListener("input", checkInputs);
+
+  document.getElementById("loginButton").addEventListener("click", function () {
+    var email = document.getElementById("exampleInputEmail1").value.trim();
+    var password = document.getElementById("exampleInputPassword1").value.trim();
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/event/connect", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        window.location.href = "/";
+      } else {
+        console.error("Login failed:", xhr.responseText);
+        alert("La connexion a échoué. Veuillez vérifier votre email et votre mot de passe.");
       }
+    };
 
-      document.getElementById("exampleInputEmail1").addEventListener("input", function () {
-        checkInputs();
-        if (!this.value.includes('@') && this.value !== '') {
-          $(this).popover('show');
-        } else {
-          $(this).popover('hide');
-        }
-      });
+    var data = JSON.stringify({ email: email, password: password });
+    xhr.send(data);
+  });
 
-      document.getElementById("exampleInputEmail1").addEventListener("focusout", function () {
-        $(this).popover('hide');
-      });
+  function handleEnterKey(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      document.getElementById("loginButton").click();
+    }
+  }
 
-      document.getElementById("exampleInputPassword1").addEventListener("input", checkInputs);
+  document.getElementById("exampleInputEmail1").addEventListener("keypress", handleEnterKey);
+  document.getElementById("exampleInputPassword1").addEventListener("keypress", handleEnterKey);
 
-      document.getElementById("loginButton").addEventListener("click", function () {
-        var email = document.getElementById("exampleInputEmail1").value.trim();
-        var password = document.getElementById("exampleInputPassword1").value.trim();
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/event/connect", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            window.location.href = "/";
-          } else {
-            console.error("Login failed:", xhr.responseText);
-            alert("La connexion a échoué. Veuillez vérifier votre email et votre mot de passe.");
-          }
-        };
-
-        var data = JSON.stringify({ email: email, password: password });
-        xhr.send(data);
-      });
-
-      function handleEnterKey(event) {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          document.getElementById("loginButton").click();
-        }
-      }
-
-      document.getElementById("exampleInputEmail1").addEventListener("keypress", handleEnterKey);
-      document.getElementById("exampleInputPassword1").addEventListener("keypress", handleEnterKey);
-    </script>
+</script>
 
 
 
-    <div style="margin-left: -13px;" class="container mt-4 d-flex align-items-center">
-      <div style="color: white; margin-right: 15px;" class="mr-3">Pas de Compte?</div>
-      <button onclick="window.location.href='/event/creationCompte'" type="button" class="btn btn-dark">Créer un
-        compte</button>
-    </div>
-
-
-
-  </div>
   <% include ("../partials/footer") %>

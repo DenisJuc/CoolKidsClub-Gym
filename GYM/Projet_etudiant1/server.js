@@ -324,3 +324,25 @@ app.post('/update-details', (req, res) => {
         });
     });
 });
+app.post('/delete-account', (req, res) => {
+    const userId = req.session.user.E_ID;
+    const deleteQuery = "DELETE FROM e_compte WHERE E_ID = ?";
+    console.log("deleted");
+
+    con.query(deleteQuery, [userId], (err, result) => {
+        if (err) {
+            console.error("Error deleting user account:", err);
+            return res.status(500).send("Error deleting user account");
+        }
+
+
+        req.session.destroy(err => {
+            if (err) {
+                console.error("Error destroying session:", err);
+                return res.status(500).send("Error destroying session");
+            }
+
+            res.redirect("/logout");
+        });
+    });
+});
