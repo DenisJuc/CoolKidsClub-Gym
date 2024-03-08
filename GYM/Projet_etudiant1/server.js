@@ -150,6 +150,11 @@ app.post('/event/panier', (req, res) => {
     const price = req.body.price;
     const categorie = req.body.categorie;
     const quantite = req.body.quantite;
+    const poids = req.body.poids;
+    const sexe = req.body.sexe;
+    const color = req.body.color;
+    const taille = req.body.taille;
+
     const userId = req.session.user ? req.session.user.E_ID : null;
 
 
@@ -176,16 +181,34 @@ app.post('/event/panier', (req, res) => {
         } else {
 
             const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, ?, ?, ?)";
+
             const values = [productName, price, categorie, quantite, userId];
 
             con.query(insertSql, values, (insertErr, insertResult) => {
-                if (insertErr) {
-                    console.error("Error inserting data:", insertErr);
-                    res.redirect('/event/connect');
-                } else {
-                    console.log("Data inserted successfully");
-                    res.redirect('/event/panier');
+                if (categorie === 'Equipement') {
+                    const insertEquipmentsSql = "INSERT INTO e_equipements (E_TYPE, E_POIDS, E_FOURNISSEUR_ID) VALUES (?, ?, ?)";
+                    const equipmentValues = [productName, poids, null];
+                    con.query(insertEquipmentsSql, equipmentValues, (insertEquipmentsErr, insertEquipmentsResult) => {
+                        if (insertEquipmentsErr) {
+                            console.error("Error inserting equipment data:", insertEquipmentsErr);
+                        } else {
+                            console.log("Equipment data inserted successfully");
+                        }
+                    });
+                } else if (categorie === 'Vetements') {
+                    const insertVetementsSQL = "INSERT INTO e_vetements(E_TYPE, E_COULEUR, E_TAILLE, E_SEXE, E_FOURNISSEUR_ID) VALUES(?, ?, ?, ?, ?)"
+                    const vetementsValues = [productName, color, taille, sexe, null];
+                    con.query(insertVetementsSQL, vetementsValues, (insertVetementsErr, insertVetementsResult) => {
+                        if (insertVetementsErr) {
+                            console.error("Error inserting clothing data:", insertVetementsErr);
+                        } else {
+                            console.log("Clothing data inserted successfully");
+                        }
+                    })
                 }
+                res.redirect('/event/panier');
+
+
             });
         }
     });

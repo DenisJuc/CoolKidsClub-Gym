@@ -54,7 +54,7 @@
 
               <h2><input checked="true" type="checkbox" id="vetementsCheckbox" onchange="filterItems('Vetements')">
                 Vêtements</h2>
-              <!-- Options de filtrage spécifiques aux vêtements (si nécessaire) -->
+              <!-- Options de filtrage spécifiques aux vêtements (si nécessaire) 
               <div>
                 <label>
                   Couleur:
@@ -86,7 +86,8 @@
                   Prix: <span id="priceRange">0</span> - 100$ <br>
                   <input type="range" min="0" max="100" value="0" oninput="updatePriceRange(this.value)">
                 </label><br>
-              </div>
+              </div>-->
+
             </div>
 
 
@@ -97,7 +98,7 @@
               <h2><input checked="true" type="checkbox" id="equipmentsCheckbox" onchange="filterItems('Equipments')">
                 Équipements</h2>
 
-              <!-- Options de filtrage spécifiques aux équipements (si nécessaire) -->
+              <!-- Options de filtrage spécifiques aux équipements (si nécessaire) 
               <div>
                 <label>
                   Poids:
@@ -114,13 +115,13 @@
                   Prix: <span id="priceRange2">0</span> - 100$ <br>
                   <input type="range" min="0" max="100" value="0" oninput="updatePriceRange2(this.value)">
                 </label><br>
-                <!-- <button id="showAllButton" type="button" style="border-radius: 8px;" class="btn btn-light">
+                <button id="showAllButton" type="button" style="border-radius: 8px;" class="btn btn-light">
                   Montre tout
-                </button> -->
-                <!-- <button type="button" style="border-radius: 8px;" class="btn btn-light"
-                  onclick="confirmSelection() ">Confirmer la sélection</button> -->
+                </button> 
+                 <button type="button" style="border-radius: 8px;" class="btn btn-light"
+                  onclick="confirmSelection() ">Confirmer la sélection</button> 
                 </form>
-              </div>
+              </div>-->
             </div>
 
 
@@ -308,13 +309,13 @@
             checkboxList.style.display = checkboxList.style.display === 'none' ? 'block' : 'none';
           });
 
-          function updatePriceRange(value) {
-            document.getElementById('priceRange').innerText = value;
-          }
+          //function updatePriceRange(value) {
+          //  document.getElementById('priceRange').innerText = value;
+          // }
 
-          function updatePriceRange2(value) {
-            document.getElementById('priceRange2').innerText = value;
-          }
+          // function updatePriceRange2(value) {
+          //  document.getElementById('priceRange2').innerText = value;
+          //}
 
           // function confirmSelection() {
           //   var vetementsCheckbox = document.getElementById('vetementsCheckbox');
@@ -355,12 +356,9 @@
             if (!response.ok) {
               return response.json().then(data => {
                 if (response.status === 401) {
-                  // Handle the case where user is not logged in
                   alert(data.message);
-                  // Redirect to the connection page
                   window.location.href = "/event/connect?error=" + encodeURIComponent(data.message);
                 } else {
-                  // Handle other error cases
                   showError(data.message);
                 }
               });
@@ -369,40 +367,37 @@
           })
         </script>
 
-<script>
-  // Function to add item to cart
-  function addToCart() {
-      // Check if the user is logged in (you can replace this with your own logic)
-      var isLoggedIn = true; // Assuming the user is logged in for demonstration purposes
+        <script>
+          // Function to add item to cart
+          // function addToCart() {
+          //   var isLoggedIn = true;
 
-      if (!isLoggedIn) {
-          // User is not logged in, display error message
-          var errorMessage = "<div class='alert alert-danger' role='alert'>Vous devez être connecté pour ajouter des articles au panier.</div>";
-          $('#errorMessageContainer').html(errorMessage);
-      } else {
-          // User is logged in, submit the form
-          $('#insertForm').submit();
-      }
-  }
-</script>
+          //   if (!isLoggedIn) {
+          //    var errorMessage = "<div class='alert alert-danger' role='alert'>Vous devez être connecté pour ajouter des articles au panier.</div>";
+          //     $('#errorMessageContainer').html(errorMessage);
+          //  } else {
+          //    $('#insertForm').submit();
+          //   }
+          //  }
+        </script>
 
 
         <!-- Pop-up modal for login prompt -->
-<div id="loginPromptModal" class="modal" tabindex="-1">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Login Required</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div id="loginPromptModal" class="modal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Connectez</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Il faut que vous soyez connecter</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
-              <p>You need to be logged in to add items to the cart.</p>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-          </div>
-      </div>
-  </div>
-</div>
-<!-- Error message container -->
-<div id="errorMessageContainer"></div>
+        </div>
+
+        <div id="errorMessageContainer"></div>
