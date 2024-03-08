@@ -58,27 +58,27 @@
                 <label>
                   Couleur:
                   <select id="colorFilter" onchange="filterItems()">
-                    <option value="noir">Noir</option>
-                    <option value="rouge">Rouge</option>
-                    <option value="bleu">Bleu</option>
-                    <option value="jaune">Jaune</option>
+                    <option name="color" value="noir">Noir</option>
+                    <option name="color" value="rouge">Rouge</option>
+                    <option name="color" value="bleu">Bleu</option>
+                    <option name="color" value="jaune">Jaune</option>
                   </select>
                 </label><br>
                 <label>
                   Sexe:
                   <select id="sexeFilter" onchange="filterItems()">
-                    <option value="male">Male</option>
-                    <option value="femme">Femme</option>
-                    <option value="genreX">X</option>
+                    <option name="sexe" value="male">Male</option>
+                    <option name="sexe" value="femme">Femme</option>
+                    <option name="sexe" value="genreX">X</option>
                   </select>
                 </label><br>
                 <label>
                   Taille:
                   <select id="tailleFilter" onchange="filterItems()">
-                    <option value="small">S</option>
-                    <option value="medium">M</option>
-                    <option value="large">L</option>
-                    <option value="xlarge">XL</option>
+                    <option name="taille" value="small">S</option>
+                    <option name="taille" value="medium">M</option>
+                    <option name="taille" value="large">L</option>
+                    <option name="taille" value="xlarge">XL</option>
                   </select>
                 </label><br>
                 <label>
@@ -99,13 +99,13 @@
               <div>
                 <label>
                   Poids:
-                  <select onchange="filterItems()">
-                    <option value="2.5">2.5kg</option>
-                    <option value="5">5kg</option>
-                    <option value="10">10kg</option>
-                    <option value="15">15kg</option>
-                    <option value="20">20kg</option>
-                    <option value="30">30kg</option>
+                  <select id="poidsFilter" onchange="filterItems()">
+                    <option name="poids" value="2.5">2.5kg</option>
+                    <option name="poids" value="5">5kg</option>
+                    <option name="poids" value="10">10kg</option>
+                    <option name="poids" value="15">15kg</option>
+                    <option name="poids" value="20">20kg</option>
+                    <option name="poids" value="30">30kg</option>
                   </select>
                 </label><br>
                 <label>
@@ -145,12 +145,13 @@
                 <p
                   style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px;margin-right: 50px;">
                   Nom :
-                  Haltère<br>Prix : 20 $</p>
+                  Haltère 1kg-10kg<br>Prix : 20 $</p>
                 <form id="insertForm" action="/event/panier" method="post">
                   <input type="hidden" name="productName" value="Haltère">
                   <input type="hidden" name="price" value="20">
                   <input type="hidden" name="categorie" value="Equipement">
                   <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="poids" value="1kg-10kg">
                   <button type="submit" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
                 </form>
               </div>
@@ -163,19 +164,21 @@
                   <input type="hidden" name="price" value="30">
                   <input type="hidden" name="categorie" value="Equipement">
                   <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="poids" value="20kg">
                   <button type="submit" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
                 </form>
               </div>
               <div class="p-2 bd-highlight">
                 <p
                   style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px;margin-right: 50px;">
-                  Nom : Barre W<br>
+                  Nom : Barre W 20.4kg<br>
                   Prix : 40 $</p>
                 <form id="insertForm" action="/event/panier" method="post">
                   <input type="hidden" name="productName" value="Barre W">
                   <input type="hidden" name="price" value="40">
                   <input type="hidden" name="categorie" value="Equipement">
                   <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="poids" value="20.4kg">
                   <button type="submit" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
                 </form>
               </div>
@@ -209,20 +212,20 @@
                   Labs<br>
                   <label>
                     Couleur:
-                    <select>
-                      <option value="noir">Noir</option>
-                      <option value="rouge">Rouge</option>
-                      <option value="bleu">Bleu</option>
-                      <option value="jaune">Jaune</option>
+                    <select id="colorSelect" name="color">
+                      <option name="color" value="noir">Noir</option>
+                      <option name="color" value="rouge">Rouge</option>
+                      <option name="color" value="bleu">Bleu</option>
+                      <option name="color" value="jaune">Jaune</option>
                     </select>
                   </label><br>
                   <label>
                     Taille:
-                    <select>
-                      <option value="small">S</option>
-                      <option value="medium">M</option>
-                      <option value="large">L</option>
-                      <option value="xlarge">XL</option>
+                    <select id="tailleSelect" name="taille">
+                      <option name="taille" value="small">S</option>
+                      <option name="taille" value="medium">M</option>
+                      <option name="taille" value="large">L</option>
+                      <option name="taille" value="xlarge">XL</option>
                     </select>
                   </label><br>Prix : 25 $
                 </p>
@@ -231,6 +234,9 @@
                   <input type="hidden" name="price" value="25">
                   <input type="hidden" name="categorie" value="Vetements">
                   <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" id="colorInput" name="color" value="">
+                  <input type="hidden" id="tailleInput" name="taille" value="">
+                  <input type="hidden" name="sexe" value="X">
                   <button type="submit" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
                 </form>
               </div>
@@ -241,7 +247,7 @@
                   Nom : Hoodie Peak Labs<br>
                   <label>
                     Couleur:
-                    <select>
+                    <select id="colorSelect" name="color">
                       <option value="noir">Noir</option>
                       <option value="rouge">Rouge</option>
                       <option value="bleu">Bleu</option>
@@ -250,19 +256,24 @@
                   </label><br>
                   <label>
                     Taille:
-                    <select>
+                    <select id="tailleSelect" name="taille">
                       <option value="small">S</option>
                       <option value="medium">M</option>
                       <option value="large">L</option>
                       <option value="xlarge">XL</option>
                     </select>
-                  </label><br>Prix : 35 $
+                  </label><br>
+                  Prix : 35 $
                 </p>
-                <form id="insertForm" action="/event/panier" method="post">
+                <form class="insertForm" action="/event/panier" method="post">
                   <input type="hidden" name="productName" value="Hoodie Peak Labs">
                   <input type="hidden" name="price" value="35">
                   <input type="hidden" name="quantite" value="1">
                   <input type="hidden" name="categorie" value="Vetements">
+                  <input type="hidden" id="colorInput" name="color" value="">
+                  <input type="hidden" id="tailleInput" name="taille" value="">
+                  <input type="hidden" name="sexe" value="X">
+
                   <button type="submit" class="btn btn-dark"
                     style="margin-top: -600px; margin-left: 25%;height: 37px; width: 210px;">Ajouter au panier</button>
                 </form>
@@ -313,15 +324,29 @@
             }
           }
 
+          document.querySelectorAll('.colorSelect').forEach(function (select) {
+            select.addEventListener('change', function () {
+              var color = this.value;
+              this.closest('form').querySelector('.colorInput').value = color;
+            });
+          });
+
+
+          document.querySelectorAll('.tailleSelect').forEach(function (select) {
+            select.addEventListener('change', function () {
+              var size = this.value;
+              this.closest('form').querySelector('.tailleInput').value = size;
+            });
+          });
 
 
 
           function confirmSelection() {
-            // Determine which category is selected
+
             var vetementsCheckbox = document.getElementById('vetementsCheckbox');
             var equipmentsCheckbox = document.getElementById('equipementsCheckbox');
             var category = vetementsCheckbox.checked ? 'vetements' : 'equipments';
-            // Call the filterItems() function with the determined category
+
             filterItems(category);
           }
 
