@@ -90,7 +90,7 @@
                         <div class="form-signin">
 
 
-                            <label for="inputName" class="sr-only" style="margin-top: 100px;">Nom</label>
+                            <label for="inputName" class="sr-only">Nom</label>
                             <input class="form-control" type="nom" id="nom" name="nom" placeholder="nom" required="">
 
                             <label for="inputPrenom" class="sr-only">Prenom</label>
@@ -110,7 +110,7 @@
                                 placeholder="Mot de passe" required="">
 
                             <label for="inputVFPassword" class="sr-only">Vérifier Mot de passe</label>
-                            <input class="form-control" type="VFpassword" id="VFpassword" name="VFpassword"
+                            <input class="form-control" type="password" id="VFpassword" name="VFpassword"
                                 placeholder="Vérifier Mot de passe" required="">
                             <button class="btn btn-dark" type="submit">Créer compte</button>
                         </div>
@@ -145,56 +145,57 @@
                 </div>
                 <script>
                     document.getElementById("registrationForm").addEventListener("submit", function (event) {
-                        event.preventDefault(); // Empêcher le comportement par défaut du formulaire
-
-                        // Récupérer les données du formulaire
+                        event.preventDefault(); // Prevent the default form submission
+                
+                        // Retrieve form data
                         var formData = new FormData(this);
-
-                        // Convertir les données du formulaire en objet JSON
-                        var jsonData = {};
-                        formData.forEach((value, key) => {
-                            jsonData[key] = value;
-                        });
-
-                        // Envoyer les données du formulaire via une requête AJAX
-                        fetch("/event/creationCompte", {
-                            method: "POST",
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(jsonData)
-                        })
+                        var password = formData.get('password');
+                        var VFpassword = formData.get('VFpassword');
+                
+                        // Check if passwords match
+                        if (password !== VFpassword) {
+                            // If passwords don't match, show error message and stop form submission
+                            showError("Les mots de passe ne correspondent pas.");
+                        } else {
+                            // If passwords match, proceed with form submission
+                            // Convert form data to JSON
+                            var jsonData = {};
+                            formData.forEach((value, key) => {
+                                jsonData[key] = value;
+                            });
+                
+                            // Send form data via AJAX
+                            fetch("/event/creationCompte", {
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(jsonData)
+                            })
                             .then(response => {
                                 if (!response.ok) {
-                                    // S'il y a une erreur dans la réponse, afficher le message d'erreur
+                                    // If there's an error in the response, show the error message
                                     return response.json().then(data => {
                                         showError(data.message);
                                     });
                                 }
+                                // Redirect user to connect page upon successful account creation
                                 window.location.href = "/event/connect";
                             })
+                            .catch(error => {
+                                // Handle any errors that occur during the fetch request
+                                showError("Une erreur est survenue lors de la création du compte.");
+                            });
+                        }
                     });
-
-                    // Fonction pour afficher le message d'erreur
+                
+                    // Function to display error message
                     function showError(message) {
-                        // Afficher le message dans une fenêtre d'alerte
+                        // Display the message in an alert window
                         alert(message);
                     }
-
-
-                    // Vérification côté client que les mots de passe correspondent
-                    document.getElementById("registrationForm").onsubmit = function (event) {
-                        var password = document.getElementById("password").value;
-                        var VFpassword = document.getElementById("VFpassword").value;
-
-                        if (password !== VFpassword) {
-                            // Si les mots de passe ne correspondent pas, afficher un message pop-up
-                            showError("Les mots de passe ne correspondent pas.");
-                            event.preventDefault(); // Annuler la soumission du formulaire
-                        }
-                    };
-
                 </script>
+                
 
 
                 <br>
