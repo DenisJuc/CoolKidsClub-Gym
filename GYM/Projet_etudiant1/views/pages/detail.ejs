@@ -177,22 +177,17 @@
 
         </div>
         <script>
-            // Function to validate phone number format
             function validatePhoneNumber(input) {
-                var phoneNumberPattern = /^\d{10}$/; // Regular expression for 10-digit phone number
+                var phoneNumberPattern = /^\d{10}$/;
                 return phoneNumberPattern.test(input);
             }
         
-            // Add event listener to the form submission
             document.querySelector("form[action='/update-details']").addEventListener("submit", function(event) {
-                // Retrieve the phone number input field value
                 var numInput = document.getElementById("num");
                 var phoneNumber = numInput.value;
-        
-                // Validate the phone number format
+
                 if (!validatePhoneNumber(phoneNumber)) {
-                    // If the phone number is not in the correct format, prevent form submission and display an error message
-                    event.preventDefault(); // Prevent form submission
+                    event.preventDefault();
                     alert("Veuillez entrer un numéro de téléphone valide de 10 chiffres.");
                 }
             });

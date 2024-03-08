@@ -145,26 +145,20 @@
                 </div>
                 <script>
                     document.getElementById("registrationForm").addEventListener("submit", function (event) {
-                        event.preventDefault(); // Prevent the default form submission
-                
-                        // Retrieve form data
+                        event.preventDefault();
+
                         var formData = new FormData(this);
                         var password = formData.get('password');
                         var VFpassword = formData.get('VFpassword');
                 
-                        // Check if passwords match
                         if (password !== VFpassword) {
-                            // If passwords don't match, show error message and stop form submission
                             showError("Les mots de passe ne correspondent pas.");
                         } else {
-                            // If passwords match, proceed with form submission
-                            // Convert form data to JSON
                             var jsonData = {};
                             formData.forEach((value, key) => {
                                 jsonData[key] = value;
                             });
-                
-                            // Send form data via AJAX
+
                             fetch("/event/creationCompte", {
                                 method: "POST",
                                 headers: {
@@ -174,24 +168,18 @@
                             })
                             .then(response => {
                                 if (!response.ok) {
-                                    // If there's an error in the response, show the error message
                                     return response.json().then(data => {
                                         showError(data.message);
                                     });
                                 }
-                                // Redirect user to connect page upon successful account creation
                                 window.location.href = "/event/connect";
                             })
                             .catch(error => {
-                                // Handle any errors that occur during the fetch request
                                 showError("Une erreur est survenue lors de la création du compte.");
                             });
                         }
                     });
-                
-                    // Function to display error message
                     function showError(message) {
-                        // Display the message in an alert window
                         alert(message);
                     }
                 </script>
