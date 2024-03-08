@@ -136,6 +136,15 @@ app.get("/event/mdp_oublie", function (req, res) {
     });
 });
 
+app.get("/event/apropos", function (req, res) {
+    res.render("pages/apropos", {
+        siteTitle: "A Propos",
+        pageTitle: "A propos",
+        userDetails: req.session.user,
+    });
+});
+
+
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
     const price = req.body.price;
