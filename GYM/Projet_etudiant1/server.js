@@ -135,19 +135,45 @@ app.post('/event/panier', (req, res) => {
     const quantite = req.body.quantite;
     const userId = req.session.user ? req.session.user.E_ID : null;
 
-    const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, ?, ?, ?)";
-    const values = [productName, price, categorie, quantite, userId];
+    // Check if the product already exists for the user
+    const selectSql = "SELECT * FROM e_produit WHERE E_NOM = ? AND E_USER_ID = ?";
+    con.query(selectSql, [productName, userId], (selectErr, selectResult) => {
+        if (selectErr) {
+            console.error("Error selecting data:", selectErr);
+            res.status(500).send("Error selecting data");
+            return;
+        }
 
-    con.query(insertSql, values, (insertErr, insertResult) => {
-        if (insertErr) {
-            console.error("Error inserting data:", insertErr);
-            res.status(500).send("Error inserting data");
+        if (selectResult.length > 0) {
+            // If the product already exists, update the quantity
+            const updateSql = "UPDATE e_produit SET E_QUANTITE = E_QUANTITE + 1 WHERE E_NOM = ? AND E_USER_ID = ?";
+            con.query(updateSql, [productName, userId], (updateErr, updateResult) => {
+                if (updateErr) {
+                    console.error("Error updating quantity:", updateErr);
+                    res.status(500).send("Error updating quantity");
+                } else {
+                    console.log("Quantity updated successfully");
+                    res.redirect('/event/panier');
+                }
+            });
         } else {
-            console.log("Data inserted successfully");
-            res.redirect('/event/panier');
+            // If the product doesn't exist, insert a new record
+            const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, ?, ?, ?)";
+            const values = [productName, price, categorie, quantite, userId];
+
+            con.query(insertSql, values, (insertErr, insertResult) => {
+                if (insertErr) {
+                    console.error("Error inserting data:", insertErr);
+                    res.status(500).send("Error inserting data");
+                } else {
+                    console.log("Data inserted successfully");
+                    res.redirect('/event/panier');
+                }
+            });
         }
     });
 });
+
 
 app.get("/event/panier", function (req, res) {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
