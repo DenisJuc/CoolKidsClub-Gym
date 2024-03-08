@@ -167,7 +167,7 @@ app.post('/event/panier', (req, res) => {
             con.query(updateSql, [productName, userId], (updateErr, updateResult) => {
                 if (updateErr) {
                     console.error("Error updating quantity:", updateErr);
-                    res.status(500).send("Error updating quantity");
+                    res.redirect('/event/connect');
                 } else {
                     console.log("Quantity updated successfully");
                     res.redirect('/event/panier');

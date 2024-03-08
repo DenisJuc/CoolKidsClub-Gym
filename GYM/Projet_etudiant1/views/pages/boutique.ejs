@@ -368,3 +368,41 @@
             window.location.href = "/event/connect";
           })
         </script>
+
+<script>
+  // Function to add item to cart
+  function addToCart() {
+      // Check if the user is logged in (you can replace this with your own logic)
+      var isLoggedIn = true; // Assuming the user is logged in for demonstration purposes
+
+      if (!isLoggedIn) {
+          // User is not logged in, display error message
+          var errorMessage = "<div class='alert alert-danger' role='alert'>Vous devez être connecté pour ajouter des articles au panier.</div>";
+          $('#errorMessageContainer').html(errorMessage);
+      } else {
+          // User is logged in, submit the form
+          $('#insertForm').submit();
+      }
+  }
+</script>
+
+
+        <!-- Pop-up modal for login prompt -->
+<div id="loginPromptModal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Login Required</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p>You need to be logged in to add items to the cart.</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Error message container -->
+<div id="errorMessageContainer"></div>

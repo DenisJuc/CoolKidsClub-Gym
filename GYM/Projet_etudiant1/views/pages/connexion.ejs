@@ -211,6 +211,55 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#4D69A4", en
 
   </script>
 
+<script>
+    document.getElementById('add-to-cart').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        const productName = document.getElementById('product-name').value;
+        const price = document.getElementById('price').value;
+        const categorie = document.getElementById('categorie').value;
+        const quantite = document.getElementById('quantite').value;
+
+        const jsonData = {
+            productName: productName,
+            price: price,
+            categorie: categorie,
+            quantite: quantite
+        };
+
+        // Send form data via AJAX
+        fetch("/event/panier", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                // If there's an error in the response, show the error message
+                return response.json().then(data => {
+                    showError(data.message);
+                });
+            }
+            // Show success message
+            alert("Produit ajouté au panier avec succès !");
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch request
+            showError("Une erreur est survenue lors de l'ajout au panier.");
+        });
+    });
+
+    // Function to display error message
+    function showError(message) {
+        // Display the message in an alert window
+        alert(message);
+    }
+</script>
+
+
+
 
 
   <% include ("../partials/footer") %>
