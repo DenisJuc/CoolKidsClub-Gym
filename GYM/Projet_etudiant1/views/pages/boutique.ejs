@@ -52,7 +52,7 @@
             <!-- VETEMEMTNS-->
             <div class="category-wrapper">
 
-              <h2><input type="checkbox" id="vetementsCheckbox" onchange="filterItems('Vetements')"> Vêtements</h2>
+              <h2><input checked="true" type="checkbox" id="vetementsCheckbox" onchange="filterItems('Vetements')"> Vêtements</h2>
               <!-- Options de filtrage spécifiques aux vêtements (si nécessaire) -->
               <div>
                 <label>
@@ -93,7 +93,7 @@
             <!-- EQUIPEMENTS -->
 
             <div class="category-wrapper">
-              <h2><input type="checkbox" id="equipmentsCheckbox" onchange="filterItems('Equipments')"> Équipements</h2>
+              <h2><input checked="true" type="checkbox" id="equipmentsCheckbox" onchange="filterItems('Equipments')"> Équipements</h2>
 
               <!-- Options de filtrage spécifiques aux équipements (si nécessaire) -->
               <div>
@@ -112,11 +112,11 @@
                   Prix: <span id="priceRange2">0</span> - 100$ <br>
                   <input type="range" min="0" max="100" value="0" oninput="updatePriceRange2(this.value)">
                 </label><br>
-                <button id="showAllButton" type="button" style="border-radius: 8px;" class="btn btn-light">
-                  Montre tous
-                </button>
-                <button type="button" style="border-radius: 8px;" class="btn btn-light"
-                  onclick="confirmSelection() ">Confirmer la sélection</button>
+                <!-- <button id="showAllButton" type="button" style="border-radius: 8px;" class="btn btn-light">
+                  Montre tout
+                </button> -->
+                <!-- <button type="button" style="border-radius: 8px;" class="btn btn-light"
+                  onclick="confirmSelection() ">Confirmer la sélection</button> -->
                 </form>
               </div>
             </div>
@@ -314,27 +314,27 @@
             document.getElementById('priceRange2').innerText = value;
           }
 
-          function confirmSelection() {
-            var vetementsCheckbox = document.getElementById('vetementsCheckbox');
-            var equipmentsCheckbox = document.getElementById('equipmentsCheckbox');
-            var category = vetementsCheckbox.checked ? 'vetements' : 'equipments';
+          // function confirmSelection() {
+          //   var vetementsCheckbox = document.getElementById('vetementsCheckbox');
+          //   var equipmentsCheckbox = document.getElementById('equipmentsCheckbox');
+          //   var category = vetementsCheckbox.checked ? 'vetements' : 'equipments';
 
-            filterItems(category);
+          //   filterItems(category);
 
-            document.querySelectorAll('.colorSelect').forEach(function (select) {
-              select.addEventListener('change', function () {
-                var color = this.value;
-                this.closest('form').querySelector('.colorInput').value = color;
-              });
-            });
+          //   document.querySelectorAll('.colorSelect').forEach(function (select) {
+          //     select.addEventListener('change', function () {
+          //       var color = this.value;
+          //       this.closest('form').querySelector('.colorInput').value = color;
+          //     });
+          //   });
 
-            document.querySelectorAll('.tailleSelect').forEach(function (select) {
-              select.addEventListener('change', function () {
-                var size = this.value;
-                this.closest('form').querySelector('.tailleInput').value = size;
-              });
-            });
-          }
+          //   document.querySelectorAll('.tailleSelect').forEach(function (select) {
+          //     select.addEventListener('change', function () {
+          //       var size = this.value;
+          //       this.closest('form').querySelector('.tailleInput').value = size;
+          //     });
+          //   });
+          // }
 
           document.getElementById('confirmerButton').addEventListener('click', confirmSelection);
 
