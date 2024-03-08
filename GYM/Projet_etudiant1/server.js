@@ -152,7 +152,7 @@ app.post('/event/panier', (req, res) => {
     const quantite = req.body.quantite;
     const userId = req.session.user ? req.session.user.E_ID : null;
 
-    // Check if the product already exists for the user
+
     const selectSql = "SELECT * FROM e_produit WHERE E_NOM = ? AND E_USER_ID = ?";
     con.query(selectSql, [productName, userId], (selectErr, selectResult) => {
         if (selectErr) {
@@ -162,7 +162,7 @@ app.post('/event/panier', (req, res) => {
         }
 
         if (selectResult.length > 0) {
-            // If the product already exists, update the quantity
+
             const updateSql = "UPDATE e_produit SET E_QUANTITE = E_QUANTITE + 1 WHERE E_NOM = ? AND E_USER_ID = ?";
             con.query(updateSql, [productName, userId], (updateErr, updateResult) => {
                 if (updateErr) {
@@ -174,14 +174,14 @@ app.post('/event/panier', (req, res) => {
                 }
             });
         } else {
-            // If the product doesn't exist, insert a new record
+
             const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, ?, ?, ?)";
             const values = [productName, price, categorie, quantite, userId];
 
             con.query(insertSql, values, (insertErr, insertResult) => {
                 if (insertErr) {
                     console.error("Error inserting data:", insertErr);
-                    res.status(500).send("Error inserting data");
+                    res.redirect('/event/connect');
                 } else {
                     console.log("Data inserted successfully");
                     res.redirect('/event/panier');

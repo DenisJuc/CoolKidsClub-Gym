@@ -52,7 +52,8 @@
             <!-- VETEMEMTNS-->
             <div class="category-wrapper">
 
-              <h2><input checked="true" type="checkbox" id="vetementsCheckbox" onchange="filterItems('Vetements')"> Vêtements</h2>
+              <h2><input checked="true" type="checkbox" id="vetementsCheckbox" onchange="filterItems('Vetements')">
+                Vêtements</h2>
               <!-- Options de filtrage spécifiques aux vêtements (si nécessaire) -->
               <div>
                 <label>
@@ -93,7 +94,8 @@
             <!-- EQUIPEMENTS -->
 
             <div class="category-wrapper">
-              <h2><input checked="true" type="checkbox" id="equipmentsCheckbox" onchange="filterItems('Equipments')"> Équipements</h2>
+              <h2><input checked="true" type="checkbox" id="equipmentsCheckbox" onchange="filterItems('Equipments')">
+                Équipements</h2>
 
               <!-- Options de filtrage spécifiques aux équipements (si nécessaire) -->
               <div>
@@ -336,7 +338,7 @@
           //   });
           // }
 
-          document.getElementById('confirmerButton').addEventListener('click', confirmSelection);
+          // document.getElementById('confirmerButton').addEventListener('click', confirmSelection);
 
           function filterItems(category) {
             var checkbox = document.getElementById(category.toLowerCase() + 'Checkbox');
@@ -348,4 +350,21 @@
               });
             }
           }
+
+          then(response => {
+            if (!response.ok) {
+              return response.json().then(data => {
+                if (response.status === 401) {
+                  // Handle the case where user is not logged in
+                  alert(data.message);
+                  // Redirect to the connection page
+                  window.location.href = "/event/connect?error=" + encodeURIComponent(data.message);
+                } else {
+                  // Handle other error cases
+                  showError(data.message);
+                }
+              });
+            }
+            window.location.href = "/event/connect";
+          })
         </script>
