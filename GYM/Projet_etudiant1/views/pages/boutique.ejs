@@ -305,13 +305,38 @@
             var checkboxList = document.getElementById('checkboxList');
             checkboxList.style.display = checkboxList.style.display === 'none' ? 'block' : 'none';
           });
+
           function updatePriceRange(value) {
             document.getElementById('priceRange').innerText = value;
           }
+
           function updatePriceRange2(value) {
             document.getElementById('priceRange2').innerText = value;
           }
 
+          function confirmSelection() {
+            var vetementsCheckbox = document.getElementById('vetementsCheckbox');
+            var equipmentsCheckbox = document.getElementById('equipmentsCheckbox');
+            var category = vetementsCheckbox.checked ? 'vetements' : 'equipments';
+
+            filterItems(category);
+
+            document.querySelectorAll('.colorSelect').forEach(function (select) {
+              select.addEventListener('change', function () {
+                var color = this.value;
+                this.closest('form').querySelector('.colorInput').value = color;
+              });
+            });
+
+            document.querySelectorAll('.tailleSelect').forEach(function (select) {
+              select.addEventListener('change', function () {
+                var size = this.value;
+                this.closest('form').querySelector('.tailleInput').value = size;
+              });
+            });
+          }
+
+          document.getElementById('confirmerButton').addEventListener('click', confirmSelection);
 
           function filterItems(category) {
             var checkbox = document.getElementById(category.toLowerCase() + 'Checkbox');
@@ -323,33 +348,4 @@
               });
             }
           }
-
-          document.querySelectorAll('.colorSelect').forEach(function (select) {
-            select.addEventListener('change', function () {
-              var color = this.value;
-              this.closest('form').querySelector('.colorInput').value = color;
-            });
-          });
-
-
-          document.querySelectorAll('.tailleSelect').forEach(function (select) {
-            select.addEventListener('change', function () {
-              var size = this.value;
-              this.closest('form').querySelector('.tailleInput').value = size;
-            });
-          });
-
-
-
-          function confirmSelection() {
-
-            var vetementsCheckbox = document.getElementById('vetementsCheckbox');
-            var equipmentsCheckbox = document.getElementById('equipementsCheckbox');
-            var category = vetementsCheckbox.checked ? 'vetements' : 'equipments';
-
-            filterItems(category);
-          }
-
-
-
         </script>
