@@ -128,6 +128,14 @@ app.get("/event/detail", function (req, res) {
     });
 });
 
+app.get("/event/mdp_oublie", function (req, res) {
+    res.render("pages/mdp_oublie", {
+        siteTitle: "Changer Mot de passe",
+        pageTitle: "Changer Mot de passe",
+        userDetails: req.session.user,
+    });
+});
+
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
     const price = req.body.price;
