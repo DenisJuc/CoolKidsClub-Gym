@@ -82,10 +82,28 @@ app.get("/event/creationCompte", function (req, res) {
     });
 });
 app.get("/event/boutique", function (req, res) {
-    res.render("pages/boutique", {
-        siteTitle: "Boutique",
-        pageTitle: "Boutique",
-        userDetails: req.session.user,
+    var query = 'SELECT * FROM e_produit';
+
+    if (req.query.vetements && req.query.equipements) {
+        query = 'SELECT * FROM e_produit';
+    } else if (req.query.vetements) {
+        query = 'SELECT * FROM e_produit WHERE E_CATEGORIE = "Vetements"';
+    } else if (req.query.equipements) {
+        query = 'SELECT * FROM e_produit WHERE E_CATEGORIE = "Equipement"';
+    } else {
+
+        query = 'SELECT * FROM e_produit';
+    }
+
+    con.query(query, function (error, results, fields) {
+        if (error) throw error;
+
+        res.render("pages/boutique", {
+            siteTitle: "Boutique",
+            pageTitle: "Boutique",
+            userDetails: req.session.user,
+            products: results
+        });
     });
 });
 app.get("/event/test", function (req, res) {
@@ -115,7 +133,7 @@ app.post('/event/panier', (req, res) => {
     const price = req.body.price;
     const categorie = req.body.categorie;
     const quantite = req.body.quantite;
-    const userId = req.session.user ? req.session.user.E_ID : null; // Retrieve logged-in user's ID
+    const userId = req.session.user ? req.session.user.E_ID : null;
 
     const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, ?, ?, ?)";
     const values = [productName, price, categorie, quantite, userId];
