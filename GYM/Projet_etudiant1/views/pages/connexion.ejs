@@ -198,9 +198,7 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#4D69A4", en
       if (!response.ok) {
         return response.json().then(data => {
           if (response.status === 400) {
-            // Handle the case where user is not logged in
             alert(data.message);
-            // Redirect to the connection page
             window.location.href = "/event/connect";
           }
         });
@@ -227,7 +225,6 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#4D69A4", en
             quantite: quantite
         };
 
-        // Send form data via AJAX
         fetch("/event/panier", {
             method: "POST",
             headers: {
@@ -237,23 +234,18 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#4D69A4", en
         })
         .then(response => {
             if (!response.ok) {
-                // If there's an error in the response, show the error message
                 return response.json().then(data => {
                     showError(data.message);
                 });
             }
-            // Show success message
             alert("Produit ajouté au panier avec succès !");
         })
         .catch(error => {
-            // Handle any errors that occur during the fetch request
             showError("Une erreur est survenue lors de l'ajout au panier.");
         });
     });
 
-    // Function to display error message
     function showError(message) {
-        // Display the message in an alert window
         alert(message);
     }
 </script>

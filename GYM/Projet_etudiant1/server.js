@@ -161,8 +161,7 @@ app.post('/event/panier', (req, res) => {
     const selectSql = "SELECT * FROM e_produit WHERE E_NOM = ? AND E_USER_ID = ?";
     con.query(selectSql, [productName, userId], (selectErr, selectResult) => {
         if (selectErr) {
-            console.error("Error selecting data:", selectErr);
-            res.status(500).send("Error selecting data");
+            res.status(500).send("Erreur");
             return;
         }
 
@@ -171,10 +170,8 @@ app.post('/event/panier', (req, res) => {
             const updateSql = "UPDATE e_produit SET E_QUANTITE = E_QUANTITE + 1 WHERE E_NOM = ? AND E_USER_ID = ?";
             con.query(updateSql, [productName, userId], (updateErr, updateResult) => {
                 if (updateErr) {
-                    console.error("Error updating quantity:", updateErr);
                     res.redirect('/event/connect');
                 } else {
-                    console.log("Quantity updated successfully");
                     res.redirect('/event/panier');
                 }
             });
@@ -190,9 +187,9 @@ app.post('/event/panier', (req, res) => {
                     const equipmentValues = [productName, poids, null];
                     con.query(insertEquipmentsSql, equipmentValues, (insertEquipmentsErr, insertEquipmentsResult) => {
                         if (insertEquipmentsErr) {
-                            console.error("Error inserting equipment data:", insertEquipmentsErr);
+                            console.error("Erreur");
                         } else {
-                            console.log("Equipment data inserted successfully");
+                            console.log("Inserer");
                         }
                     });
                 } else if (categorie === 'Vetements') {
@@ -200,9 +197,9 @@ app.post('/event/panier', (req, res) => {
                     const vetementsValues = [productName, color, taille, sexe, null];
                     con.query(insertVetementsSQL, vetementsValues, (insertVetementsErr, insertVetementsResult) => {
                         if (insertVetementsErr) {
-                            console.error("Error inserting clothing data:", insertVetementsErr);
+                            console.error("Erreur");
                         } else {
-                            console.log("Clothing data inserted successfully");
+                            console.log("Inserer");
                         }
                     })
                 }
@@ -244,8 +241,7 @@ app.post('/delete-item/:productId', (req, res) => {
         }
 
         if (selectResult.length === 0) {
-            // Product not found
-            return res.status(404).send("Product not found");
+            return res.status(404).send("Erreur");
         }
 
         const currentQuantity = selectResult[0].E_QUANTITE;
@@ -254,21 +250,17 @@ app.post('/delete-item/:productId', (req, res) => {
             //si il y a plus que 1 produit
             con.query("UPDATE e_produit SET E_QUANTITE = E_QUANTITE - 1 WHERE E_IDPRODUIT = ?", [productId], (updateErr, updateResult) => {
                 if (updateErr) {
-                    console.error("Error updating product quantity:", updateErr);
-                    return res.status(500).send("Error updating product quantity");
+                    console.error("Erreur");
                 }
-                console.log("Product quantity decreased successfully");
-                res.redirect('/event/panier'); // Redirect to the cart page after updating the quantity
+                res.redirect('/event/panier');
             });
         } else {
             // Si c'est 1, on delete le produit
             con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
                 if (deleteErr) {
-                    console.error("Error deleting product:", deleteErr);
-                    return res.status(500).send("Error deleting product");
+                    return res.status(500).send("Erreur");
                 }
-                console.log("Product deleted successfully");
-                res.redirect('/event/panier'); // Redirect to the cart page after deleting the product
+                res.redirect('/event/panier');
             });
         }
     });
@@ -281,8 +273,7 @@ app.post('/event/creationCompte', (req, res) => {
     const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
     con.query(checkEmailQuery, [email], (checkErr, checkResult) => {
         if (checkErr) {
-            console.error("Erreur lors de la vérification de l'email :", checkErr);
-            return res.status(500).send("Erreur interne du serveur");
+            return res.status(500).send("Erreur");
         }
 
         // Si l'email existe déjà, envoyer une réponse au client
@@ -297,10 +288,8 @@ app.post('/event/creationCompte', (req, res) => {
         // Exécuter la requête d'insertion
         con.query(insertQuery, values, (insertErr, insertResult) => {
             if (insertErr) {
-                console.error("Erreur lors de l'insertion des données :", insertErr);
-                return res.status(500).send("Erreur interne du serveur");
+                return res.status(500).send("Erreur");
             }
-            console.log("Données insérées avec succès");
             res.redirect('/event/connect');
         });
     });
@@ -317,16 +306,11 @@ app.post('/event/connect', (req, res) => {
         console.log("Result:", result);
 
         if (result.length > 0) {
-            // Login successful
-            req.session.user = result[0];// Store user ID in session
-
-            console.log("User inserted in session:", req.session.user);
+            req.session.user = result[0];
             res.redirect('/event/detail');
             return req.session.user;
         } else {
-            // Login failed
-            console.error("Login failed for email:", email);
-            res.status(401).send("Login failed. Please check your email and password.");
+            res.status(401).send("Erreur");
         }
     });
 });
@@ -344,13 +328,12 @@ app.get("/event/detail", (req, res) => {
     const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
     con.query(userDetailsQuery, [loggedInUserId], (err, userDetails) => {
         if (err) {
-            console.error("Error fetching user details:", err);
-            res.status(500).send("Internal Server Error");
+            res.status(500).send("Erreur");
             return;
         }
 
         if (userDetails.length === 0) {
-            res.status(404).send("User not found");
+            res.status(404).send("Erreur");
             return;
         }
 
@@ -366,8 +349,7 @@ app.get('/logout', (req, res) => {
     // Detruit la session
     req.session.destroy(err => {
         if (err) {
-            console.error("ERREUR:", err);
-            res.status(500).send("Internal Server Error");
+            res.status(500).send("Erreur");
             return;
         }
         res.redirect('/'); // Revas dans la page d'acceuil
@@ -404,21 +386,16 @@ app.post('/update-details', (req, res) => {
     updateQuery += " WHERE E_ID = ?";
     updateValues.push(userId);
 
-    console.log("Generated SQL query:", updateQuery);
-    console.log("Update values:", updateValues);
-
 
     con.query(updateQuery, updateValues, (err, result) => {
         if (err) {
-            console.error("Error updating user details:", err);
-            return res.status(500).send("Error updating user details");
+            return res.status(500).send("Erreur");
         }
 
         const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
         con.query(userDetailsQuery, [userId], (err, userDetails) => {
             if (err) {
-                console.error("Error fetching updated user details:", err);
-                return res.status(500).send("Error fetching updated user details");
+                return res.status(500).send("Erreur");
             }
 
             req.session.user = userDetails[0];
@@ -440,15 +417,12 @@ app.post('/delete-account', (req, res) => {
 
     con.query(deleteQuery, [userId], (err, result) => {
         if (err) {
-            console.error("Error deleting user account:", err);
-            return res.status(500).send("Error deleting user account");
+            return res.status(500).send("Erreur");
         }
-
 
         req.session.destroy(err => {
             if (err) {
-                console.error("Error destroying session:", err);
-                return res.status(500).send("Error destroying session");
+                return res.status(500).send("Erreur");
             }
 
             res.redirect("/logout");
