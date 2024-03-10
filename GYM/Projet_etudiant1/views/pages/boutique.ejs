@@ -239,19 +239,23 @@
                   </label><br>
                   Prix : 35 $
                 </p>
-                <form class="insertForm" action="/event/panier" method="post">
+                <form class="insertForm1" action="/event/panier" method="post">
                   <input type="hidden" name="productName" value="Hoodie Peak Labs">
                   <input type="hidden" name="price" value="35">
                   <input type="hidden" name="quantite" value="1">
                   <input type="hidden" name="categorie" value="Vetements">
-                  <input type="hidden" id="colorInput" name="color" value="">
-                  <input type="hidden" id="tailleInput" name="taille" value="">
+                  <input type="hidden" id="colorInput1" name="color" value="">
+                  <input type="hidden" id="tailleInput1" name="taille" value="">
                   <input type="hidden" name="sexe" value="X">
 
                   <button type="submit" class="btn btn-dark"
                     style="margin-top: -600px; margin-left: 25%;height: 37px; width: 210px;">Ajouter au panier</button>
                 </form>
               </div>
+
+
+
+
               <div class="p-2 bd-highlight">
                 <p
                   style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px; margin-left: 42%;">
@@ -278,6 +282,37 @@
           document.getElementById('filterButton').addEventListener('click', function () {
             var checkboxList = document.getElementById('checkboxList');
             checkboxList.style.display = checkboxList.style.display === 'none' ? 'block' : 'none';
+          });
+
+          document.addEventListener('DOMContentLoaded', function () {
+            const colorSelect = document.getElementById('colorSelect');
+            const tailleSelect = document.getElementById('tailleSelect');
+            const colorInput = document.getElementById('colorInput1');
+            const tailleInput = document.getElementById('tailleInput1');
+
+            colorSelect.addEventListener('change', function () {
+              colorInput.value = colorSelect.value;
+            });
+
+            tailleSelect.addEventListener('change', function () {
+              tailleInput.value = tailleSelect.value;
+            });
+          });
+
+          document.addEventListener('DOMContentLoaded', function () {
+            const colorSelect = document.getElementById('colorSelect');
+            const tailleSelect = document.getElementById('tailleSelect');
+            const colorInput = document.getElementById('colorInput');
+            const tailleInput = document.getElementById('tailleInput');
+
+            colorSelect.addEventListener('change', function () {
+              colorInput.value = colorSelect.value;
+              console.log(value);
+            });
+
+            tailleSelect.addEventListener('change', function () {
+              tailleInput.value = tailleSelect.value;
+            });
           });
 
           //function updatePriceRange(value) {
