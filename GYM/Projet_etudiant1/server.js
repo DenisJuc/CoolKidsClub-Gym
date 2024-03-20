@@ -429,3 +429,43 @@ app.post('/delete-account', (req, res) => {
         });
     });
 });
+app.post('/event/add-subscription-to-cart', (req, res) => {
+    const { subscriptionType } = req.body;
+    const userId = req.session.user ? req.session.user.E_ID : null;
+  
+    if (!userId) {
+      res.redirect('/event/connect');
+      return;
+    }
+  
+    let productName, price;
+    switch (subscriptionType) {
+      case 'essai-gratuit':
+        productName = 'Essai Gratuit';
+        price = 0.00;
+        break;
+      case 'standard':
+        productName = 'Abonnement Standard';
+        price = 14.99;
+        break;
+      case 'peak':
+        productName = 'Abonnement Peak';
+        price = 35.99;
+        break;
+      default:
+        return res.redirect('/event/abonnement');
+    }
+  
+    const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, 'Abonnement', 1, ?)";
+    const values = [productName, price, userId];
+  
+    con.query(insertSql, values, (err) => {
+      if (err) {
+        console.error("Erreur lors de l'ajout au panier :", err);
+        res.redirect('/event/abonnement');
+      } else {
+        res.redirect('/event/panier');
+      }
+    });
+  });
+  
