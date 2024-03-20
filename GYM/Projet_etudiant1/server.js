@@ -455,15 +455,15 @@ app.post('/event/add-subscription-to-cart', (req, res) => {
             console.error("Erreur", deleteErr);
             return res.status(500).send("Erreur");
         }
+    });
 
-        con.query("INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, 'Abonnement', 1, ?)",
-                  [subscription.productName, subscription.price, userId], insertErr => {
-            if (insertErr) {
-                console.error("Erreur", insertErr);
-                return res.status(500).send("Erreur");
-            }
+    con.query("INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, 'Abonnement', 1, ?)",
+                [subscription.productName, subscription.price, userId], insertErr => {
+        if (insertErr) {
+            console.error("Erreur", insertErr);
+            return res.status(500).send("Erreur");
+        }
 
-            res.redirect('/event/panier');
-        });
+        res.redirect('/event/panier');
     });
 });
