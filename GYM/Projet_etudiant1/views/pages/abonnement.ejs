@@ -36,32 +36,17 @@
 
   <script>
     let selectedOption = null;
-
+  
     function selectOption(optionId) {
       if (selectedOption) {
         document.getElementById(selectedOption).classList.remove('selected');
       }
       selectedOption = optionId;
       document.getElementById(optionId).classList.add('selected');
+      document.getElementById('subscriptionTypeInput').value = optionId; 
     }
-
-    function unselectOptions() {
-      if (selectedOption) {
-        document.getElementById(selectedOption).classList.remove('selected');
-        selectedOption = null;
-      }
-    }
-
-    function selectOption(optionId) {
-  if (selectedOption) {
-    document.getElementById(selectedOption).classList.remove('selected');
-  }
-  selectedOption = optionId;
-  document.getElementById(optionId).classList.add('selected');
-  document.getElementById('subscriptionTypeInput').value = optionId; // Update the hidden input's value
-  }
-
   </script>
+  
 
   <style>
     body {
