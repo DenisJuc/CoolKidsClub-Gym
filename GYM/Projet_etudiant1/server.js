@@ -190,4 +190,68 @@ con.query(checkEmail, [email], (err, rows) => {
         }
     });
 });
+<<<<<<< Updated upstream
 });
+=======
+app.post('/delete-account', (req, res) => {
+    const userId = req.session.user.E_ID;
+    const deleteQuery = "DELETE FROM e_compte WHERE E_ID = ?";
+    console.log("deleted");
+
+    con.query(deleteQuery, [userId], (err, result) => {
+        if (err) {
+            return res.status(500).send("Erreur");
+        }
+
+        req.session.destroy(err => {
+            if (err) {
+                return res.status(500).send("Erreur");
+            }
+
+            res.redirect("/logout");
+        });
+    });
+});
+
+import nodemailer from "nodemailer";
+
+// Notre compte service
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'PeakLabs@gmail.com', 
+        pass: 'PeakLabs123' 
+    }
+});
+
+
+function generateResetToken() {
+    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return token;
+}
+
+
+app.post('/event/send_reset_email', (req, res) => {
+    const email = req.body.email; 
+
+    const token = generateResetToken(); 
+
+    // Link
+    const mailOptions = {
+        from: 'PeakLabs@gmail.com', 
+        to: email, 
+        subject: 'Réinitialiser votre mot de passe', 
+        html: `<p>S'il vous plait cliquer <a href="http://yourdomain.com/reset_password?token=${token}">ici</a> pour réinitialiser votre mot de passe.</p>` 
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).send("Error sending email");
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200).send("Email sent successfully");
+        }
+    });
+});
+>>>>>>> Stashed changes
