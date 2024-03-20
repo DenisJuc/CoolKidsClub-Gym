@@ -144,6 +144,14 @@ app.get("/event/apropos", function (req, res) {
     });
 });
 
+app.get("/event/reset", function (req, res) {
+    console.log(req.session.user);
+    res.render("pages/reset", {
+        siteTitle: "Reset",
+        pageTitle: "Reset",
+        userDetails: req.session.user,
+    });
+});
 
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
@@ -336,6 +344,8 @@ app.get("/event/detail", (req, res) => {
             res.status(404).send("Erreur");
             return;
         }
+
+        
 
         res.render("pages/detail", {
             siteTitle: "Details",

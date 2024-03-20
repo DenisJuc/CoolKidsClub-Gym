@@ -1,0 +1,126 @@
+<%- include("../partials/header.ejs") %>
+    <style>
+        .titre {
+            font-size: 64px;
+            color: white;
+            font-family: 'Khand';
+            flex-direction: column;
+            text-align: center;
+            margin-top: -50px;
+        }
+
+        body {
+            background-color: #41455D;
+        }
+
+        .items_page {
+            font-family: 'Khand';
+            flex-direction: column;
+            color: #FFFFFF;
+            font-size: 32px;
+        }
+
+        .form-signin {
+            width: 55%;
+            margin: -10;
+        }
+
+        .form-control {
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            background-color: grey;
+            border-color: grey;
+        }
+
+        .custom-inputs {
+            background-color: #D9D9D9;
+            width: 489px;
+            height: 35px;
+            border: none;
+            display: block;
+        }
+
+        .custom_butt {
+            margin-left: 650px;
+            margin-top: -500px;
+        }
+
+        .column {
+            float: left;
+            width: 50%;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .card {
+            margin-bottom: 20px;
+
+        }
+
+        .card-body {
+            padding: 20px;
+
+        }
+
+        .btn-info {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <link href="https://fonts.googleapis.com/css2?family=Khand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <div class="container">
+        <div class="alert alert-warning alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="titre">Réinitialiser le mot de passe</div>
+
+
+
+        <div class="row">
+
+            <div class="col-md-8">
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <form action="/update-details" method="post">
+                                <input type="hidden" name="userId" value="<%= userDetails.E_ID %>">
+                                <label for="name">Nom:</label>
+                                <input type="text" id="name" name="name" value="<%= userDetails.E_NOM %>">
+                                <label for="prenom">Prénom:</label>
+                                <input type="text" id="prenom" name="prenom" value="<%= userDetails.E_PRENOM %>">
+                                <label for="email">Courriel:</label>
+                                <input type="email" id="email" name="email" value="<%= userDetails.E_COURRIEL %>">
+                                <label for="num">Mobile:</label>
+                                <input type="text" id="num" name="num" value="<%= userDetails.E_NUMBER %>">
+                                <label for="password">Mot De Passe:</label>
+                                <input type="password" id="password" name="password"
+                                    value="<%= userDetails.E_PASSWORD %>">
+                                <button type="submit" class="btn btn-info">Modifier mes détails</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <a class="btn btn-info" target="__blank" href="event/connect">Cancel</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <%- include("../partials/footer.ejs") %>
