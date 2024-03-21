@@ -433,83 +433,40 @@ app.post('/delete-account', (req, res) => {
     });
 });
 
+app.post('/event/add-subscription-to-cart', (req, res) => {
+    const { subscriptionType } = req.body;
+    const userId = req.session.user ? req.session.user.E_ID : null;
 
-import Stripe from 'stripe';
-// This is your test secret API key.
-const stripe = new Stripe('sk_test_51OvgtJP5VwBXZgOXohPNaXkcg0PbJqdZm05VpQfzYgDpNZSA31iYGd18dnxJVREkqRapCb8vy8cmiyVAZvwgkqC5000DhDQ9Ut');
-
-app.use(express.static("public"));
-app.use(express.json());
-
-
-const buildLineItem = (item) => {
-  return {
-    amount: item.amount, // Amount in cents
-    reference: item.id, // Unique reference for the item in the scope of the calculation
-  };
-};
-
-// Securely calculate the order amount, including tax
-const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total with any exclusive taxes on the server to prevent
-  // people from directly manipulating the amount on the client
-  var amount=0;
-  items.forEach(item => {
-    console.log(item.amount); // This will log the amount of each item in the array
-    amount += item.amount;
-});
-  let orderAmount = amount;
-  orderAmount += (amount*0.15);
-  orderAmount += 10;
-  return orderAmount;
-};
-
-app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
-
-  // Create a Tax Calculation for the items being sold
-  const amount = await calculateOrderAmount(items);
-
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amount,
-    currency: "cad",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    },
-  });
-
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
-});
-
-// Invoke this method in your webhook handler when `payment_intent.succeeded` webhook is received
-const handlePaymentIntentSucceeded = async (paymentIntent) => {
-  // Create a Tax Transaction for the successful payment
-  stripe.tax.transactions.createFromCalculation({
-    calculation: paymentIntent.metadata['tax_calculation'],
-    reference: 'myOrder_123', // Replace with a unique reference from your checkout/order system
-  });
-};
-
-
-app.get("/event/confirmation", function (req, res) {
-    const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
-
-    if (!loggedInUserId) {
-        res.redirect('/event/connect');
-        return;
+    if (!userId) {
+        return res.redirect('/event/connect');
     }
-    con.query("SELECT * FROM e_produit WHERE E_USER_ID = ?", [loggedInUserId], function (err, result) {
-        if (err) throw err;
-        res.render("pages/confirmation", {
-            siteTitle: "Application simple",
-            pageTitle: "Liste d'événements",
-            userDetails: req.session.user,
-            items: result
-        });
+
+    const subscriptions = {
+        'essai-gratuit': { productName: 'Essai Gratuit', price: 0.00 },
+        'standard': { productName: 'Abonnement Standard', price: 14.99 },
+        'peak': { productName: 'Abonnement Peak', price: 35.99 }
+    };
+
+    const subscription = subscriptions[subscriptionType];
+
+    if (!subscription) {
+        return res.redirect('/event/abonnement');
+    }
+
+    con.query("DELETE FROM e_produit WHERE E_USER_ID = ? AND E_CATEGORIE = 'Abonnement'", [userId], deleteErr => {
+        if (deleteErr) {
+            console.error("Erreur", deleteErr);
+            return res.status(500).send("Erreur");
+        }
+    });
+
+    con.query("INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, 'Abonnement', 1, ?)",
+                [subscription.productName, subscription.price, userId], insertErr => {
+        if (insertErr) {
+            console.error("Erreur", insertErr);
+            return res.status(500).send("Erreur");
+        }
+
+        res.redirect('/event/panier');
     });
 });
