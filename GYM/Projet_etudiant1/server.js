@@ -56,6 +56,7 @@ con.connect(function (err) {
     console.log("connected!");
 });
 
+
 /*
     Description des routes
 */
@@ -120,6 +121,8 @@ app.get("/event/abonnement", function (req, res) {
         userDetails: req.session.user,
     });
 });
+
+
 app.get("/event/detail", function (req, res) {
     res.render("pages/detail", {
         siteTitle: "Details",

@@ -1,0 +1,133 @@
+<%- include ("../partials/header.ejs") %>
+<div class="container mt-5 mb-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="text-left logo p-2 px-5">
+                    <img src="/gym-website-logo-without-a-person-upscaled.png" width="50">
+                </div>
+                <div class="invoice p-5">
+                    <h5>Votre commande est confirmée</h5>
+                    <span class="font-weight-bold d-block mt-4">
+                        <% if (userDetails) { %>
+                            Salut <%= userDetails.E_NOM %>,
+                        <% } else { %>
+                        <% } %>
+                    </span>
+                    <span>Votre commande a été confirmée et sera expédiée dans les deux prochains jours !</span>
+                    <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="py-2">
+                                            <span class="d-block text-muted">Order Date</span>
+                                            <span><%= new Date().toLocaleDateString()%></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="py-2">
+                                            <span class="d-block text-muted">Order No</span>
+                                            <span>KKG1234567890</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="py-2">
+                                            <span class="d-block text-muted">Payment</span>
+                                            <span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="product border-bottom table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Produit</th>
+                                    <th scope="col">Prix</th>
+                                    <th scope="col">Specifications</th>
+                                    <th scope="col">Quantité</th>
+                                </tr>
+                            </thead>
+                            <% let total = 0; %>
+                            <% items.forEach(function(item){ %>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">
+                                        <%= item.E_NOM %>
+                                    </th>
+                                    <td>
+                                        <%= item.E_PRIX %> $
+                                    </td>
+                                    <td>
+                                        <%= item.E_CATEGORIE %>
+                                    </td>
+                                    <td>
+                                        <%= item.E_QUANTITE %>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <% total += parseFloat(item.E_PRIX) * parseInt(item.E_QUANTITE); %>
+                            <% }); %>
+                        </table>
+                    </div>
+                    <div class="row d-flex justify-content-end">
+                        <div class="col-md-5">
+                            <table class="table table-borderless">
+                                <tbody class="totals">
+                                    <tr>
+                                        <td>
+                                            <div class="text-left">
+                                                <span class="text-muted">Total des produits</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right">
+                                                <span><%= total.toFixed(2) %></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="text-left">
+                                                <span class="text-muted">Frais d'expédition</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right">
+                                                <span>$10</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="text-left">
+                                                <span class="text-muted">Tax (15%)</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right">
+                                                <span><%= (total * 0.15).toFixed(2) %></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-top border-bottom">
+                                        <td>
+                                            <div class="text-left">
+                                                <span class="font-weight-bold">Total</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right">
+                                                <span class="font-weight-bold"><%= (total + 10 + total * 0.15).toFixed(2) %></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <p class="font-weight-bold mb-0">Merci d'avoir supporter notre compagnie!</p>
+                    <button type="button" class="btn btn-primary"><a class="nav-link active d-flex align-items-center" href="http://localhost:4000/">Procéder à l'accueil</a></button>
