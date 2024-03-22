@@ -25,29 +25,28 @@
           <h3>35.99$</h3>
         </div>
       </div>
-      <button type="button" class="custom_butt" onclick="unselectOptions()">Confirmer</button>
+      <form id="subscriptionForm" action="/event/add-subscription-to-cart" method="post">
+        <input type="hidden" name="subscriptionType" id="subscriptionTypeInput" value="">
+        <button type="submit" class="custom_butt">Confirmer</button>
+      </form>
+      
     </div>
   </div>
 
 
   <script>
     let selectedOption = null;
-
+  
     function selectOption(optionId) {
       if (selectedOption) {
         document.getElementById(selectedOption).classList.remove('selected');
       }
       selectedOption = optionId;
       document.getElementById(optionId).classList.add('selected');
-    }
-
-    function unselectOptions() {
-      if (selectedOption) {
-        document.getElementById(selectedOption).classList.remove('selected');
-        selectedOption = null;
-      }
+      document.getElementById('subscriptionTypeInput').value = optionId; 
     }
   </script>
+  
 
   <style>
     body {
