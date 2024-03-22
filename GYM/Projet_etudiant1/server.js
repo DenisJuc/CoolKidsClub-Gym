@@ -230,6 +230,17 @@ app.get("/event/panier", function (req, res) {
     });
 });
 
+app.post('/delete-payment', (req, res) => {
+    const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
+
+            con.query("DELETE FROM e_produit WHERE E_USER_ID = ?", [loggedInUserId], (deleteErr, deleteResult) => {
+                if (deleteErr) {
+                    return res.status(500).send("Erreur");
+                }
+                
+        });
+});
+
 app.post('/delete-item/:productId', (req, res) => {
     const productId = req.params.productId;
 

@@ -85,7 +85,7 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span><%= total.toFixed(2) %></span>
+                                                <span><%= total.toFixed(2)%>$</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -97,22 +97,35 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span>$10</span>
+                                                <span>10.00$</span>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <div class="text-left">
-                                                <span class="text-muted">Tax (15%)</span>
+                                                <span class="text-muted">TPS (5%)</span>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span><%= (total * 0.15).toFixed(2) %></span>
+                                                <span><%= (total * 0.05).toFixed(2)%>$</span>
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="text-left">
+                                                <span class="text-muted">TVQ (9.975%)</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right">
+                                                <span><%= (total * 0.10).toFixed(2) %>$</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
                                     <tr class="border-top border-bottom">
                                         <td>
                                             <div class="text-left">
@@ -121,7 +134,7 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span class="font-weight-bold"><%= (total + 10 + total * 0.15).toFixed(2) %></span>
+                                                <span class="font-weight-bold"><%= (total + 10 + total * 0.15).toFixed(2) %>$</span>
                                             </div>
                                         </td>
                                     </tr>

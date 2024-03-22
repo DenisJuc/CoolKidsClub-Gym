@@ -179,24 +179,25 @@ button:disabled {
   
 }
 </style>
+<% if(totalPrice !=0){ %>
 <form class="payment-form" id="payment-form">
   <div id="payment-element">
     <!--Stripe.js injects the Payment Element-->
   </div>
-  <button id="submit">
-    <div class="spinner hidden" id="spinner"></div>
-    <span id="button-text">Payer</span>
-  </button>
+  <form action="/delete-payment" method="post">
+    <button type="submit" id="submit">
+      <div class="spinner hidden" id="spinner"></div>
+      <span id="button-text">Payer <%= (totalPrice + 10 + (totalPrice  * 0.15)) %> $</span>
+    </button>
+  </form>
   <div id="payment-message" class="hidden"></div>
-  <!-- Display total price -->
-  <p style="color: white;">Prix Total: <%= (totalPrice + 10 + (totalPrice  * 0.15)) %> $</p>
 </form>
+<%}%>
 <script>
   // This is your test publishable API key.
   const stripe = Stripe("pk_test_51OvgtJP5VwBXZgOXDryIBBT5IF0R9MBETSKFGKAThPHCIpht3aQzszoI2uvtQ0ekn0Hw8zDmw0yfYcTMF1sVvSVP00YZW1Mt3y");
   // The items the customer wants to buy
   let items = [];
-  // Iterate over itemsP and push data into items array
   <% itemsP.forEach(function(item) { %>
     items.push({ id: "<%= item.id %>", amount: <%= item.amount %> });
   <% }); %>
@@ -225,7 +226,7 @@ async function initialize() {
   elements = stripe.elements({ appearance, clientSecret });
 
   const paymentElementOptions = {
-    layout: "tabs",
+    layout: "tabs"
   };
 
   const paymentElement = elements.create("payment", paymentElementOptions);
