@@ -161,10 +161,12 @@ button:disabled {
         </td>
       </tr>
     </tbody>
-    <% totalPrice += parseFloat(item.E_PRIX); %>
-    <% itemsP.push({ id: item.E_IDPRODUIT, amount: parseFloat(item.E_PRIX*100) }); %>
+    <% totalPrice += parseFloat(item.E_PRIX)* item.E_QUANTITE; %>
+    <% itemsP.push({ id: item.E_IDPRODUIT, amount: parseFloat((item.E_PRIX*100 * item.E_QUANTITE)*(1.15)) });
+    const items = itemsP; %>
   <% }); %>
 </table>
+  
 <style>
   .payment-form {
   width: 30vw;
@@ -187,12 +189,18 @@ button:disabled {
   </button>
   <div id="payment-message" class="hidden"></div>
   <!-- Display total price -->
-  <p style="color: white;">Prix Total: <%= (totalPrice + 10 + totalPrice  * 0.15).toFixed(2) %> $</p>
+  <p style="color: white;">Prix Total: <%= (totalPrice + 10 + (totalPrice  * 0.15)) %> $</p>
 </form>
 <script>
   // This is your test publishable API key.
   const stripe = Stripe("pk_test_51OvgtJP5VwBXZgOXDryIBBT5IF0R9MBETSKFGKAThPHCIpht3aQzszoI2uvtQ0ekn0Hw8zDmw0yfYcTMF1sVvSVP00YZW1Mt3y");
   // The items the customer wants to buy
+  let items = [];
+  // Iterate over itemsP and push data into items array
+  <% itemsP.forEach(function(item) { %>
+    items.push({ id: "<%= item.id %>", amount: <%= item.amount %> });
+  <% }); %>
+  items.push({id:"shipping", amount: 1000})
 let elements;
 
 initialize();
@@ -207,7 +215,7 @@ async function initialize() {
   const response = await fetch("/create-payment-intent", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ itemsP }),
+    body: JSON.stringify({ items }),
   });
   const { clientSecret } = await response.json();
 

@@ -467,3 +467,81 @@ app.post('/event/add-subscription-to-cart', (req, res) => {
         res.redirect('/event/panier');
     });
 });
+
+import Stripe from 'stripe';
+// This is your test secret API key.
+const stripe = new Stripe('sk_test_51OvgtJP5VwBXZgOXohPNaXkcg0PbJqdZm05VpQfzYgDpNZSA31iYGd18dnxJVREkqRapCb8vy8cmiyVAZvwgkqC5000DhDQ9Ut');
+
+app.use(express.static("public"));
+app.use(express.json());
+
+
+const buildLineItem = (item) => {
+  return {
+    amount: item.amount, // Amount in cents
+    reference: item.id, // Unique reference for the item in the scope of the calculation
+  };
+};
+
+// Securely calculate the order amount, including tax
+const calculateOrderAmount = (items) => {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total with any exclusive taxes on the server to prevent
+  // people from directly manipulating the amount on the client
+
+  var amount=0;
+  items.forEach(item => {
+    console.log(item.amount); // This will log the amount of each item in the array
+    amount += item.amount;
+});
+  let orderAmount = amount;
+  return orderAmount;
+};
+
+app.post("/create-payment-intent", async (req, res) => {
+  const { items } = req.body;
+
+  // Create a Tax Calculation for the items being sold
+  const amount = await calculateOrderAmount(items);
+
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: "cad",
+    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
+
+// Invoke this method in your webhook handler when `payment_intent.succeeded` webhook is received
+const handlePaymentIntentSucceeded = async (paymentIntent) => {
+  // Create a Tax Transaction for the successful payment
+  stripe.tax.transactions.createFromCalculation({
+    reference: 'myOrder_123', // Replace with a unique reference from your checkout/order system
+  });
+};
+
+
+app.get("/event/confirmation", function (req, res) {
+    const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
+
+    if (!loggedInUserId) {
+        res.redirect('/event/connect');
+        return;
+    }
+    con.query("SELECT * FROM e_produit WHERE E_USER_ID = ?", [loggedInUserId], function (err, result) {
+        if (err) throw err;
+        res.render("pages/confirmation", {
+            siteTitle: "Application simple",
+            pageTitle: "Liste d'événements",
+            userDetails: req.session.user,
+            items: result
+        });
+    });
+});
