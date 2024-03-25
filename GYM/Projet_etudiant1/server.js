@@ -230,6 +230,19 @@ app.get("/event/panier", function (req, res) {
     });
 });
 
+app.post('/delete-payment', (req, res) => {
+    const userId = req.session.user.E_ID;
+    const deleteQuery = "DELETE FROM e_produit WHERE E_USER_ID = ?";
+    console.log("deleted");
+
+    con.query(deleteQuery, [userId], (err, result) => {
+        if (err) {
+            return res.status(500).send("Erreur");
+        }
+        res.redirect('/');
+    });
+});
+
 app.post('/delete-item/:productId', (req, res) => {
     const productId = req.params.productId;
 
@@ -530,7 +543,6 @@ const handlePaymentIntentSucceeded = async (paymentIntent) => {
 
 app.get("/event/confirmation", function (req, res) {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
-
     if (!loggedInUserId) {
         res.redirect('/event/connect');
         return;
