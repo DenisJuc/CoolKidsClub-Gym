@@ -1,4 +1,12 @@
-<%- include ("../partials/header.ejs") %>
+<%- include ("../partials/head.ejs") %>
+<head>
+	<link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
+	<style>
+		body {
+			font-family: 'Krona One';
+		}
+	</style>
+</head>
 <div class="container mt-5 mb-5">
     <div class="row d-flex justify-content-center">
         <div class="col-md-8">
@@ -121,7 +129,7 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span><%= (total * 0.10).toFixed(2) %>$</span>
+                                                <span><%= total * 0.0975 %>$</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -134,7 +142,7 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span class="font-weight-bold"><%= (total + 10 + total * 0.15).toFixed(2) %>$</span>
+                                                <span class="font-weight-bold"><%= (total + 10 + total * 0.14975).toFixed(2) %>$</span>
                                             </div>
                                         </td>
                                     </tr>

@@ -1,10 +1,9 @@
 <%- include ("../partials/header.ejs") %>
-
 <script src="https://js.stripe.com/v3/"></script>
-<script src="checkout.js" defer></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <style>
 	body {
-		background-color: #41455D;
+		background-color:#41455D;
 	}
   * {
   box-sizing: border-box;
@@ -126,78 +125,179 @@ button:disabled {
     min-width: initial;
   }
 }
-	</style>
-<% let itemsP = []; %>
+</style>
+<section class="h-100 h-custom"  >
+  <div class="container h-100 py-5" >
+    <div class="row d-flex justify-content-center align-items-center h-100" >
+      <div class="col">
+        <div class="table-responsive" style="border-radius: 16px;">
+          <% let itemsP = []; %>
 <% let totalPrice = 0; %>
-<table class="table table-dark table-striped table-borderless">
-  <thead>
-    <tr>
-      <th scope="col">Produit</th>
-      <th scope="col">Prix</th>
-      <th scope="col">Specifications</th>
-      <th scope="col">Quantité</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <% items.forEach(function(item){ %>
-    <tbody>
-      <tr>
-        <th scope="row">
-          <%= item.E_NOM %>
-        </th>
-        <td>
-          <%= item.E_PRIX %> $
-        </td>
-        <td>
-          <%= item.E_CATEGORIE %>
-        </td>
-        <td>
-          <%= item.E_QUANTITE %>
-        </td>
-        <td>
-          <form action="/delete-item/<%= item.E_IDPRODUIT %>" method="post">
-            <button type="submit" class="btn btn-danger">Delete</button>
-          </form>
-        </td>
-      </tr>
-    </tbody>
-    <% totalPrice += parseFloat(item.E_PRIX)* item.E_QUANTITE; %>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" class="h5">Mon Panier</th>
+                <th scope="col">Spécifications</th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Prix</th>
+              <th scope="col"></th>
+              </tr>
+            </thead>
+            <% items.forEach(function(item){ %>
+            <tbody>    
+              <tr>
+                <th scope="row">
+                  <div class="d-flex align-items-center">
+                    <img src="/produit<%= item.E_PRIX %>.jpeg" class="img-fluid rounded-3"
+                      style="width: 120px;" alt="Book">
+                    <div class="flex-column ms-4">
+                      <p class="mb-2"><%= item.E_NOM %></p>
+                    </div>
+                  </div>
+                </th>
+                <td class="align-middle">
+                  <p class="mb-0" style="font-weight: 500;"><%= item.E_CATEGORIE %></p>
+                </td>
+                <td class="align-middle">
+                  <div class="d-flex flex-row">
+                    
+<input 
+id="form1" 
+min="0" 
+name="quantity" 
+value="<%= item.E_QUANTITE %>" 
+type="number" 
+class="form-control form-control-sm" 
+style="width: 50px;" 
+data-product-id="<%= item.E_IDPRODUIT %>"
+onChange="updateQuantity(this)"
+/>                 
+<form action="/update-page" method="post">
+  <button type="submit" class="btn btn-success">Confirmer</button>
+</form>
+                  </div>
+                  
+                </td>
+                
+                <td class="align-middle">
+                  <p class="mb-0" style="font-weight: 500;">$<%= item.E_PRIX %></p>
+                </td>
+                <td class="align-middle text-center">
+                  <div class="d-flex justify-content-center">
+                  <form action="/delete-item/<%= item.E_IDPRODUIT %>" method="post">
+                    <button type="submit" class="btn btn-danger">X</button>
+                  </form>
+                </div>
+                </td>
+              </tr>
+            </tbody>
+            <% totalPrice += parseFloat(item.E_PRIX)* item.E_QUANTITE; %>
     <% itemsP.push({ id: item.E_IDPRODUIT, amount: parseFloat((item.E_PRIX*100 * item.E_QUANTITE)*(1.15)) });
     const items = itemsP; %>
-  <% }); %>
-</table>
+            <% }); %>
+          </table>
+        </div>
+
+        <div class="card shadow-2-strong mb-5 mb-lg-0">
+          <div class="card-body p-4">
+            <% if(totalPrice !=0){ %>
+            <div class="row" style="display: flex;justify-content: flex-end;">  
+              
+                      
+                      
+              <div class="col-lg-4 col-xl-3">
+                <div class="d-flex justify-content-between" style="font-weight: 500;">
+                  <p class="mb-2">Subtotal</p>
+                  <p class="mb-2" id="subtotal">$<%= totalPrice%></p>
+                </div>
+        
+                <div class="d-flex justify-content-between" style="font-weight: 500;">
+                  <p class="mb-2">Shipping</p>
+                  <p class="mb-2">$10</p>
+                </div>
+                
+                <div class="d-flex justify-content-between" style="font-weight: 500;">
+                  <p class="mb-0">Taxes</p>
+                  <p class="mb-0" id="taxes">$<%= ((totalPrice  * 0.14975).toFixed(2)) %></p>
+                </div>
+                <hr class="my-4">
+                <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
+                  <p class="mb-2">Total (avec taxes)</p>
+                  <p class="mb-2" id="total">$<%= (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) %></p>
+                </div>
+                <button id="myBtn">Payer <%= (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) %> $</button>
+                <div id="myModal" class="modal">
   
-<style>
-  .payment-form {
-  width: 30vw;
-  min-width: 500px;
-  align-self: center; 
-  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-    0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
-  border-radius: 7px;
-  padding: 40px;
-  
-}
-</style>
-<% if(totalPrice !=0){ %>
-<form class="payment-form" id="payment-form">
-  <div id="payment-element">
-    <!--Stripe.js injects the Payment Element-->
+                  <!-- Modal content -->
+                  <div class="modal-content" style="width: 20%; margin: auto;position: fixed; top: 50%;left: 50%; transform: translateY(-50%) translateX(-50%);padding: 20px; padding-top: 40px;padding-bottom: 40px;">
+                    <span class="close">&times;</span>
+                    
+                    <div style="width: 100%;">             
+                      <form class="payment-form" id="payment-form">
+                        <div id="payment-element">
+                          
+                        </div>
+                        <div style="text-align: right;">
+                          <button type="submit" id="submit">
+                            <div class="spinner hidden" id="spinner"></div>
+                            <span id="button-text">Payer</span>
+                          </button>
+                        </div>
+                        <div id="payment-message" class="hidden"></div>
+                      </form>
+                    </div>
+                  </div>
+                  
+                </div>
+                  </div>
+                
+                </div>
+                
+                <script>
+                // Get the modal
+                var modal = document.getElementById("myModal");
+                
+                // Get the button that opens the modal
+                var btn = document.getElementById("myBtn");
+                
+                // Get the <span> element that closes the modal
+                var span = document.getElementsByClassName("close")[0];
+                
+                // When the user clicks the button, open the modal 
+                btn.onclick = function() {
+                  modal.style.display = "block";
+                }
+                
+                // When the user clicks on <span> (x), close the modal
+                span.onclick = function() {
+                  modal.style.display = "none";
+                }
+                
+                // When the user clicks anywhere outside of the modal, close it
+                window.onclick = function(event) {
+                  if (event.target == modal) {
+                    modal.style.display = "none";
+                  }
+                }
+                </script>
+            </div>
+              </div>
+            </div>
+            <%}%>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
-    <button type="submit" id="submit">
-      <div class="spinner hidden" id="spinner"></div>
-      <span id="button-text">Payer <%= (totalPrice + 10 + (totalPrice  * 0.15)) %> $</span>
-    </button>
-  <div id="payment-message" class="hidden"></div>
-</form>
-<%}%>
+</section>
 <script>
   // This is your test publishable API key.
   const stripe = Stripe("pk_test_51OvgtJP5VwBXZgOXDryIBBT5IF0R9MBETSKFGKAThPHCIpht3aQzszoI2uvtQ0ekn0Hw8zDmw0yfYcTMF1sVvSVP00YZW1Mt3y");
   // The items the customer wants to buy
   let items = [];
   <% itemsP.forEach(function(item) { %>
-    items.push({ id: "<%= item.id %>", amount: <%= item.amount %> });
+    items.push({ id: "<%= item.id %>", amount: Math.ceil(<%= item.amount %>) });
   <% }); %>
   items.push({id:"shipping", amount: 1000})
 let elements;
@@ -312,5 +412,38 @@ function setLoading(isLoading) {
     document.querySelector("#button-text").classList.remove("hidden");
   }
 }
+
+function updateQuantity(input) {
+    const productId = input.getAttribute('data-product-id'); // Get the ID of the product
+    const newQuantity = input.value; // Get the new quantity
+
+    // Send an AJAX request to the server to update the quantity of the product
+    fetch('/update-quantity', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: productId,
+            newQuantity: newQuantity,
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error updating product quantity');
+        }
+        // Update the interface
+        updateSubtotal(input);
+        updateTotal();
+
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+
+  
 </script>
 <%- include ("../partials/footer.ejs") %>
