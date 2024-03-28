@@ -259,15 +259,7 @@ app.post('/delete-item/:productId', (req, res) => {
 
         const currentQuantity = selectResult[0].E_QUANTITE;
 
-        if (currentQuantity > 1) {
-            //si il y a plus que 1 produit
-            con.query("UPDATE e_produit SET E_QUANTITE = E_QUANTITE - 1 WHERE E_IDPRODUIT = ?", [productId], (updateErr, updateResult) => {
-                if (updateErr) {
-                    console.error("Erreur");
-                }
-                res.redirect('/event/panier');
-            });
-        } else {
+       
             // Si c'est 1, on delete le produit
             con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
                 if (deleteErr) {
@@ -275,7 +267,7 @@ app.post('/delete-item/:productId', (req, res) => {
                 }
                 res.redirect('/event/panier');
             });
-        }
+        
     });
 });
 
@@ -556,4 +548,34 @@ app.get("/event/confirmation", function (req, res) {
             items: result
         });
     });
+});
+
+// Route pour la mise à jour de la quantité du produit
+app.post('/update-quantity', (req, res) => {
+    const productId = req.body.productId;
+    const newQuantity = req.body.newQuantity;
+
+    // Mettez à jour la quantité du produit dans la base de données
+    con.query("UPDATE e_produit SET E_QUANTITE = ? WHERE E_IDPRODUIT = ?", [newQuantity, productId], (err, result) => {
+        if (err) {
+            console.error('Erreur lors de la mise à jour de la quantité du produit:', err);
+            return res.status(500).send('Erreur lors de la mise à jour de la quantité du produit');
+        } else if (newQuantity == 0) {
+            con.query("DELETE FROM e_produit WHERE E_IDPRODUIT=?", [productId], deleteErr => {
+                if (deleteErr) {
+                    console.error("Erreur", deleteErr);
+                    return res.status(500).send("Erreur");
+                }
+                // Redirect after deleting the product
+                res.redirect('/event/panier');
+            });
+        } else {
+            // Redirect after updating the quantity
+            res.redirect('/event/panier');
+        }
+    });
+});
+
+app.post('/update-page', (req, res) => {
+    res.redirect('/event/panier')
 });
