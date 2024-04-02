@@ -12,6 +12,7 @@ import dateFormat from "dateformat";
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+import nodemailer from 'nodemailer';
 
 // Configure session middleware
 app.use(session({
@@ -259,15 +260,15 @@ app.post('/delete-item/:productId', (req, res) => {
 
         const currentQuantity = selectResult[0].E_QUANTITE;
 
-       
-            // Si c'est 1, on delete le produit
-            con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
-                if (deleteErr) {
-                    return res.status(500).send("Erreur");
-                }
-                res.redirect('/event/panier');
-            });
-        
+
+        // Si c'est 1, on delete le produit
+        con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
+            if (deleteErr) {
+                return res.status(500).send("Erreur");
+            }
+            res.redirect('/event/panier');
+        });
+
     });
 });
 
@@ -463,14 +464,14 @@ app.post('/event/add-subscription-to-cart', (req, res) => {
     });
 
     con.query("INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, 'Abonnement', 1, ?)",
-                [subscription.productName, subscription.price, userId], insertErr => {
-        if (insertErr) {
-            console.error("Erreur", insertErr);
-            return res.status(500).send("Erreur");
-        }
+        [subscription.productName, subscription.price, userId], insertErr => {
+            if (insertErr) {
+                console.error("Erreur", insertErr);
+                return res.status(500).send("Erreur");
+            }
 
-        res.redirect('/event/panier');
-    });
+            res.redirect('/event/panier');
+        });
 });
 
 import Stripe from 'stripe';
@@ -482,54 +483,54 @@ app.use(express.json());
 
 
 const buildLineItem = (item) => {
-  return {
-    amount: item.amount, // Amount in cents
-    reference: item.id, // Unique reference for the item in the scope of the calculation
-  };
+    return {
+        amount: item.amount, // Amount in cents
+        reference: item.id, // Unique reference for the item in the scope of the calculation
+    };
 };
 
 // Securely calculate the order amount, including tax
 const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total with any exclusive taxes on the server to prevent
-  // people from directly manipulating the amount on the client
+    // Replace this constant with a calculation of the order's amount
+    // Calculate the order total with any exclusive taxes on the server to prevent
+    // people from directly manipulating the amount on the client
 
-  var amount=0;
-  items.forEach(item => {
-    console.log(item.amount); // This will log the amount of each item in the array
-    amount += item.amount;
-});
-  let orderAmount = amount;
-  return orderAmount;
+    var amount = 0;
+    items.forEach(item => {
+        console.log(item.amount); // This will log the amount of each item in the array
+        amount += item.amount;
+    });
+    let orderAmount = amount;
+    return orderAmount;
 };
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
+    const { items } = req.body;
 
-  // Create a Tax Calculation for the items being sold
-  const amount = await calculateOrderAmount(items);
+    // Create a Tax Calculation for the items being sold
+    const amount = await calculateOrderAmount(items);
 
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amount,
-    currency: "cad",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    },
-  });
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "cad",
+        // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+        automatic_payment_methods: {
+            enabled: true,
+        },
+    });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+    res.send({
+        clientSecret: paymentIntent.client_secret,
+    });
 });
 
 // Invoke this method in your webhook handler when `payment_intent.succeeded` webhook is received
 const handlePaymentIntentSucceeded = async (paymentIntent) => {
-  // Create a Tax Transaction for the successful payment
-  stripe.tax.transactions.createFromCalculation({
-    reference: 'myOrder_123', // Replace with a unique reference from your checkout/order system
-  });
+    // Create a Tax Transaction for the successful payment
+    stripe.tax.transactions.createFromCalculation({
+        reference: 'myOrder_123', // Replace with a unique reference from your checkout/order system
+    });
 };
 
 
@@ -578,4 +579,37 @@ app.post('/update-quantity', (req, res) => {
 
 app.post('/update-page', (req, res) => {
     res.redirect('/event/panier')
+});
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    service: 'gmail',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'peaklabs1@gmail.com',
+        pass: 'womv ulmb tpye yfsr'
+    }
+});
+
+app.post('/send-reset-email', (req, res) => {
+    const email = req.body.email;
+
+    const mailOptions = {
+        from: 'peaklabs1@gmail.com',
+        to: email,
+        subject: 'Reset Password',
+        text: 'HIIIIII'
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Error sending email');
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200).send('Email sent successfully');
+        }
+    });
 });
