@@ -145,6 +145,15 @@ app.get("/event/apropos", function (req, res) {
     });
 });
 
+app.get("/event/newpass", function (req, res) {
+    res.render("pages/newpass", {
+        siteTitle: "newpass",
+        pageTitle: "newpass",
+        userDetails: req.session.user,
+    });
+});
+
+
 
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
@@ -598,10 +607,19 @@ app.post('/send-reset-email', (req, res) => {
     const mailOptions = {
         from: 'peaklabs1@gmail.com',
         to: email,
-        subject: 'Reset Password',
-        text: 'HIIIIII'
+        subject: 'Réinitialisation du mot de passe', // Sujet de l'e-mail
+        text: `Cher(e) Utilisateur,
+    
+    Nous avons reçu une demande de réinitialisation de votre mot de passe. Si vous n'avez pas effectué cette demande, vous pouvez ignorer cet e-mail.
+    
+    Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant :
+    http://localhost:4000/event/newpass
+    
+    Si le lien ne fonctionne pas, veuillez copier et coller l'URL dans la barre d'adresse de votre navigateur.
+    
+    Merci,
+    PeakLabs`
     };
-
     // Send the email
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {

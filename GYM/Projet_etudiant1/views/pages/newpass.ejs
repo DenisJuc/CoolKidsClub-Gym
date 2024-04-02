@@ -1,0 +1,17 @@
+<%- include ("../partials/header.ejs") %>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form action="/update-details" method="post">
+                        <label for="password">Mot De Passe:</label>
+                        <input type="password" id="password" name="password">
+                        <button type="submit" class="btn btn-info">Modifier mes détails</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% include ("../partials/footer") %>
