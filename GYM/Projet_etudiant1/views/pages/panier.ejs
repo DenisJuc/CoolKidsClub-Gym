@@ -98,6 +98,45 @@ button:disabled {
   animation: loading 2s infinite ease;
 }
 
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 @-webkit-keyframes loading {
   0% {
     -webkit-transform: rotate(0deg);
@@ -149,7 +188,8 @@ button:disabled {
                 <th scope="row">
                   <div class="d-flex align-items-center">
                     <img src="/produit<%= item.E_PRIX %>.jpeg" class="img-fluid rounded-3"
-                      style="width: 120px;" alt="Book">
+                      style="width: 120px;" alt="<%= item.E_NOM %>"
+                      onerror="this.onerror=null;this.src='/gym-website-logo-without-a-person-upscaled.png'; document.getElementById('quantityInput_<%= item.E_IDPRODUIT %>').disabled = true;">
                     <div class="flex-column ms-4">
                       <p class="mb-2"><%= item.E_NOM %></p>
                     </div>
@@ -160,25 +200,19 @@ button:disabled {
                 </td>
                 <td class="align-middle">
                   <div class="d-flex flex-row">
+                    <input 
+                    id="form1" min="0" name="quantity" value="<%= item.E_QUANTITE %>" type="number" class="form-control form-control-sm" style="width: 50px;" data-product-id="<%= item.E_IDPRODUIT %>" 
                     
-<input 
-id="form1" 
-min="0" 
-name="quantity" 
-value="<%= item.E_QUANTITE %>" 
-type="number" 
-class="form-control form-control-sm" 
-style="width: 50px;" 
-data-product-id="<%= item.E_IDPRODUIT %>"
-onChange="updateQuantity(this)"
-/>                 
-<form action="/update-page" method="post">
-  <button type="submit" class="btn btn-success">Confirmer</button>
-</form>
-                  </div>
-                  
-                </td>
-                
+                    <% if(item.imageLoadFailed) { %> disabled <% } %> 
+            onChange="updateQuantity(this)"
+        />  
+                                   
+                    <form action="/update-page" method="post" style="margin-left: 10px;">
+                        <button type="submit" class="btn btn-success">Confirmer</button><% if(item.imageLoadFailed) { %> disabled <% } %>>Confirmer</button>
+                        
+                    </form>
+                  </div>                 
+                </td>               
                 <td class="align-middle">
                   <p class="mb-0" style="font-weight: 500;">$<%= item.E_PRIX %></p>
                 </td>
