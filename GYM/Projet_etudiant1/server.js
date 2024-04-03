@@ -296,7 +296,13 @@ app.post('/delete-item/:productId', (req, res) => {
         }
 
         const currentQuantity = selectResult[0].E_QUANTITE;
-
+            con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
+                if (deleteErr) {
+                    return res.status(500).send("Erreur");
+                }
+                res.redirect('/event/panier');
+            });
+        
     });
 });
 
@@ -519,7 +525,17 @@ const buildLineItem = (item) => {
 
 // Securely calculate the order amount, including tax
 const calculateOrderAmount = (items) => {
-};
+    // Replace this constant with a calculation of the order's amount
+    // Calculate the order total with any exclusive taxes on the server to prevent
+    // people from directly manipulating the amount on the client
+  
+    var amount=0;
+    items.forEach(item => {
+      amount += item.amount;
+  });
+    let orderAmount = amount;
+    return orderAmount;
+  };
 
 app.post("/create-payment-intent", async (req, res) => {
     const { items } = req.body;
