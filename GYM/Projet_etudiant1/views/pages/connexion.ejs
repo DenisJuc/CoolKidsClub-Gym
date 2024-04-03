@@ -68,11 +68,13 @@
                       </div>
 
                       <div class="form-outline mb-4">
-                        <input href="/event/mdp_oublie" type="password" id="exampleInputPassword1" class="form-control"
-                          placeholder="Mot de passe" />
+                        <input type="password" id="exampleInputPassword1" class="form-control" placeholder="Mot de passe" />
                         <label class="form-label" for="form2Example22"></label>
-                      </div>
+                        <button style="margin-top: -65px; margin-left: 330px;" type="button" id="togglePassword" class="btn btn-outline-secondary"><i class="fas fa-eye"></i></button>
+                    </div>
+                    
 
+                      
                       <style>
                         .form-check-input:checked {
                           border-color: #FFFFFF;
@@ -248,10 +250,24 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#4D69A4", en
     function showError(message) {
         alert(message);
     }
+
+    
 </script>
+<script>
+  document.getElementById("togglePassword").addEventListener("click", function() {
+var passwordInput = document.getElementById("exampleInputPassword1");
+var icon = this.querySelector("i");
 
+if (passwordInput.type === "password") {
+passwordInput.type = "text";
+icon.classList.remove("fa-eye");
+icon.classList.add("fa-eye-slash");
+} else {
+passwordInput.type = "password";
+icon.classList.remove("fa-eye-slash");
+icon.classList.add("fa-eye");
+}
+});
 
-
-
-
-  <% include ("../partials/footer") %>
+</script>
+  <%- include("../partials/footer.ejs") %>
