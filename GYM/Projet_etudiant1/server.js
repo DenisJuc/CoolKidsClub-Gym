@@ -175,9 +175,9 @@ app.get("/event/admin", (req, res) => {
             return;
         }
 
-        res.render("pages/detail", {
-            siteTitle: "Details",
-            pageTitle: "Details",
+        res.render("pages/admin", {
+            siteTitle: "Admin",
+            pageTitle: "Admin",
             userDetails: req.session.user,
         });
     });
