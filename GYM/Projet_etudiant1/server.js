@@ -153,7 +153,35 @@ app.get("/event/newpass", function (req, res) {
     });
 });
 
+app.get("/event/admin", function (req, res) {
+    res.render("pages/admin", {
+        siteTitle: "Admin",
+        pageTitle: "Admin",
+        userDetails: req.session.user,
+    });
+});
 
+app.get("/event/admin", (req, res) => {
+    console.log("kinda in");
+    const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+    con.query(userDetailsQuery, (err, userDetails) => {
+        if (err) {
+            res.status(500).send("Erreur");
+            return;
+        }
+
+        if (userDetails.length === 0) {
+            res.status(404).send("Erreur");
+            return;
+        }
+
+        res.render("pages/detail", {
+            siteTitle: "Details",
+            pageTitle: "Details",
+            userDetails: req.session.user,
+        });
+    });
+});
 
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
