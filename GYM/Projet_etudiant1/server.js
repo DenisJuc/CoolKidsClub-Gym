@@ -297,15 +297,6 @@ app.post('/delete-item/:productId', (req, res) => {
 
         const currentQuantity = selectResult[0].E_QUANTITE;
 
-
-        // Si c'est 1, on delete le produit
-        con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
-            if (deleteErr) {
-                return res.status(500).send("Erreur");
-            }
-            res.redirect('/event/panier');
-        });
-
     });
 });
 
@@ -528,17 +519,6 @@ const buildLineItem = (item) => {
 
 // Securely calculate the order amount, including tax
 const calculateOrderAmount = (items) => {
-    // Replace this constant with a calculation of the order's amount
-    // Calculate the order total with any exclusive taxes on the server to prevent
-    // people from directly manipulating the amount on the client
-
-    var amount = 0;
-    items.forEach(item => {
-        console.log(item.amount); // This will log the amount of each item in the array
-        amount += item.amount;
-    });
-    let orderAmount = amount;
-    return orderAmount;
 };
 
 app.post("/create-payment-intent", async (req, res) => {
@@ -587,13 +567,10 @@ app.get("/event/confirmation", function (req, res) {
         });
     });
 });
-
-// Route pour la mise à jour de la quantité du produit
 app.post('/update-quantity', (req, res) => {
     const productId = req.body.productId;
     const newQuantity = req.body.newQuantity;
 
-    // Mettez à jour la quantité du produit dans la base de données
     con.query("UPDATE e_produit SET E_QUANTITE = ? WHERE E_IDPRODUIT = ?", [newQuantity, productId], (err, result) => {
         if (err) {
             console.error('Erreur lors de la mise à jour de la quantité du produit:', err);
@@ -604,12 +581,7 @@ app.post('/update-quantity', (req, res) => {
                     console.error("Erreur", deleteErr);
                     return res.status(500).send("Erreur");
                 }
-                // Redirect after deleting the product
-                res.redirect('/event/panier');
             });
-        } else {
-            // Redirect after updating the quantity
-            res.redirect('/event/panier');
         }
     });
 });
