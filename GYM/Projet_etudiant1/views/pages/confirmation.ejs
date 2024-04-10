@@ -153,44 +153,5 @@
                     <p class="font-weight-bold mb-0">Merci d'avoir supporter notre compagnie!</p>
                     <form action="/delete-payment" method="post">
                    <button type="submit" class="btn btn-primary"><a class="nav-link active d-flex align-items-center">Procéder à l'accueil</a></button>
+
                 </form>
-                <script>
-                    function sendConfirmationEmail() {
-                        // Gather necessary data from the HTML elements
-                        const email = '<%= email %>'; // Assuming email is passed to the EJS page
-                        const items = JSON.parse('<%- JSON.stringify(items) %>'); // Assuming items data is passed to the EJS page
-                
-                        // Get the current date
-                        const currentDate = new Date().toLocaleDateString();
-                
-                        // Initialize arrays to store product details
-                        const productNames = [];
-                        const productQuantities = [];
-                        let totalAmount = 0;
-                
-                        // Extract product details from items data
-                        items.forEach(item => {
-                            productNames.push(item.E_NOM);
-                            productQuantities.push(item.E_QUANTITE);
-                            totalAmount += parseFloat(item.E_PRIX) * parseInt(item.E_QUANTITE);
-                        });
-                
-                        // Send AJAX request to the server
-                        fetch('/send-confirmation-email', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ 
-                                email,
-                                currentDate,
-                                productNames,
-                                productQuantities,
-                                totalAmount
-                            }),
-                        })
-                        .then(response => response.text())
-                        .then(result => console.log(result))
-                        .catch(error => console.error('Error:', error));
-                    }
-                </script>
