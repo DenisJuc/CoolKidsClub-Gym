@@ -28,6 +28,7 @@ app.use(session({
 const server = app.listen(4000, function () {
     console.log("serveur fonctionne sur 4000... ! ");
 });
+server.keepAliveTimeout = 61 * 1000;
 /*
     Configuration de EJS
 */

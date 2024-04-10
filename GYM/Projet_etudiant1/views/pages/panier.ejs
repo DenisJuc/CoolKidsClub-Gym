@@ -200,17 +200,19 @@ button:disabled {
                 </td>
                 <td class="align-middle">
                   <div class="d-flex flex-row">
-                    <input 
-                    id="form1" min="0" name="quantity" value="<%= item.E_QUANTITE %>" type="number" class="form-control form-control-sm" style="width: 50px;" data-product-id="<%= item.E_IDPRODUIT %>" 
-                    
-                    <% if(item.imageLoadFailed) { %> disabled <% } %> 
-            onChange="updateQuantity(this)"
-        />  
-                                   
-                    <form action="/update-page" method="post" style="margin-left: 10px;">
-                        <button type="submit" class="btn btn-success"><% if(item.imageLoadFailed) { %> disabled <% } %>Confirmer</button>
-                        
-                    </form>
+                    <input id="form1" min="0" name="quantity" value="<%= item.E_QUANTITE %>" type="number" class="form-control form-control-sm" style="width: 50px;" 
+data-product-id="<%= item.E_IDPRODUIT %>"
+    <% if((item.E_CATEGORIE === 'Abonnement')) { %> 
+        disabled 
+    <% } %> 
+    onChange="updateQuantity(this)"
+/>  
+
+<% if ((item.E_CATEGORIE != 'Abonnement')) { %> 
+    <form action="/update-page" method="post" style="margin-left: 10px;">
+        <button type="submit" class="btn btn-success">Confirmer</button>
+    </form>
+<% } %>
                   </div>                 
                 </td>               
                 <td class="align-middle">
@@ -226,7 +228,7 @@ button:disabled {
               </tr>
             </tbody>
             <% totalPrice += parseFloat(item.E_PRIX)* item.E_QUANTITE; %>
-    <% itemsP.push({ id: item.E_IDPRODUIT, amount: parseFloat((item.E_PRIX*100 * item.E_QUANTITE)*(1.15)) });
+    <% itemsP.push({ id: item.E_IDPRODUIT, amount: parseFloat((item.E_PRIX* 100 * item.E_QUANTITE)*(1.14975)) });
     const items = itemsP; %>
             <% }); %>
           </table>
