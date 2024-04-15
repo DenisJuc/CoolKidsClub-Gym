@@ -622,7 +622,7 @@ app.post('/send-reset-email', (req, res) => {
     const email = req.body.email;
 
     const mailOptions = {
-        from: 'peaklabs1@gmail.com',
+        from: 'peaklabs',
         to: email,
         subject: 'Réinitialisation du mot de passe', // Sujet de l'e-mail
         text: `Cher(e) Utilisateur,
