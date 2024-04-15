@@ -1,13 +1,35 @@
+ww
+
+
+
+ww
+
+
+
+
+
+
+
+
+
+
+
+
+
+*UPDATE PASSWORD WORKS*
 <%- include ("../partials/header.ejs") %>
 
     <div class="row">
         <div class="col-sm-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <form action="/update-details" method="post">
+                    <form action="/update-password" method="post" id="updatePasswordForm">
+                        <label for="email">Courriel:</label>
+                        <input type="email" id="email" name="email">
+                        <div id="emailError" style="color: red;"></div> <!-- Placeholder for error message -->
                         <label for="password">Mot De Passe:</label>
                         <input type="password" id="password" name="password">
-                        <button type="submit" class="btn btn-info">Modifier mes détails</button>
+                        <button type="button" id="submit" class="btn btn-info">Modifier mes détails</button>
                     </form>
                 </div>
             </div>
@@ -15,3 +37,32 @@
     </div>
 
     <%- include("../partials/footer.ejs") %>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('submitButton').addEventListener('click', function () {
+                    const email = document.getElementById('email').value;
+
+                    // AJAX request to check if email exists
+                    fetch('/update-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: email })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "ACCOUNT NOT FOUND") {
+                                document.getElementById('emailError').innerText = "ACCOUNT NOT FOUND!";
+                            } else {
+                                document.getElementById('emailError').innerText = "";
+                                document.getElementById('updatePasswordForm').submit();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        </script>
