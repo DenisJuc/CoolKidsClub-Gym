@@ -34,16 +34,25 @@
                     </div>
                   </div>
                   <div style="margin-top: 30px;" class="form-group">
-                    <button name="recover-submit" class="btn btn-dark" type="submit">réinitialiser mot de passe</button>
-                  </div>
-                  <input type="hidden" class="hide" name="token" id="token" value="">
-                </form>
+                    <button name="recover-submit" class="btn btn-dark" type="submit"*forget password* : ME
+                    onclick="showMessagePopup()">réinitialiser mot de passe</button>
+                </div>
+                <input type="hidden" class="hide" name="token" id="token" value="">
+              </form>
 
-              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+<script>
+  function showMessagePopup() {
+    alert("On vous a envoyé un courriel. Veuillez retourner à la page de connexion!");
+  }
+  if (window.location.search.includes('showMessage=true')) {
+    window.onload = showMessagePopup;
+  }
+</script>
   <%- include("../partials/footer.ejs") %>
