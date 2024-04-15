@@ -154,14 +154,6 @@ app.get("/event/newpass", function (req, res) {
     });
 });
 
-app.get("/event/admin", function (req, res) {
-    res.render("pages/admin", {
-        siteTitle: "Admin",
-        pageTitle: "Admin",
-        userDetails: req.session.user,
-    });
-});
-
 app.get("/event/admin", (req, res) => {
     console.log("kinda in");
     const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
@@ -421,6 +413,22 @@ app.post('/update-password', (req, res) => {
                 res.status(404).json({ message: "ACCOUNT NOT FOUND" });
             }
         }
+    });
+});
+
+app.get("/event/admin", function (req, res) {
+    const userDetailsQuery = "SELECT * FROM e_compte";
+    con.query(userDetailsQuery, (err, userDetails) => {
+        if (err) {
+            res.status(500).send("Erreur");
+            return;
+        }
+
+        res.render("pages/admin", {
+            siteTitle: "Admin",
+            pageTitle: "Admin",
+            userDetails: userDetails,
+        });
     });
 });
 
