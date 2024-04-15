@@ -154,14 +154,6 @@ app.get("/event/newpass", function (req, res) {
     });
 });
 
-app.get("/event/admin", function (req, res) {
-    res.render("pages/admin", {
-        siteTitle: "Admin",
-        pageTitle: "Admin",
-        userDetails: req.session.user,
-    });
-});
-
 app.get("/event/admin", (req, res) => {
     console.log("kinda in");
     const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
@@ -394,6 +386,49 @@ app.get('/logout', (req, res) => {
             return;
         }
         res.redirect('/'); // Revas dans la page d'acceuil
+    });
+});
+
+app.post('/update-password', (req, res) => {
+    const email = req.body.email;
+    const newPassword = req.body.password;
+
+    const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL" = '${email}';
+
+    con.query(checkEmailQuery, (error, results) => {
+        if (error) {
+            res.status(500).send("Error checking email in the database");
+        } else {
+            if (results.length > 0) {
+                const updatePasswordQuery = "UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL" = '${email}';
+
+                con.query(updatePasswordQuery, (error, results) => {
+                    if (error) {
+                        res.status(500).send("Error updating password");
+                    } else {
+                        res.redirect("/event/connect")
+                    }
+                });
+            } else {
+                res.status(404).json({ message: "ACCOUNT NOT FOUND" });
+            }
+        }
+    });
+});
+
+app.get("/event/admin", function (req, res) {
+    const userDetailsQuery = "SELECT * FROM e_compte";
+    con.query(userDetailsQuery, (err, userDetails) => {
+        if (err) {
+            res.status(500).send("Erreur");
+            return;
+        }
+
+        res.render("pages/admin", {
+            siteTitle: "Admin",
+            pageTitle: "Admin",
+            userDetails: userDetails,
+        });
     });
 });
 
