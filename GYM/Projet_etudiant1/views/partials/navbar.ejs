@@ -33,7 +33,7 @@
 
                 <!-- <a class="nav-link active d-flex align-items-center" href="#">en</a>
                 <a class="nav-link active d-flex align-items-center" href="#">fr</a> -->
-                <div id="google_translate_element"></div>
+                <div style="padding-top: 20px;" id="google_translate_element"></div>
 
 
                 <a class="nav-link active" href="/event/panier">
@@ -74,4 +74,78 @@
         }
     }
     waitForGoogleTranslate();
+</script>
+
+<style>
+    .VIpgJd-ZVi9od-ORHb{
+        display: none !important;
+    }
+    /* .goog-te-banner-frame.skiptranslate, .goog-te-gadget-simple img{
+        display: none !important;
+    }
+    .goog-tooltip{
+        display: none !important;
+    }
+    .goog-text-highlight {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    body{
+        top: 0px !important;
+    }
+    .goog-logo-link {
+    display:none !important;
+} 
+     */
+.goog-te-gadget{
+    color: transparent !important;
+}
+.VIpgJd-ZVi9od-l4eHX-hSRGPd{
+    display: none;
+}
+.VIpgJd-ZVi9od-ORHb{
+    display: none !important;
+}
+.goog-te-banner-frame{
+    display: none;
+}
+
+</style>
+<!-- <script>
+    window.addEventListener('load', function() {
+
+    var logo = document.querySelector('skiptranslate goog-te-gadget');
+    if (logo){
+        banner.innerHTML = '';
+    }
+
+});
+
+</script> -->
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+    // Wait for the Google Translate widget to initialize
+    setTimeout(function() {
+        // Select the banner frame element
+        var bannerFrame = document.querySelector('.goog-te-banner-frame');
+        
+        // If the banner frame element exists
+        if (bannerFrame) {
+            // Hide the banner by setting its display property to none
+            bannerFrame.innerHTML = '';
+            
+            // Listen for changes in the language selection
+            window.addEventListener('click', function(event) {
+                // Check if the click event target is inside the Google Translate widget
+                if (!event.target.closest('.goog-te-combo')) {
+                    // Hide the banner again if the click event target is not inside the widget
+                    bannerFrame.style.display = none;
+                }
+            });
+        }
+    }, 1000); // Adjust the timeout value as needed to ensure the widget has fully loaded
+});
+
 </script>

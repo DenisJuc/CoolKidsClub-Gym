@@ -18,7 +18,7 @@
                     <h5>Votre commande est confirmée</h5>
                     <span class="font-weight-bold d-block mt-4">
                         <% if (userDetails) { %>
-                            Salut <%= userDetails.E_NOM %>,
+                            Salut <%= userDetails.E_PRENOM %>,
                         <% } else { %>
                         <% } %>
                     </span>
@@ -129,7 +129,7 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span><%= total * 0.0975 %>$</span>
+                                                <span><%= (total * 0.0975).toFixed(2) %>$</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -142,7 +142,7 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                                <span class="font-weight-bold"><%= (total + 10 + total * 0.14975).toFixed(2) %>$</span>
+                                                <span class="font-weight-bold"><%= (parseFloat(total) + 10 + (parseFloat(total) * 0.14975)).toFixed(2) %>$</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -152,6 +152,6 @@
                     </div>
                     <p class="font-weight-bold mb-0">Merci d'avoir supporter notre compagnie!</p>
                     <form action="/delete-payment" method="post">
-                    <button type="submit" class="btn btn-primary"><a class="nav-link active d-flex align-items-center">Procéder à l'accueil</a></button>
-                    </form>
-                    <%- include("../partials/footer.ejs") %>
+                   <button type="submit" class="btn btn-primary"><a class="nav-link active d-flex align-items-center">Procéder à l'accueil</a></button>
+
+                </form>

@@ -28,6 +28,7 @@ app.use(session({
 const server = app.listen(4000, function () {
     console.log("serveur fonctionne sur 4000... ! ");
 });
+server.keepAliveTimeout = 61 * 1000;
 /*
     Configuration de EJS
 */
@@ -674,50 +675,3 @@ app.post('/send-reset-email', (req, res) => {
         }
     });
 });
-<<<<<<< Updated upstream
-=======
-
-app.post('/send-confirmation-email', (req, res) => {
-        const { email, currentDate, productNames, productImages, productQuantities, totalAmount } = req.body;
-        // You can now use these variables to construct your email content
-
-    const mailOptions = {
-        from: 'Peaks Labs',
-        to: email,
-        subject: `Confirmation d'achat en ligne`, // Sujet de l'e-mail
-        text: `
-        Bonjour,
-
-        Merci pour votre achat. Nous avons reçu votre commande et elle devrait être livrée sous 7 jours.
-        
-        Consultez le récapitulatif de votre commande et faites-nous savoir si nous avons manqué quelque chose.
-        
-        ${productNames.map((name, index) => `
-            Produit ${index + 1} - ${name}
-            Image: ${productImages[index]}
-            Quantité: ${productQuantities[index]}
-        `).join('\n')}
-        
-        Date de commande : ${currentDate}
-        Montant total : ${totalAmount} $
-        
-        Si vous avez des questions ou souhaitez effectuer des retours, contactez-nous ici http://localhost:4000 et nous serons heureux de vous aider.
-        
-        Merci de nous faire confiance !
-        
-        Peak Labs
-    `
-    };
-    // Send the email
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-            res.status(500).send('Error sending email');
-        } else {
-            console.log('Email sent: ' + info.response);
-            res.status(200).send('Email sent successfully');
-        }
-    });
-});
-
->>>>>>> Stashed changes
