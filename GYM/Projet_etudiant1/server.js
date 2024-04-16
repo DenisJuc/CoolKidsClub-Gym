@@ -705,3 +705,23 @@ app.get("/event/apply", function (req, res) {
         userDetails: req.session.user,
     });
 });
+
+// Assuming you have already set up Express.js and connected to your NoSQL database
+const router = express.Router();
+const Comment = require('../models/comment');
+router.post('/comments', async (req, res) => {
+  try {
+    const { username, text, countryCode } = req.body;
+    const newComment = new Comment({
+      username,
+      text,
+      countryCode
+    });
+    const savedComment = await newComment.save();
+    res.status(201).json(savedComment);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
