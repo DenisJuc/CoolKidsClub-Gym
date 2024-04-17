@@ -63,6 +63,11 @@
                             <% items.forEach(function(item){ %>
                             <tbody>
                                 <tr>
+                                    <th>
+                                        <img src="/produit<%= item.E_PRIX %>.jpeg" class="img-fluid rounded-3"
+                      style="width: 40px;" alt="<%= item.E_NOM %>"
+                      onerror="this.onerror=null;this.src='/gym-website-logo-without-a-person-upscaled.png'; document.getElementById('quantityInput_<%= item.E_IDPRODUIT %>').disabled = true;">
+                                    </th>
                                     <th scope="row">
                                         <%= item.E_NOM %>
                                     </th>
