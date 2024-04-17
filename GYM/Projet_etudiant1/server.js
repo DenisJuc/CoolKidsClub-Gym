@@ -28,6 +28,7 @@ app.use(session({
 const server = app.listen(4000, function () {
     console.log("serveur fonctionne sur 4000... ! ");
 });
+server.keepAliveTimeout = 61 * 1000;
 /*
     Configuration de EJS
 */
@@ -153,22 +154,11 @@ app.get("/event/newpass", function (req, res) {
     });
 });
 
-app.get("/event/admin", function (req, res) {
-<<<<<<< Updated upstream
-    res.render("pages/admin", {
-        siteTitle: "Admin",
-        pageTitle: "Admin",
-        userDetails: req.session.user,
-    });
-});
-
 app.get("/event/admin", (req, res) => {
-=======
 
     if (!req.session.user || !req.session.user.isAdmin) {
         return res.status(403).send("Forbidden");
     }
->>>>>>> Stashed changes
     console.log("kinda in");
     const userDetailsQuery = "SELECT * FROM e_compte";
     const productQuery = "SELECT * FROM e_produit";
@@ -411,8 +401,6 @@ app.get('/logout', (req, res) => {
     });
 });
 
-<<<<<<< Updated upstream
-=======
 const isAdmin = (req, res, next) => {
     if (req.session.user && req.session.user.isAdmin) {
         next();
@@ -448,7 +436,6 @@ app.post('/update-password', (req, res) => {
     });
 });
 
->>>>>>> Stashed changes
 app.post('/update-details', (req, res) => {
     const userId = req.body.userId;
     const updatedDetails = req.body;
@@ -675,7 +662,7 @@ app.post('/send-reset-email', (req, res) => {
     const email = req.body.email;
 
     const mailOptions = {
-        from: 'peaklabs1@gmail.com',
+        from: 'peaklabs',
         to: email,
         subject: 'Réinitialisation du mot de passe', // Sujet de l'e-mail
         text: `Cher(e) Utilisateur,
@@ -699,5 +686,19 @@ app.post('/send-reset-email', (req, res) => {
             console.log('Email sent: ' + info.response);
             res.status(200).send('Email sent successfully');
         }
+    });
+});
+app.get("/event/review", function (req, res) {
+    res.render("pages/review", {
+        siteTitle: "Review",
+        pageTitle: "Review",
+        userDetails: req.session.user,
+    });
+});
+app.get("/event/apply", function (req, res) {
+    res.render("pages/appliquer", {
+        siteTitle: "Appli",
+        pageTitle: "Appli",
+        userDetails: req.session.user,
     });
 });
