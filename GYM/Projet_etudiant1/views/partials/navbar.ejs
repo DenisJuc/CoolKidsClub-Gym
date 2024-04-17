@@ -20,14 +20,11 @@
         <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <% if (userDetails) { %>
-                <a class="nav-link active text-decoration-underline d-flex align-items-center" aria-current="page">
-                    Bienvenue <%= userDetails.E_PRENOM %>
-                </a>
+                    <a class="nav-link active text-decoration-underline d-flex align-items-center"
+                    aria-current="page" href="/logout">
+                    Déconnexion
                 <% } else { %>
-                <a class="nav-link active text-decoration-underline d-flex align-items-center"
-                    aria-current="page" href="/event/connect">
-                    Se Connecter au Lab
-                </a>
+                    
                 <% } %>
                 <a class="nav-link active d-flex align-items-center" href="/event/boutique">Boutique</a>
 
@@ -49,15 +46,33 @@
                     aria-disabled="true"><img src="/user-solid.png" alt=""
                         style="filter: brightness(0%);" width="40px"></a>
                 <% } else { %>
-                <a class="nav-link active d-flex align-items-center" href="/event/creationCompte"
-                    tabindex="-1" aria-disabled="true"><img src="/user-solid.png" alt=""
-                        style="filter: brightness(0%);" width="40px"></a>
+                    <div class="dropdown">
+                        <a class="nav-link active text-decoration-underline d-flex align-items-center" href="javascript:void(0);" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
+                            <img src="/user-solid.png" alt="" style="filter: brightness(0%);" width="40px">
+                        </a>
+                        <ul style="margin-left: -140px;" class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
+                            <li><a class="dropdown-item" href="/event/connect">Se Connecter</a></li>
+                            <li><a class="dropdown-item" href="/event/creationCompte">Inscription</a></li>
+                        </ul>
+                    </div>
                 <% } %>
             </div>
         </div>
     </div>
 
 </nav>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    function toggleDropdown() {
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        dropdownMenu.classList.toggle("show");
+    }
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'fr'}, 'google_translate_element');
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
     function googleTranslateElementInit() {
@@ -78,10 +93,15 @@ body > .skiptranslate > iframe.skiptranslate {
   display: none !important;
   visibility: hidden !important;
 }
+body > .skiptranslate > iframe.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+}
+.custom-dropdown-menu {
+        right: auto !important;
+        left: 0 !important;
+    }
 /*
 .navbar {
-    margin-top: -40px; /* Adjust this value according to the height of the hidden banner */
-}
-*/
+    margin-top: -40px; /* Adjust this value according to the height of the hidden banner} */
 </style>
-
