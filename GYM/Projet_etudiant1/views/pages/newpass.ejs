@@ -1,22 +1,4 @@
-ww
 
-
-
-ww
-
-
-
-
-
-
-
-
-
-
-
-
-
-*UPDATE PASSWORD WORKS*
 <%- include ("../partials/header.ejs") %>
 
     <div class="row">
@@ -29,13 +11,43 @@ ww
                         <div id="emailError" style="color: red;"></div> <!-- Placeholder for error message -->
                         <label for="password">Mot De Passe:</label>
                         <input type="password" id="password" name="password">
-                        <button type="button" id="submit" class="btn btn-info">Modifier mes détails</button>
+
+                        <button type="submit" class="btn btn-info">Modifier mes détails</button>
+                        <button type="button" id="submit" class="btn btn-info" onclick="updatePassword()">Modifier mes
+                            détails</button>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <%- include("../partials/footer.ejs") %>
 
+        <script>
+            function updatePassword() {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                fetch('/update-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, password: password })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "ACCOUNT NOT FOUND") {
+                            document.getElementById('emailError').innerText = "ACCOUNT NOT FOUND!";
+                        } else {
+                            window.location.href = "/event/connect";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        </script>
     <%- include("../partials/footer.ejs") %>
 
         <script>

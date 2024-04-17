@@ -123,6 +123,51 @@
                         style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px;">Salle
                         de bronzage, sauna et piscines incluses</span>
                 </div>
+
+                <script>
+                    document.getElementById("registrationForm").addEventListener("submit", function (event) {
+                        event.preventDefault();
+
+                        var formData = new FormData(this);
+                        var password = formData.get('password');
+                        var VFpassword = formData.get('VFpassword');
+                
+                        if (password !== VFpassword) {
+                            showError("Les mots de passe ne correspondent pas.");
+                        } else {
+                            var jsonData = {};
+                            formData.forEach((value, key) => {
+                                jsonData[key] = value;
+                            });
+
+                            fetch("/event/creationCompte", {
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(jsonData)
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(data => {
+                                        showError(data.message);
+                                    });
+                                }
+                                window.location.href = "/event/connect";
+                            })
+                            .catch(error => {
+                                showError("Une erreur est survenue lors de la création du compte.");
+
+
+            <div class="col-6">
+                <div>
+                    <img style="border-radius: 20x;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 60px; float: left;"
+                        src="/solarium.png" alt="muscle">
+                    <span
+                        style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px;">Salle
+                        de bronzage, sauna et piscines incluses</span>
+                </div>
+
                 <div>
                     <img style="border-radius: 16px;height: 50px;width: 50px; float: left;" src="/wall-clock.png"
                         alt="muscle">

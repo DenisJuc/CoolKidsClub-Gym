@@ -163,16 +163,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <a class="btn btn-info" target="__blank" href="/logout">Se déconnecter</a>
+                <% if (userDetails.isAdmin) { %>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a href="/event/admin" class="btn btn-info">PAGE ADMIN</a>
+                        </div>
                     </div>
-                    <div class="col-sm-6">
-                        <form action="/delete-account" method="post">
-                            <button type="submit" class="btn btn-info">Supprimer mon compte</button>
-                        </form>
-                    </div>
-                </div>
+                    <% } %>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <a class="btn btn-info" target="__blank" href="/logout">Se déconnecter</a>
+                            </div>
+                            <div class="col-sm-6">
+                                <form action="/delete-account" method="post">
+                                    <button type="submit" class="btn btn-info">Supprimer mon compte</button>
+                                </form>
+                            </div>
+                        </div>
             </div>
 
         </div>
@@ -181,8 +188,8 @@
                 var phoneNumberPattern = /^\d{10}$/;
                 return phoneNumberPattern.test(input);
             }
-        
-            document.querySelector("form[action='/update-details']").addEventListener("submit", function(event) {
+
+            document.querySelector("form[action='/update-details']").addEventListener("submit", function (event) {
                 var numInput = document.getElementById("num");
                 var phoneNumber = numInput.value;
 
@@ -194,4 +201,4 @@
         </script>
 
 
-<%- include("../partials/footer.ejs") %>
+        <%- include("../partials/footer.ejs") %>
