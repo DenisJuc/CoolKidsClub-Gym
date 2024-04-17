@@ -155,26 +155,35 @@ app.get("/event/newpass", function (req, res) {
 });
 
 app.get("/event/admin", (req, res) => {
+
+    if (!req.session.user || !req.session.user.isAdmin) {
+        return res.status(403).send("Forbidden");
+    }
     console.log("kinda in");
-    const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+    const userDetailsQuery = "SELECT * FROM e_compte";
+    const productQuery = "SELECT * FROM e_produit";
     con.query(userDetailsQuery, (err, userDetails) => {
         if (err) {
-            res.status(500).send("Erreur");
-            return;
+            console.error("Error executing userDetailsQuery:", err);
+            return res.status(500).send("Internal Server Error");
         }
 
-        if (userDetails.length === 0) {
-            res.status(404).send("Erreur");
-            return;
-        }
+        con.query(productQuery, (err, products) => {
+            if (err) {
+                console.error("Error executing productQuery:", err);
+                return res.status(500).send("Internal Server Error");
+            }
 
-        res.render("pages/admin", {
-            siteTitle: "Admin",
-            pageTitle: "Admin",
-            userDetails: req.session.user,
+            res.render("pages/admin", {
+                siteTitle: "Admin",
+                pageTitle: "Admin",
+                userDetails: userDetails,
+                products: products
+            });
         });
     });
 });
+
 
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
@@ -289,13 +298,13 @@ app.post('/delete-item/:productId', (req, res) => {
         }
 
         const currentQuantity = selectResult[0].E_QUANTITE;
-            con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
-                if (deleteErr) {
-                    return res.status(500).send("Erreur");
-                }
-                res.redirect('/event/panier');
-            });
-        
+        con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
+            if (deleteErr) {
+                return res.status(500).send("Erreur");
+            }
+            res.redirect('/event/panier');
+        });
+
     });
 });
 
@@ -340,6 +349,9 @@ app.post('/event/connect', (req, res) => {
 
         if (result.length > 0) {
             req.session.user = result[0];
+            if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
+                req.session.user.isAdmin = true;
+            }
             res.redirect('/event/detail');
             return req.session.user;
         } else {
@@ -389,56 +401,40 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.get("/event/admin", function (req, res) {
-    res.render("pages/admin", {
-        siteTitle: "Admin",
-        pageTitle: "Admin",
-        userDetails: req.session.user,
+const isAdmin = (req, res, next) => {
+    if (req.session.user && req.session.user.isAdmin) {
+        next();
+    } else {
+        res.status(403).send("Unauthorized access");
+    }
+};
+
+app.post('/update-password', (req, res) => {
+    const email = req.body.email;
+    const newPassword = req.body.password;
+
+    const checkEmailQuery = `SELECT * FROM e_compte WHERE E_COURRIEL = '${email}'`;
+    con.query(checkEmailQuery, (error, results) => {
+        if (error) {
+            res.status(500).send("Error checking email in the database");
+        } else {
+            if (results.length > 0) {
+                const updatePasswordQuery = `UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL = '${email}'`;
+
+
+                con.query(updatePasswordQuery, (error, results) => {
+                    if (error) {
+                        res.status(500).send("Error updating password");
+                    } else {
+                        res.redirect("/event/connect")
+                    }
+                });
+            } else {
+                res.status(404).json({ message: "ACCOUNT NOT FOUND" });
+            }
+        }
     });
 });
-
-// app.post('/update-password', (req, res) => {
-//     const email = req.body.email;
-//     const newPassword = req.body.password;
-
-//     const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL" = '${email}';
-
-//     con.query(checkEmailQuery, (error, results) => {
-//         if (error) {
-//             res.status(500).send("Error checking email in the database");
-//         } else {
-//             if (results.length > 0) {
-//                 const updatePasswordQuery = "UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL" = '${email}';
-
-//                 con.query(updatePasswordQuery, (error, results) => {
-//                     if (error) {
-//                         res.status(500).send("Error updating password");
-//                     } else {
-//                         res.redirect("/event/connect")
-//                     }
-//                 });
-//             } else {
-//                 res.status(404).json({ message: "ACCOUNT NOT FOUND" });
-//             }
-//         }
-//     });
-// });
-
-// app.get("/event/admin", function (req, res) {
-//     const userDetailsQuery = "SELECT * FROM e_compte";
-//     con.query(userDetailsQuery, (err, userDetails) => {
-//         if (err) {
-//             res.status(500).send("Erreur");
-//             return;
-//         }
-
-//         res.render("pages/admin", {
-//             siteTitle: "Admin",
-//             pageTitle: "Admin",
-//             userDetails: userDetails,
-//         });
-//     });
-// });
 
 app.post('/update-details', (req, res) => {
     const userId = req.body.userId;
@@ -553,6 +549,7 @@ app.post('/event/add-subscription-to-cart', (req, res) => {
 });
 
 import Stripe from 'stripe';
+import { debug } from "console";
 // This is your test secret API key.
 const stripe = new Stripe('sk_test_51OvgtJP5VwBXZgOXohPNaXkcg0PbJqdZm05VpQfzYgDpNZSA31iYGd18dnxJVREkqRapCb8vy8cmiyVAZvwgkqC5000DhDQ9Ut');
 
@@ -572,14 +569,14 @@ const calculateOrderAmount = (items) => {
     // Replace this constant with a calculation of the order's amount
     // Calculate the order total with any exclusive taxes on the server to prevent
     // people from directly manipulating the amount on the client
-  
-    var amount=0;
+
+    var amount = 0;
     items.forEach(item => {
-      amount += item.amount;
-  });
+        amount += item.amount;
+    });
     let orderAmount = amount;
     return orderAmount;
-  };
+};
 
 app.post("/create-payment-intent", async (req, res) => {
     const { items } = req.body;
