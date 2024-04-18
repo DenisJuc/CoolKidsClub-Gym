@@ -308,57 +308,79 @@ app.post('/delete-item/:productId', (req, res) => {
     });
 });
 
+import bcrypt from 'bcrypt';
+
 app.post('/event/creationCompte', (req, res) => {
     const { nom, prénom, email, num, password } = req.body;
 
-    // Vérifier si l'email existe déjà dans la base de données
     const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
     con.query(checkEmailQuery, [email], (checkErr, checkResult) => {
         if (checkErr) {
             return res.status(500).send("Erreur");
         }
 
-        // Si l'email existe déjà, envoyer une réponse au client
         if (checkResult.length > 0) {
             return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
         }
 
-        // Si l'email n'existe pas encore, procéder à l'insertion dans la base de données
-        const insertQuery = `INSERT INTO e_compte (E_NOM, E_LOCATION, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?, ?)`;
-        const values = [nom, " ", prénom, email, password, num];
-
-        // Exécuter la requête d'insertion
-        con.query(insertQuery, values, (insertErr, insertResult) => {
-            if (insertErr) {
-                return res.status(500).send("Erreur");
+        bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+            if (hashErr) {
+                return res.status(500).send("Erreur lors du hachage du mot de passe.");
             }
-            res.redirect('/event/connect');
+
+
+            const insertQuery = `INSERT INTO e_compte (E_NOM, E_LOCATION, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?, ?)`;
+            const values = [nom, " ", prénom, email, hashedPassword, num];
+
+            con.query(insertQuery, values, (insertErr, insertResult) => {
+                if (insertErr) {
+                    return res.status(500).send("Erreur lors de l'insertion des données.");
+                }
+                res.redirect('/event/connect');
+            });
         });
     });
 });
+
+
 app.post('/event/connect', (req, res) => {
     const { email, password } = req.body;
 
-    const verifyUserQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_PASSWORD = ?";
-    con.query(verifyUserQuery, [email, password], (err, result) => {
+    const verifyUserQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
+    con.query(verifyUserQuery, [email], (err, result) => {
         if (err) {
             console.error("Error verifying user:", err);
             return res.status(500).send("Internal Server Error");
         }
-        console.log("Result:", result);
 
-        if (result.length > 0) {
-            req.session.user = result[0];
-            if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
-                req.session.user.isAdmin = true;
-            }
-            res.redirect('/event/detail');
-            return req.session.user;
-        } else {
-            res.status(401).send("Erreur");
+        if (result.length === 0) {
+            return res.status(401).send("Email not found");
         }
+
+        const user = result[0];
+
+        // Compare the provided password with the hashed password from the database
+        bcrypt.compare(password, user.E_PASSWORD, (compareErr, isMatch) => {
+            if (compareErr) {
+                console.error("Error comparing passwords:", compareErr);
+                return res.status(500).send("Internal Server Error");
+            }
+
+            if (isMatch) {
+                // Passwords match, user is authenticated
+                req.session.user = user;
+                if (user.E_COURRIEL === "peaklabs1@gmail.com") {
+                    req.session.user.isAdmin = true;
+                }
+                res.redirect('/event/detail');
+            } else {
+                // Passwords do not match
+                res.status(401).send("Incorrect password");
+            }
+        });
     });
 });
+
 
 
 app.get("/event/detail", (req, res) => {
@@ -700,5 +722,28 @@ app.get("/event/apply", function (req, res) {
         siteTitle: "Appli",
         pageTitle: "Appli",
         userDetails: req.session.user,
+    });
+});
+
+app.post('/event/soumettre-avis', (req, res) => {
+    const { userName, userRating, userCountry, userReview } = req.body;
+
+    console.log("nom:", userName);
+    console.log("etoiles:", userRating);
+    console.log("pays:", userCountry);
+    console.log("commentaire:", userReview);
+    const newReview = new Review({
+        name: userName,
+        rating: userRating,
+        country: userCountry,
+        review: userReview
+    });
+
+    newReview.save((err, savedReview) => {
+        if (err) {
+            console.error("Error saving review:", err);
+            return res.status(500).send("Internal Server Error");
+        }
+        res.status(201).json(savedReview); // Assuming you want to send back the saved review
     });
 });
