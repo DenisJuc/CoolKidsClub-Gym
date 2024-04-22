@@ -20,16 +20,13 @@
         <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <% if (userDetails) { %>
-                <a class="nav-link active text-decoration-underline d-flex align-items-center" aria-current="page">
-                    Bienvenue <%= userDetails.E_PRENOM %>
-                </a>
+                    <a class="nav-link active text-decoration-underline d-flex align-items-center"
+                    aria-current="page" href="/logout">
+                    Déconnexion
                 <% } else { %>
-                <a class="nav-link active text-decoration-underline d-flex align-items-center"
-                    aria-current="page" href="/event/connect">
-                    Se Connecter au Lab
-                </a>
+                    
                 <% } %>
-                <a class="nav-link active d-flex align-items-center" href="/event/boutique">Boutique</a>
+                <a class="nav-link active d-flex align-items-center toucher" href="/event/boutique">Boutique</a>
 
                 <!-- <a class="nav-link active d-flex align-items-center" href="#">en</a>
                 <a class="nav-link active d-flex align-items-center" href="#">fr</a> -->
@@ -37,7 +34,7 @@
 
 
                 <a class="nav-link active" href="/event/panier">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40px" fill="currentColor"
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40px" fill="#FFFFFF"
                         class="bi bi-cart-fill align-items-center nav-link active d-flex "
                         viewBox="0 0 16 16">
                         <path
@@ -49,15 +46,35 @@
                     aria-disabled="true"><img src="/user-solid.png" alt=""
                         style="filter: brightness(0%);" width="40px"></a>
                 <% } else { %>
-                <a class="nav-link active d-flex align-items-center" href="/event/creationCompte"
-                    tabindex="-1" aria-disabled="true"><img src="/user-solid.png" alt=""
-                        style="filter: brightness(0%);" width="40px"></a>
+                    <div class="dropdown">
+                        <button class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
+                            <img src="/user-solid.png" alt="" style="filter: brightness(0%);" width="40px">
+                        </a>
+                        <ul style="margin-left: -140px;" class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
+                            <li><a class="dropdown-item" href="/event/connect">Se Connecter</a></li>
+                            <li><a class="dropdown-item" href="/event/creationCompte">Inscription</a></li>
+                        </ul>
+                    </div>
                 <% } %>
+                <div id="google_translate_element"></div>
+
             </div>
         </div>
     </div>
 
 </nav>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    function toggleDropdown() {
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        dropdownMenu.classList.toggle("show");
+    }
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'fr'}, 'google_translate_element');
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
     function googleTranslateElementInit() {
@@ -78,6 +95,7 @@ body > .skiptranslate > iframe.skiptranslate {
   display: none !important;
   visibility: hidden !important;
 }
+<<<<<<< HEAD
 
 
 .navbar {
@@ -85,4 +103,28 @@ body > .skiptranslate > iframe.skiptranslate {
 }
 
 </style>
+=======
+body > .skiptranslate > iframe.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+}
+.custom-dropdown-menu {
+        right: auto !important;
+        left: 0 !important;
+    }
+>>>>>>> 61ebfc241955814618be8772e5a747d014f8c065
 
+.navbar {
+    margin-top: -40px; 
+}
+
+        /* .toucher {
+            transition: color 0.3s ease-in-out;
+            font-weight: bold;
+            color: #000 !important;
+    }
+
+    .toucher:hover {
+        color: #FFFFFF !important;
+    } */
+</style>
