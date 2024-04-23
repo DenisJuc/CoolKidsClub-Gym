@@ -9,6 +9,12 @@ const con = mysql.createConnection({
     database: "mybd"
 });
 
+const res = {
+    status: jest.fn().mockReturnThis(),
+    send: jest.fn(),
+    redirect: jest.fn()
+};
+
 const connection = (req, res) => {
     const { email, password } = req.body;
 

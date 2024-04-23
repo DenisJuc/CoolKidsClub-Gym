@@ -1,30 +1,70 @@
 const connection = require('./connection');
 
-describe('POST /event/connect', () => {
-    const req = {
-        body: { email: 'test@example.com', password: 'testPassword' },
-        session: {}
-    };
+// Mocking the MySQL connection and query function
+jest.mock('mysql', () => ({
+    createConnection: jest.fn(() => ({
+        query: jest.fn(),
+    })),
+}));
 
-    test('should authenticate user with correct email and password', () => {
-        const res = {
-            redirect: jest.fn()
+describe('connection function', () => {
+    let req, res;
+
+    beforeEach(() => {
+        req = {
+            body: {
+                email: 'test@example.com',
+                password: 'testpassword',
+            },
+            session: {}, // Initialize session object
         };
+        res = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            redirect: jest.fn(),
+        };
+    });
 
-        // Mock bcrypt.compare to simulate successful authentication
-        jest.mock('bcrypt', () => ({
-            compare: jest.fn((password, hashedPassword, callback) => {
-                callback(null, true); // Simulate passwords match
-            })
-        }));
+    it('should authenticate user and redirect if password is correct', async () => {
+        // Mocking the query result for a successful login
+        const result = [{ E_PASSWORD: 'hashed_password' }];
+        const con = require('mysql').createConnection();
+        con.query.mockImplementationOnce((query, values, callback) => {
+            callback(null, result);
+        });
 
-        connection(req, res);
+        await connection(req, res);
 
-        // Check if session is set and user is redirected
         expect(req.session.user).toEqual({
             E_COURRIEL: 'test@example.com',
-            E_PASSWORD: 'testPassword'
+            E_PASSWORD: 'hashed_password',
         });
         expect(res.redirect).toHaveBeenCalledWith('/event/detail');
+    });
+
+    it('should handle incorrect password', async () => {
+        // Mocking the query result for an incorrect password
+        const result = [{ E_PASSWORD: 'incorrect_password' }];
+        const con = require('mysql').createConnection();
+        con.query.mockImplementationOnce((query, values, callback) => {
+            callback(null, result);
+        });
+
+        await connection(req, res);
+
+        expect(res.send).toHaveBeenCalledWith('Incorrect password');
+    });
+
+    it('should handle user not found', async () => {
+        // Mocking the query result for a user not found
+        const result = [];
+        const con = require('mysql').createConnection();
+        con.query.mockImplementationOnce((query, values, callback) => {
+            callback(null, result);
+        });
+
+        await connection(req, res);
+
+        expect(res.send).toHaveBeenCalledWith('Email not found');
     });
 });
