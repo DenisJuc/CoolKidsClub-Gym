@@ -91,5 +91,95 @@
             </div>
         </div>
     </div>
+    <select id="timeframe">
+        <option value="7days">Last 7 Days</option>
+        <option value="30days">Last 30 Days</option>
+        <option value="1year">Last 1 Year</option>
+    </select>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script>
+        /*
+        // DATA
+        var labels = ["January", "February", "March", "April", "May", "June", "July"];
+        var data = [65, 59, 80, 81, 56, 55, 40];
+    
+        // Chart
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Produits Acheter',
+                    data: data,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        */ 
+       
+       
+    const timeframeSelect = document.getElementById('timeframe');
+    const canvas = document.getElementById('myChart');
+    const ctx = canvas.getContext('2d');
+
+    let myChart;
+
+    // Pour gety the product ewpfjow
+    function fetchDataAndRenderChart() {
+        const timeframe = timeframeSelect.value;
+
+        fetch(`/product-purchases?timeframe=${timeframe}`)
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(product => product.E_IDPRODUIT);
+                const purchaseCounts = data.map(product => product.purchaseCount);
+
+                if (myChart) {
+                    myChart.destroy(); 
+                }
+
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Product Purchases',
+                            data: purchaseCounts,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // to render the chartyyyyytytyt
+    fetchDataAndRenderChart();
+    timeframeSelect.addEventListener('change', fetchDataAndRenderChart);
+
+    </script>
+    
+
+
 
     <% include ("../partials/footer") %>
