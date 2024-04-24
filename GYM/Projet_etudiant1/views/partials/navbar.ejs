@@ -21,7 +21,8 @@
             <div class="navbar-nav">
                 <% if (userDetails) { %>
                     <a class="nav-link active text-decoration-underline d-flex align-items-center" aria-current="page">
-                        Bienvenue <%= userDetails.E_PRENOM %>
+                        Bienvenue <%= userDetails.E_PRENOM %> 
+
                     </a>
                 <% } else { %>
                     
@@ -42,6 +43,15 @@
                     </svg>
                 </a>
                 <% if (userDetails) { %>
+                    <div class="dropdown">
+                        <a class="nav-link active text-decoration-underline d-flex align-items-center" href="javascript:void(0);" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
+                            <img src="/user-solid.png" alt="" style="filter: brightness(0%);" width="40px">
+                        </a>
+                        <ul style="margin-left: -140px;" class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
+                            <li><a class="dropdown-item" href="/event/detail">Votre compte</a></li>
+                            <li><a class="dropdown-item" href="/logout">Déconnexion</a></li>
+                        </ul>
+                    </div>
                 <!--<a class="nav-link active d-flex align-items-center" href="/event/detail" tabindex="-1"
                     aria-disabled="true"><img src="/user-solid.png" alt=""
                         style="filter: brightness(0%);" width="40px"></a>-->
@@ -58,6 +68,7 @@
                                     <% } %>   
                             </ul>
                         </div>        
+
                 <% } else { %>
                     <div class="dropdown">
                         <a class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
