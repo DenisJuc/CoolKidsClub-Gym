@@ -84,6 +84,11 @@
                   </div>
                   <div class="form-group" style="margin-top: 20px;">
                     <div class="col-xs-12">
+                        <a class="btn btn-info" target="__blank" href="/logout">Se déconnecter</a>
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-top: 20px;">
+                    <div class="col-xs-12">
                         <% if (userDetails.isAdmin) { %>
                             <div class="row">
                                 <div class="col-sm-12">
@@ -133,6 +138,9 @@ function validatePhoneNumber(input) {
                     alert("Veuillez entrer un numéro de téléphone valide de 10 chiffres.");
                 }
             });
-  </script>   
-                                                   
-<%- include("../partials/footer.ejs") %>
+
+
+        </script>
+
+
+ <%- include("../partials/footer.ejs") %>
