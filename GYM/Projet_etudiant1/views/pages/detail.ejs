@@ -54,7 +54,7 @@
                           
                           <div class="col-xs-6">
                               <label for="phone"><h4>Numéro de téléphone</h4></label>
-                              <input type="number" class="form-control" id="num" name="num" value="<%= userDetails.E_NUMBER %>">
+                              <input type="text" class="form-control" id="num" name="num" value="<%= userDetails.E_NUMBER %>">
                           </div>
                       </div>
           
@@ -63,6 +63,13 @@
                           <div class="col-xs-6">
                               <label for="email"><h4>Courriel</h4></label>
                               <input type="email" class="form-control" id="email" name="email" value="<%= userDetails.E_COURRIEL %>">
+                          </div>
+                      </div>
+                      <div class="form-group" style="margin-top: 20px;">
+                          
+                          <div class="col-xs-6">
+                              <label for="password"><h4>Password</h4></label>
+                              <input type="password" class="form-control" id="password" name="password" value="<%= userDetails.E_PASSWORD %>">
                           </div>
                       </div>
                       <div class="form-group">
@@ -80,6 +87,11 @@
                         <form action="/delete-account" method="post">
                             <button type="submit" class="btn btn-lg btn-danger">Supprimer mon compte</button>  
                             </form>                 
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-top: 20px;">
+                    <div class="col-xs-12">
+                        <a class="btn btn-info" target="__blank" href="/logout">Se déconnecter</a>
                     </div>
                   </div>
                   <div class="form-group" style="margin-top: 20px;">
@@ -133,6 +145,12 @@ function validatePhoneNumber(input) {
                     alert("Veuillez entrer un numéro de téléphone valide de 10 chiffres.");
                 }
             });
-  </script>   
-                                                   
+<<<<<<< HEAD
+        </script>
+
+
+ <%- include("../partials/footer.ejs") %>
+=======
+  </script>                                                    
 <%- include("../partials/footer.ejs") %>
+>>>>>>> 61ebfc241955814618be8772e5a747d014f8c065

@@ -747,3 +747,39 @@ app.post('/event/soumettre-avis', (req, res) => {
         res.status(201).json(savedReview); // Assuming you want to send back the saved review
     });
 });
+
+app.get('/product-purchases', (req, res) => {
+    const { timeframe } = req.query;
+
+    let startDate;
+    let endDate = new Date();
+    switch (timeframe) {
+        case '7days':
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - 7);
+            break;
+        case '30days':
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            break;
+        case '1year':
+            startDate = new Date();
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            break;
+        default:
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            break;
+    }
+//NEEDING TO GET FIXED
+    con.query('SELECT E_IDPRODUIT, COUNT(*) AS purchaseCount FROM e_produit WHERE purchaseDate BETWEEN ? AND ? GROUP BY E_IDPRODUIT', [startDate, endDate], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        res.json(results);
+    });
+});
+
