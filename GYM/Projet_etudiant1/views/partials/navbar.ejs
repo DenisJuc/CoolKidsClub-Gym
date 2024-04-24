@@ -46,7 +46,7 @@
                     aria-disabled="true"><img src="/user-solid.png" alt=""
                         style="filter: brightness(0%);" width="40px"></a>-->
                         <div class="dropdown">
-                            <button class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
+                            <a class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
                                 <img src="/user-solid.png" alt="" style="filter: brightness(0%);" width="40px">
                             </a>
                             <ul style="margin-left: -140px;" class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
@@ -60,7 +60,7 @@
                         </div>        
                 <% } else { %>
                     <div class="dropdown">
-                        <button class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
+                        <a class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
                             <img src="/user-solid.png" alt="" style="filter: brightness(0%);" width="40px">
                         </a>
                         <ul style="margin-left: -140px;" class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
@@ -115,3 +115,38 @@ body > .skiptranslate > iframe.skiptranslate {
 } */
 
 </style>
+
+<script>
+// Function to show the selected language
+function showSelectedLanguage() {
+    // Get the select element
+    var languageDropdown = document.querySelector(".goog-te-combo");
+    
+    // Check if the language dropdown exists
+    if (languageDropdown) {
+        // Get the selected language value
+        var selectedLanguage = languageDropdown.value;
+        
+        // Check if the selected language is French
+        if (selectedLanguage === 'fr') {
+            // If the selected language is French, return without displaying the alert or applying CSS
+            return null;
+        } else {
+            // Display the selected language in an alert
+            alert("Selected language: " + selectedLanguage);
+            
+            // Apply the CSS to the navbar
+            document.querySelector('.navbar').style.marginTop = '-40px';
+            
+            // Return the selected language
+            return selectedLanguage;
+        }
+    }
+
+    // Return null if the language dropdown doesn't exist
+    return null;
+}
+</script>
+
+
+
