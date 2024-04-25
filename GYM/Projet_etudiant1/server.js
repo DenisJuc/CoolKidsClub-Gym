@@ -384,7 +384,6 @@ app.post('/event/connect', (req, res) => {
 
 
 app.get("/event/detail", (req, res) => {
-    console.log("kinda in");
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
 
     if (!loggedInUserId) {
@@ -501,13 +500,15 @@ app.post('/update-details', (req, res) => {
             }
 
             req.session.user = userDetails[0];
-
+                if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
+                    req.session.user.isAdmin = true;
+                }
 
             res.render("pages/detail", {
                 siteTitle: "Details",
                 pageTitle: "Details",
-
                 userDetails: req.session.user,
+                
             });
         });
     });
