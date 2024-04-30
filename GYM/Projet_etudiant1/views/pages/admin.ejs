@@ -1,5 +1,4 @@
 <%- include ("../partials/header.ejs") %>
-
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <div class="container mt-5">
@@ -34,8 +33,10 @@
                                     <%= user.E_NUMBER %>
                                 </td>
                                 <td>
-                                    <!-- Checkbox for admin privilege -->
-                                    <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>" <%= user.isAdmin ? 'checked' : '' %>>
+                                    <form action="/set-admin-status" method="post" id="adminForm">
+                                        <input type="hidden" name="userId" value="<%= user.E_ID %>">
+                                        <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>" <%= user.isAdmin ? 'checked' : '' %> onchange="this.form.submit()">
+                                    </form>
                                 </td>
                             </tr>
                         <% }); %>

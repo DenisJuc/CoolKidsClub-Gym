@@ -784,3 +784,35 @@ app.get('/product-purchases', (req, res) => {
     });
 });
 
+app.post('/set-admin-status', (req, res) => {
+    const { userId, adminCheckbox } = req.body;
+    const isAdmin = adminCheckbox === 'on';
+
+    const updateAdminQuery = "UPDATE e_compte SET isAdmin = ? WHERE E_ID = ?";
+    con.query(updateAdminQuery, [isAdmin, userId], (err, result) => {
+        if (err) {
+            console.error("Error updating admin status:", err);
+            return res.status(500).send("Erreur lors de la mise à jour du statut administrateur");
+        }
+
+        if (result.affectedRows === 0) {
+            console.error("No rows affected while updating admin status");
+            return res.status(500).send("Erreur lors de la mise à jour du statut administrateur");
+        }
+
+        const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+        con.query(userDetailsQuery, [userId], (err, userDetails) => {
+            if (err) {
+                console.error("Error fetching user details:", err);
+                return res.status(500).send("Erreur lors de la récupération des détails de l'utilisateur");
+            }
+
+            req.session.user = userDetails[0];
+                req.session.user.isAdmin = true;
+
+            res.redirect('/admin-dashboard');
+        });
+    });
+});
+
+
