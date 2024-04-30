@@ -1,188 +1,135 @@
 <%- include("../partials/header.ejs") %>
-    <style>
-        .titre {
-            font-size: 64px;
-            color: white;
-            font-family: 'Khand';
-            flex-direction: column;
-            text-align: center;
-            margin-top: -50px;
-        }
+<link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
+    
+<style>
+      body {
+        font-family: 'Krona One';
+        background-color: #41455D;
+      }
+</style>
+<hr>
+<div class="container bootstrap snippet">
+    <div class="row">
+  		<div class="col-sm-10"><h1>Mon profil</h1></div>
+    	<div class="col-sm-2"><a class="pull-right"><img title="profile image" class="img-circle img-responsive" src="/gym-website-logo-without-a-person-upscaled.png"></a></div>
+    </div>
+    <div class="row">
+  		<div class="col-sm-3"><!--left col-->
+              
 
-        body {
-            background-color: #41455D;
-        }
+      <div class="text-center">
+        <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar">
+      </div></hr><br>
+          
+        </div><!--/col-3-->
+    	<div class="col-sm-9">
 
-        .items_page {
-            font-family: 'Khand';
-            flex-direction: column;
-            color: #FFFFFF;
-            font-size: 32px;
-        }
-
-        .form-signin {
-            width: 55%;
-            margin: -10;
-        }
-
-        .form-control {
-            margin-bottom: 25px;
-        }
-
-        .btn-primary {
-            background-color: grey;
-            border-color: grey;
-        }
-
-        .custom-inputs {
-            background-color: #D9D9D9;
-            width: 489px;
-            height: 35px;
-            border: none;
-            display: block;
-        }
-
-        .custom_butt {
-            margin-left: 650px;
-            margin-top: -500px;
-        }
-
-        .column {
-            float: left;
-            width: 50%;
-        }
-
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        .card {
-            margin-bottom: 20px;
-
-        }
-
-        .card-body {
-            padding: 20px;
-
-        }
-
-        .btn-info {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-    </style>
-
-    <link href="https://fonts.googleapis.com/css2?family=Khand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <div class="container">
-        <div class="alert alert-warning alert-dismissible fade in" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-
-        <div class="titre">VOTRE COMPTE</div>
-
-
-
-        <div class="row">
-
-            <div class="col-md-8">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Nom</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= userDetails.E_NOM %>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Prenom</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= userDetails.E_PRENOM %>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Courriel</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= userDetails.E_COURRIEL %>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Mobile</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= userDetails.E_NUMBER %>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <h6 class="mb-0">Mot De Pass</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                                <%= userDetails.E_PASSWORD%>
-                            </div>
-                        </div>
-                        <hr>
-
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <form action="/update-details" method="post">
-                                <input type="hidden" name="userId" value="<%= userDetails.E_ID %>">
-                                <label for="name">Nom:</label>
-                                <input type="text" id="name" name="name" value="<%= userDetails.E_NOM %>">
-                                <label for="prenom">Prénom:</label>
-                                <input type="text" id="prenom" name="prenom" value="<%= userDetails.E_PRENOM %>">
-                                <label for="email">Courriel:</label>
-                                <input type="email" id="email" name="email" value="<%= userDetails.E_COURRIEL %>">
-                                <label for="num">Mobile:</label>
-                                <input type="text" id="num" name="num" value="<%= userDetails.E_NUMBER %>">
-                                <label for="password">Mot De Passe:</label>
-                                <input type="password" id="password" name="password"
-                                    value="<%= userDetails.E_PASSWORD %>">
-                                <button type="submit" class="btn btn-info">Modifier mes détails</button>
-                            </form>
+              
+          <div class="tab-content">
+            <div class="tab-pane active" id="home">
+                <hr>
+                  <form class="form" action="/update-details" method="post" id="registrationForm">
+                    <div class="form-group" style="margin-top: 20px;">
+                        <div class="col-xs-6">
+                            <label for="first_name"><h4>Votre identifiant</h4></label>
+                            <input type="number" class="form-control" name="userId" value="<%= userDetails.E_ID %>" readonly title="Your identifier" >
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
+                      <div class="form-group" style="margin-top: 20px;">
+                          
+                          <div class="col-xs-6">
+                              <label for="first_name"><h4>Prénom</h4></label>
+                              <input type="text" class="form-control" name="prenom"  value="<%= userDetails.E_PRENOM %>" title="enter your first name if any.">
+                          </div>
+                      </div>
+                      <div class="form-group" style="margin-top: 20px;">
+                          
+                          <div class="col-xs-6">
+                            <label for="last_name"><h4>Last name</h4></label>
+                              <input type="text" class="form-control" name="name"  value="<%= userDetails.E_NOM %>">
+                          </div>
+                      </div>
+          
+                      <div class="form-group" style="margin-top: 20px;">
+                          
+                          <div class="col-xs-6">
+                              <label for="phone"><h4>Numéro de téléphone</h4></label>
+                              <input type="number" class="form-control" id="num" name="num" maxlength="10" value="<%= userDetails.E_NUMBER %>">
+                          </div>
+                      </div>
+          
+                      <div class="form-group" style="margin-top: 20px;">
+                          
+                          <div class="col-xs-6">
+                              <label for="email"><h4>Courriel</h4></label>
+                              <input type="email" class="form-control" id="email" name="email" value="<%= userDetails.E_COURRIEL %>">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                           <div class="col-xs-12">
+                                <br>
+                              	<button class="btn btn-lg btn-success" type="submit">
+                                    <i class="glyphicon glyphicon-ok-sign"></i>Sauver les modifications
+                            </button> 
+                            </div>
+                        </div>
+                      
+              	</form>
+                  <div class="form-group" style="margin-top: 20px;">
+                    <div class="col-xs-12">
+                        <form action="/delete-account" method="post">
+                            <button type="submit" class="btn btn-lg btn-danger">Supprimer mon compte</button>  
+                            </form>                 
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-top: 20px;">
+                    <div class="col-xs-12">
                         <a class="btn btn-info" target="__blank" href="/logout">Se déconnecter</a>
                     </div>
-                    <div class="col-sm-6">
-                        <form action="/delete-account" method="post">
-                            <button type="submit" class="btn btn-info">Supprimer mon compte</button>
-                        </form>
+                  </div>
+                  <div class="form-group" style="margin-top: 20px;">
+                    <div class="col-xs-12">
+                        <% if (userDetails.isAdmin) { %>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <a href="/event/admin" class="btn btn-primary">Admin</a>
+                                </div>
+                            </div>
+                            <% } %>                 
                     </div>
-                </div>
-            </div>
+                  </div>
+                  
+              <hr>
+              
+             </div><!--/tab-pane-->
+  <script>
+    $(document).ready(function() {
 
-        </div>
-        <script>
-            function validatePhoneNumber(input) {
+    
+var readURL = function(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('.avatar').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+
+$(".file-upload").on('change', function(){
+    readURL(this);
+});
+});
+
+function validatePhoneNumber(input) {
                 var phoneNumberPattern = /^\d{10}$/;
                 return phoneNumberPattern.test(input);
             }
-        
-            document.querySelector("form[action='/update-details']").addEventListener("submit", function(event) {
+
+            document.querySelector("form[action='/update-details']").addEventListener("submit", function (event) {
                 var numInput = document.getElementById("num");
                 var phoneNumber = numInput.value;
 
@@ -191,7 +138,20 @@
                     alert("Veuillez entrer un numéro de téléphone valide de 10 chiffres.");
                 }
             });
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 00953978775c3314c55179bd6d2491c0ad66ce33
         </script>
 
 
+ <%- include("../partials/footer.ejs") %>
+<<<<<<< HEAD
+=======
+  </script>                                                    
 <%- include("../partials/footer.ejs") %>
+>>>>>>> 61ebfc241955814618be8772e5a747d014f8c065
+=======
+>>>>>>> 00953978775c3314c55179bd6d2491c0ad66ce33

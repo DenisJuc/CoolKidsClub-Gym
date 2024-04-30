@@ -155,26 +155,35 @@ app.get("/event/newpass", function (req, res) {
 });
 
 app.get("/event/admin", (req, res) => {
+
+    if (!req.session.user || !req.session.user.isAdmin) {
+        return res.status(403).send("Forbidden");
+    }
     console.log("kinda in");
-    const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+    const userDetailsQuery = "SELECT * FROM e_compte";
+    const productQuery = "SELECT * FROM e_produit";
     con.query(userDetailsQuery, (err, userDetails) => {
         if (err) {
-            res.status(500).send("Erreur");
-            return;
+            console.error("Error executing userDetailsQuery:", err);
+            return res.status(500).send("Internal Server Error");
         }
 
-        if (userDetails.length === 0) {
-            res.status(404).send("Erreur");
-            return;
-        }
+        con.query(productQuery, (err, products) => {
+            if (err) {
+                console.error("Error executing productQuery:", err);
+                return res.status(500).send("Internal Server Error");
+            }
 
-        res.render("pages/admin", {
-            siteTitle: "Admin",
-            pageTitle: "Admin",
-            userDetails: req.session.user,
+            res.render("pages/admin", {
+                siteTitle: "Admin",
+                pageTitle: "Admin",
+                userDetails: userDetails,
+                products: products
+            });
         });
     });
 });
+
 
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
@@ -289,68 +298,92 @@ app.post('/delete-item/:productId', (req, res) => {
         }
 
         const currentQuantity = selectResult[0].E_QUANTITE;
-            con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
-                if (deleteErr) {
-                    return res.status(500).send("Erreur");
-                }
-                res.redirect('/event/panier');
-            });
-        
+        con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
+            if (deleteErr) {
+                return res.status(500).send("Erreur");
+            }
+            res.redirect('/event/panier');
+        });
+
     });
 });
+
+import bcrypt from 'bcrypt';
 
 app.post('/event/creationCompte', (req, res) => {
     const { nom, prénom, email, num, password } = req.body;
 
-    // Vérifier si l'email existe déjà dans la base de données
     const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
     con.query(checkEmailQuery, [email], (checkErr, checkResult) => {
         if (checkErr) {
             return res.status(500).send("Erreur");
         }
 
-        // Si l'email existe déjà, envoyer une réponse au client
         if (checkResult.length > 0) {
             return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
         }
 
-        // Si l'email n'existe pas encore, procéder à l'insertion dans la base de données
-        const insertQuery = `INSERT INTO e_compte (E_NOM, E_LOCATION, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?, ?)`;
-        const values = [nom, " ", prénom, email, password, num];
-
-        // Exécuter la requête d'insertion
-        con.query(insertQuery, values, (insertErr, insertResult) => {
-            if (insertErr) {
-                return res.status(500).send("Erreur");
+        bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+            if (hashErr) {
+                return res.status(500).send("Erreur lors du hachage du mot de passe.");
             }
-            res.redirect('/event/connect');
+
+
+            const insertQuery = `INSERT INTO e_compte (E_NOM, E_LOCATION, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?, ?)`;
+            const values = [nom, " ", prénom, email, hashedPassword, num];
+
+            con.query(insertQuery, values, (insertErr, insertResult) => {
+                if (insertErr) {
+                    return res.status(500).send("Erreur lors de l'insertion des données.");
+                }
+                res.redirect('/event/connect');
+            });
         });
     });
 });
+
+
 app.post('/event/connect', (req, res) => {
     const { email, password } = req.body;
 
-    const verifyUserQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_PASSWORD = ?";
-    con.query(verifyUserQuery, [email, password], (err, result) => {
+    const verifyUserQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
+    con.query(verifyUserQuery, [email], (err, result) => {
         if (err) {
             console.error("Error verifying user:", err);
             return res.status(500).send("Internal Server Error");
         }
-        console.log("Result:", result);
 
-        if (result.length > 0) {
-            req.session.user = result[0];
-            res.redirect('/event/detail');
-            return req.session.user;
-        } else {
-            res.status(401).send("Erreur");
+        if (result.length === 0) {
+            return res.status(401).send("Email not found");
         }
+
+        const user = result[0];
+
+        // Compare the provided password with the hashed password from the database
+        bcrypt.compare(password, user.E_PASSWORD, (compareErr, isMatch) => {
+            if (compareErr) {
+                console.error("Error comparing passwords:", compareErr);
+                return res.status(500).send("Internal Server Error");
+            }
+
+            if (isMatch) {
+                // Passwords match, user is authenticated
+                req.session.user = user;
+                if (user.E_COURRIEL === "peaklabs1@gmail.com") {
+                    req.session.user.isAdmin = true;
+                }
+                res.redirect('/event/detail');
+            } else {
+                // Passwords do not match
+                res.status(401).send("Incorrect password");
+            }
+        });
     });
 });
 
 
+
 app.get("/event/detail", (req, res) => {
-    console.log("kinda in");
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
 
     if (!loggedInUserId) {
@@ -389,56 +422,40 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.get("/event/admin", function (req, res) {
-    res.render("pages/admin", {
-        siteTitle: "Admin",
-        pageTitle: "Admin",
-        userDetails: req.session.user,
+const isAdmin = (req, res, next) => {
+    if (req.session.user && req.session.user.isAdmin) {
+        next();
+    } else {
+        res.status(403).send("Unauthorized access");
+    }
+};
+
+app.post('/update-password', (req, res) => {
+    const email = req.body.email;
+    const newPassword = req.body.password;
+
+    const checkEmailQuery = `SELECT * FROM e_compte WHERE E_COURRIEL = '${email}'`;
+    con.query(checkEmailQuery, (error, results) => {
+        if (error) {
+            res.status(500).send("Error checking email in the database");
+        } else {
+            if (results.length > 0) {
+                const updatePasswordQuery = `UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL = '${email}'`;
+
+
+                con.query(updatePasswordQuery, (error, results) => {
+                    if (error) {
+                        res.status(500).send("Error updating password");
+                    } else {
+                        res.redirect("/event/connect")
+                    }
+                });
+            } else {
+                res.status(404).json({ message: "ACCOUNT NOT FOUND" });
+            }
+        }
     });
 });
-
-// app.post('/update-password', (req, res) => {
-//     const email = req.body.email;
-//     const newPassword = req.body.password;
-
-//     const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL" = '${email}';
-
-//     con.query(checkEmailQuery, (error, results) => {
-//         if (error) {
-//             res.status(500).send("Error checking email in the database");
-//         } else {
-//             if (results.length > 0) {
-//                 const updatePasswordQuery = "UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL" = '${email}';
-
-//                 con.query(updatePasswordQuery, (error, results) => {
-//                     if (error) {
-//                         res.status(500).send("Error updating password");
-//                     } else {
-//                         res.redirect("/event/connect")
-//                     }
-//                 });
-//             } else {
-//                 res.status(404).json({ message: "ACCOUNT NOT FOUND" });
-//             }
-//         }
-//     });
-// });
-
-// app.get("/event/admin", function (req, res) {
-//     const userDetailsQuery = "SELECT * FROM e_compte";
-//     con.query(userDetailsQuery, (err, userDetails) => {
-//         if (err) {
-//             res.status(500).send("Erreur");
-//             return;
-//         }
-
-//         res.render("pages/admin", {
-//             siteTitle: "Admin",
-//             pageTitle: "Admin",
-//             userDetails: userDetails,
-//         });
-//     });
-// });
 
 app.post('/update-details', (req, res) => {
     const userId = req.body.userId;
@@ -483,13 +500,15 @@ app.post('/update-details', (req, res) => {
             }
 
             req.session.user = userDetails[0];
-
+                if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
+                    req.session.user.isAdmin = true;
+                }
 
             res.render("pages/detail", {
                 siteTitle: "Details",
                 pageTitle: "Details",
-
                 userDetails: req.session.user,
+                
             });
         });
     });
@@ -553,6 +572,7 @@ app.post('/event/add-subscription-to-cart', (req, res) => {
 });
 
 import Stripe from 'stripe';
+import { debug } from "console";
 // This is your test secret API key.
 const stripe = new Stripe('sk_test_51OvgtJP5VwBXZgOXohPNaXkcg0PbJqdZm05VpQfzYgDpNZSA31iYGd18dnxJVREkqRapCb8vy8cmiyVAZvwgkqC5000DhDQ9Ut');
 
@@ -572,14 +592,14 @@ const calculateOrderAmount = (items) => {
     // Replace this constant with a calculation of the order's amount
     // Calculate the order total with any exclusive taxes on the server to prevent
     // people from directly manipulating the amount on the client
-  
-    var amount=0;
+
+    var amount = 0;
     items.forEach(item => {
-      amount += item.amount;
-  });
+        amount += item.amount;
+    });
     let orderAmount = amount;
     return orderAmount;
-  };
+};
 
 app.post("/create-payment-intent", async (req, res) => {
     const { items } = req.body;
@@ -706,22 +726,61 @@ app.get("/event/apply", function (req, res) {
     });
 });
 
-// Assuming you have already set up Express.js and connected to your NoSQL database
-const router = express.Router();
-const Comment = require('../models/comment');
-router.post('/comments', async (req, res) => {
-  try {
-    const { username, text, countryCode } = req.body;
-    const newComment = new Comment({
-      username,
-      text,
-      countryCode
+app.post('/event/soumettre-avis', (req, res) => {
+    const { userName, userRating, userCountry, userReview } = req.body;
+
+    console.log("nom:", userName);
+    console.log("etoiles:", userRating);
+    console.log("pays:", userCountry);
+    console.log("commentaire:", userReview);
+    const newReview = new Review({
+        name: userName,
+        rating: userRating,
+        country: userCountry,
+        review: userReview
     });
-    const savedComment = await newComment.save();
-    res.status(201).json(savedComment);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+
+    newReview.save((err, savedReview) => {
+        if (err) {
+            console.error("Error saving review:", err);
+            return res.status(500).send("Internal Server Error");
+        }
+        res.status(201).json(savedReview); // Assuming you want to send back the saved review
+    });
 });
 
-module.exports = router;
+app.get('/product-purchases', (req, res) => {
+    const { timeframe } = req.query;
+
+    let startDate;
+    let endDate = new Date();
+    switch (timeframe) {
+        case '7days':
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - 7);
+            break;
+        case '30days':
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            break;
+        case '1year':
+            startDate = new Date();
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            break;
+        default:
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            break;
+    }
+//NEEDING TO GET FIXED
+    con.query('SELECT E_IDPRODUIT, COUNT(*) AS purchaseCount FROM e_produit WHERE purchaseDate BETWEEN ? AND ? GROUP BY E_IDPRODUIT', [startDate, endDate], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        res.json(results);
+    });
+});
+
