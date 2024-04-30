@@ -107,17 +107,35 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <canvas id="myChart" width="400" height="200"></canvas>
     <script>
-        var labels = ["January", "February", "March", "April", "May", "June", "July"];
-        var data = [65, 59, 80, 81, 56, 55, 40];
+        const timeframeSelect = document.getElementById('timeframe');
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let myChart;
 
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
+        function fetchChartData() {
+            const timeframe = timeframeSelect.value;
+
+            fetch(`/product-purchases?timeframe=${timeframe}`)
+                .then(response => response.json())
+                .then(data => {
+                    const labels = data.labels;
+                    const values = data.data;
+
+                    myChart.data.labels = labels;
+                    myChart.data.datasets[0].data = values;
+
+                    myChart.update();
+                })
+                .catch(error => {
+                    console.error('Error fetching chart data:', error);
+                });
+        }
+        myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: [],
                 datasets: [{
                     label: 'Produits Acheter',
-                    data: data,
+                    data: [],
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1
@@ -131,6 +149,9 @@
                 }
             }
         });
+        timeframeSelect.addEventListener('change', fetchChartData);
+        fetchChartData();
+
 
         const checkboxes = document.querySelectorAll('input[name="adminCheckbox"]');
         checkboxes.forEach(checkbox => {

@@ -808,11 +808,11 @@ app.get('/product-purchases', (req, res) => {
     switch (timeframe) {
         case '7days':
             startDate = new Date();
-            startDate.setDate(startDate.getDate() - 7);
+            startDate.setDate(startDate.getDate() - 6);
             break;
         case '30days':
             startDate = new Date();
-            startDate.setDate(startDate.getDate() - 30);
+            startDate.setDate(startDate.getDate() - 29);
             break;
         case '1year':
             startDate = new Date();
@@ -820,18 +820,24 @@ app.get('/product-purchases', (req, res) => {
             break;
         default:
             startDate = new Date();
-            startDate.setDate(startDate.getDate() - 30);
+            startDate.setDate(startDate.getDate() - 29);
             break;
     }
-    //NEEDING TO GET FIXED
-    con.query('SELECT E_IDPRODUIT, COUNT(*) AS purchaseCount FROM e_produit WHERE purchaseDate BETWEEN ? AND ? GROUP BY E_IDPRODUIT', [startDate, endDate], (err, results) => {
+
+    con.query('SELECT DATE_FORMAT(E_DATE_ACHAT, "%Y-%m-%d") AS purchaseDate, COUNT(*) AS purchaseCount FROM e_produit_achat WHERE E_DATE_ACHAT BETWEEN ? AND ? GROUP BY purchaseDate', [startDate, endDate], (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json({ error: 'Internal server error' });
             return;
         }
 
-        res.json(results);
+        const labels = results.map(entry => entry.purchaseDate);
+        const data = results.map(entry => entry.purchaseCount);
+        const chartData = { labels, data };
+
+        res.json(chartData);
     });
 });
+
+
 
