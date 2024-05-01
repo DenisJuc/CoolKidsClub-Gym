@@ -783,3 +783,45 @@ app.get('/product-purchases', (req, res) => {
     });
 });
 
+// NEEDS MONGO CONNECTION
+
+
+const mongoose = require('mongoose');
+const PORT = process.env.PORT || 3000;
+
+mongoose.connect('WHAT IS OUR CONNECTION', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+  console.log('Connected to MongoDB');
+});
+
+const reviewSchema = new mongoose.Schema({
+  comment: String,
+  timestamp: { type: Date, default: Date.now },
+});
+const Review = mongoose.model('Review', reviewSchema);
+
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/submit-comment', async (req, res) => {
+  const { comment } = req.body;
+  if (!comment) {
+    return res.status(400).json({ error: 'Comment is required' });
+  }
+  try {
+    const newReview = new Review({ comment });
+    await newReview.save();
+    return res.status(201).json({ message: 'Review added successfully' });
+  } catch (err) {
+    console.error('Error adding review:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
