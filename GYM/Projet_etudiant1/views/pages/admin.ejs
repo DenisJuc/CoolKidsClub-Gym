@@ -2,8 +2,6 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-
-
     <div class="container mt-5">
         <h1 class="text-center">Admin Dashboard</h1>
         <div class="row mt-5">
@@ -16,6 +14,7 @@
                             <th>Nom</th>
                             <th>Courriel</th>
                             <th>Number</th>
+                            <th>Admin</th> <!-- New header for admin checkbox -->
                         </tr>
                     </thead>
                     <tbody>
@@ -34,11 +33,16 @@
                                     <td>
                                         <%= user.E_NUMBER %>
                                     </td>
+                                    <td>
+                                        <!-- Checkbox for admin privilege -->
+                                        <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>"
+                                            <%=user.isAdmin ? 'checked' : '' %>>
+                                    </td>
                                 </tr>
                                 <% }); %>
                                     <% } else { %>
                                         <tr>
-                                            <td colspan="4">Pas de Clients</td>
+                                            <td colspan="5">Pas de Clients</td>
                                         </tr>
                                         <% } %>
                     </tbody>
@@ -50,6 +54,7 @@
                     <thead>
                         <tr>
                             <th>ID Produit</th>
+                            <th>Purchase date uwu</th>
                             <th>Nom</th>
                             <th>Prix</th>
                             <th>Catégorie</th>
@@ -63,6 +68,9 @@
                                 <tr>
                                     <td>
                                         <%= product.E_IDPRODUIT %>
+                                    </td>
+                                    <td>
+                                        <%= product.E_DATE_ACHAT %>
                                     </td>
                                     <td>
                                         <%= product.E_NOM %>
@@ -99,20 +107,35 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <canvas id="myChart" width="400" height="200"></canvas>
     <script>
-        
-       // DATA
-        var labels = ["January", "February", "March", "April", "May", "June", "July"];
-        var data = [65, 59, 80, 81, 56, 55, 40];
-    
-       // Chart
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
+        const timeframeSelect = document.getElementById('timeframe');
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let myChart;
+
+        function fetchChartData() {
+            const timeframe = timeframeSelect.value;
+
+            fetch(`/product-purchases?timeframe=${timeframe}`)
+                .then(response => response.json())
+                .then(data => {
+                    const labels = data.labels;
+                    const values = data.data;
+
+                    myChart.data.labels = labels;
+                    myChart.data.datasets[0].data = values;
+
+                    myChart.update();
+                })
+                .catch(error => {
+                    console.error('Error fetching chart data:', error);
+                });
+        }
+        myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: [],
                 datasets: [{
                     label: 'Produits Acheter',
-                    data: data,
+                    data: [],
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1
@@ -126,60 +149,39 @@
                 }
             }
         });
-        
-       
-       
-    // const timeframeSelect = document.getElementById('timeframe');
-    // const canvas = document.getElementById('myChart');
-    // const ctx = canvas.getContext('2d');
+        timeframeSelect.addEventListener('change', fetchChartData);
+        fetchChartData();
 
-    // let myChart;
 
-    // // Pour gety the product ewpfjow
-    // function fetchDataAndRenderChart() {
-    //     const timeframe = timeframeSelect.value;
+        const checkboxes = document.querySelectorAll('input[name="adminCheckbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const userId = this.dataset.userId;
+                const isAdmin = this.checked;
 
-    //     fetch(`/product-purchases?timeframe=${timeframe}`)
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             const labels = data.map(product => product.E_IDPRODUIT);
-    //             const purchaseCounts = data.map(product => product.purchaseCount);
-
-    //             if (myChart) {
-    //                 myChart.destroy(); 
-    //             }
-
-    //             myChart = new Chart(ctx, {
-    //                 type: 'bar',
-    //                 data: {
-    //                     labels: labels,
-    //                     datasets: [{
-    //                         label: 'Product Purchases',
-    //                         data: purchaseCounts,
-    //                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
-    //                         borderColor: 'rgba(255, 99, 132, 1)',
-    //                         borderWidth: 1
-    //                     }]
-    //                 },
-    //                 options: {
-    //                     scales: {
-    //                         y: {
-    //                             beginAtZero: true
-    //                         }
-    //                     }
-    //                 }
-    //             });
-    //         })
-    //         .catch(error => console.error('Error fetching data:', error));
-    // }
-
-    // // to render the chartyyyyytytyt
-    // fetchDataAndRenderChart();
-    // timeframeSelect.addEventListener('change', fetchDataAndRenderChart);
-
+                // Here, you may send an AJAX request to your server to update admin status based on userId and isAdmin
+                // Example:
+                // fetch('/set-admin-status', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify({ userId, isAdmin })
+                // })
+                // .then(response => {
+                //     if (!response.ok) {
+                //         throw new Error('Network response was not ok');
+                //     }
+                //     return response.json();
+                // })
+                // .then(data => {
+                //     console.log('Admin status updated successfully');
+                // })
+                // .catch(error => {
+                //     console.error('There was a problem with your fetch operation:', error);
+                // });
+            });
+        });
     </script>
-    
-
-
 
     <% include ("../partials/footer") %>

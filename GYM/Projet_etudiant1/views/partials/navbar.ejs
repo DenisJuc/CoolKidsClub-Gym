@@ -21,7 +21,8 @@
             <div class="navbar-nav">
                 <% if (userDetails) { %>
                     <a class="nav-link active text-decoration-underline d-flex align-items-center" aria-current="page">
-                        Bienvenue <%= userDetails.E_PRENOM %>
+                        Bienvenue <%= userDetails.E_PRENOM %> 
+
                     </a>
                 <% } else { %>
                     
@@ -58,6 +59,7 @@
                                     <% } %>   
                             </ul>
                         </div>        
+
                 <% } else { %>
                     <div class="dropdown">
                         <a class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
