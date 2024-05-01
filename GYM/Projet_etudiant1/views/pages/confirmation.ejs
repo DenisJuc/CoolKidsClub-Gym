@@ -1,162 +1,176 @@
 <%- include ("../partials/head.ejs") %>
-<head>
-	<link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
-	<style>
-		body {
-			font-family: 'Krona One';
-		}
-	</style>
-</head>
-<div class="container mt-5 mb-5">
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="text-left logo p-2 px-5">
-                    <img src="/gym-website-logo-without-a-person-upscaled.png" width="50">
-                </div>
-                <div class="invoice p-5">
-                    <h5>Votre commande est confirmée</h5>
-                    <span class="font-weight-bold d-block mt-4">
-                        <% if (userDetails) { %>
-                            Salut <%= userDetails.E_PRENOM %>,
-                        <% } else { %>
-                        <% } %>
-                    </span>
-                    <span>Votre commande a été confirmée et sera expédiée dans les deux prochains jours !</span>
-                    <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
-                        <table class="table table-borderless">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="py-2">
-                                            <span class="d-block text-muted">Order Date</span>
-                                            <span><%= new Date().toLocaleDateString()%></span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="py-2">
-                                            <span class="d-block text-muted">Order No</span>
-                                            <span>KKG1234567890</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="py-2">
-                                            <span class="d-block text-muted">Payment</span>
-                                            <span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+    <head>
+        <link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
+        <style>
+            body {
+                font-family: 'Krona One';
+            }
+        </style>
+    </head>
+    <div class="container mt-5 mb-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="text-left logo p-2 px-5">
+                        <img src="/gym-website-logo-without-a-person-upscaled.png" width="50">
                     </div>
-                    <div class="product border-bottom table-responsive">
-                        <table class="table table-borderless">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Produit</th>
-                                    <th scope="col">Prix</th>
-                                    <th scope="col">Specifications</th>
-                                    <th scope="col">Quantité</th>
-                                </tr>
-                            </thead>
-                            <% let total = 0; %>
-                            <% items.forEach(function(item){ %>
-                            <tbody>
-                                <tr>
-                                    <th>
-                                        <img src="/produit<%= item.E_PRIX %>.jpeg" class="img-fluid rounded-3"
-                      style="width: 40px;" alt="<%= item.E_NOM %>"
-                      onerror="this.onerror=null;this.src='/gym-website-logo-without-a-person-upscaled.png'; document.getElementById('quantityInput_<%= item.E_IDPRODUIT %>').disabled = true;">
-                                    </th>
-                                    <th scope="row">
-                                        <%= item.E_NOM %>
-                                    </th>
-                                    <td>
-                                        <%= item.E_PRIX %> $
-                                    </td>
-                                    <td>
-                                        <%= item.E_CATEGORIE %>
-                                    </td>
-                                    <td>
-                                        <%= item.E_QUANTITE %>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <% total += parseFloat(item.E_PRIX) * parseInt(item.E_QUANTITE); %>
-                            <% }); %>
-                        </table>
-                    </div>
-                    <div class="row d-flex justify-content-end">
-                        <div class="col-md-5">
+                    <div class="invoice p-5">
+                        <h5>Votre commande est confirmée</h5>
+                        <span class="font-weight-bold d-block mt-4">
+                            <% if (userDetails) { %>
+                                Salut <%= userDetails.E_PRENOM %>,
+                                    <% } else { %>
+                                        <% } %>
+                        </span>
+                        <span>Votre commande a été confirmée et sera expédiée dans les deux prochains jours !</span>
+                        <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
                             <table class="table table-borderless">
-                                <tbody class="totals">
+                                <tbody>
                                     <tr>
                                         <td>
-                                            <div class="text-left">
-                                                <span class="text-muted">Total des produits</span>
+                                            <div class="py-2">
+                                                <span class="d-block text-muted">Order Date</span>
+                                                <span>
+                                                    <%= new Date().toLocaleDateString()%>
+                                                </span>
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="text-right">
-                                                <span><%= total.toFixed(2)%>$</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="text-left">
-                                                <span class="text-muted">Frais d'expédition</span>
+                                            <div class="py-2">
+                                                <span class="d-block text-muted">Order No</span>
+                                                <span>KKG1234567890</span>
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="text-right">
-                                                <span>10.00$</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="text-left">
-                                                <span class="text-muted">TPS (5%)</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="text-right">
-                                                <span><%= (total * 0.05).toFixed(2)%>$</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="text-left">
-                                                <span class="text-muted">TVQ (9.975%)</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="text-right">
-                                                <span><%= (total * 0.0975).toFixed(2) %>$</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="border-top border-bottom">
-                                        <td>
-                                            <div class="text-left">
-                                                <span class="font-weight-bold">Total</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="text-right">
-                                                <span class="font-weight-bold"><%= (parseFloat(total) + 10 + (parseFloat(total) * 0.14975)).toFixed(2) %>$</span>
+                                            <div class="py-2">
+                                                <span class="d-block text-muted">Payment</span>
+                                                <span><img src="https://img.icons8.com/color/48/000000/mastercard.png"
+                                                        width="20" /></span>
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <p class="font-weight-bold mb-0">Merci d'avoir supporter notre compagnie!</p>
-                    <form action="/delete-payment" method="post">
-                    <button type="submit" class="btn btn-primary">Procéder à l'accueil</button>
+                        <div class="product border-bottom table-responsive">
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Produit</th>
+                                        <th scope="col">Prix</th>
+                                        <th scope="col">Specifications</th>
+                                        <th scope="col">Quantité</th>
+                                    </tr>
+                                </thead>
+                                <% let total=0; %>
+                                    <% items.forEach(function(item){ %>
+                                        <tbody>
+                                            <tr>
+                                                <th>
+                                                    <img src="/produit<%= item.E_PRIX %>.jpeg"
+                                                        class="img-fluid rounded-3" style="width: 40px;"
+                                                        alt="<%= item.E_NOM %>"
+                                                        onerror="this.onerror=null;this.src='/gym-website-logo-without-a-person-upscaled.png'; document.getElementById('quantityInput_<%= item.E_IDPRODUIT %>').disabled = true;">
+                                                </th>
+                                                <th scope="row">
+                                                    <%= item.E_NOM %>
+                                                </th>
+                                                <td>
+                                                    <%= item.E_PRIX %> $
+                                                </td>
+                                                <td>
+                                                    <%= item.E_CATEGORIE %>
+                                                </td>
+                                                <td>
+                                                    <%= item.E_QUANTITE %>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <% total +=parseFloat(item.E_PRIX) * parseInt(item.E_QUANTITE); %>
+                                            <% }); %>
+                            </table>
+                        </div>
+                        <div class="row d-flex justify-content-end">
+                            <div class="col-md-5">
+                                <table class="table table-borderless">
+                                    <tbody class="totals">
+                                        <tr>
+                                            <td>
+                                                <div class="text-left">
+                                                    <span class="text-muted">Total des produits</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right">
+                                                    <span>
+                                                        <%= total.toFixed(2)%>$
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="text-left">
+                                                    <span class="text-muted">Frais d'expédition</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right">
+                                                    <span>10.00$</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="text-left">
+                                                    <span class="text-muted">TPS (5%)</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right">
+                                                    <span>
+                                                        <%= (total * 0.05).toFixed(2)%>$
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="text-left">
+                                                    <span class="text-muted">TVQ (9.975%)</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right">
+                                                    <span>
+                                                        <%= (total * 0.0975).toFixed(2) %>$
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
 
-                </form>
+                                        <tr class="border-top border-bottom">
+                                            <td>
+                                                <div class="text-left">
+                                                    <span class="font-weight-bold">Total</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right">
+                                                    <span class="font-weight-bold">
+                                                        <%= (parseFloat(total) + 10 + (parseFloat(total) *
+                                                            0.14975)).toFixed(2) %>$
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <p class="font-weight-bold mb-0">Merci d'avoir supporter notre compagnie!</p>
+                        <form action="/event/confirmation" action="/delete-payment" method="post">
+                            <button type="submit" class="btn btn-primary">Procéder à l'accueil</button>
+
+                        </form>
