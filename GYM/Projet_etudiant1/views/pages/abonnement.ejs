@@ -5,7 +5,17 @@
       <style>
           .card {
               margin-bottom: 20px;
+              transition-duration: 0.5s;
           }
+
+      .card:hover,
+      .card.hover-effect {
+        transform: translateY(-5px) scale(1.2);
+      }
+
+      .card::after {
+        transform: translateY(-5px) scale(1.0);
+      }
       </style>
   </head>
   <body>
@@ -24,7 +34,6 @@
                       <div class="card h-100" style="background: linear-gradient(to bottom, #FFC107, #FFECB3);">
                           <div class="card-body p-4 text-center">
                               <h5 class="fw-bolder" style="margin-bottom: 40px;">Essai Gratuit</h5>
-                              
                               <p style="margin-bottom: 40px;">Cet abonnement vous donne accès à toutes les permissions qu'a l'abonnement standard, mais pour un temps limité.</p>
                               $0.00
                           </div>
