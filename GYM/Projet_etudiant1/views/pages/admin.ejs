@@ -1,5 +1,51 @@
 <%- include ("../partials/header.ejs") %>
 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<div class="container mt-5">
+    <h1 class="text-center">Admin Dashboard</h1>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h2>Clients</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Courriel</th>
+                        <th>Number</th>
+                        <th>Admin</th> <!-- New header for admin checkbox -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (Array.isArray(userDetails) && userDetails.length>= 0) { %>
+                        <% userDetails.forEach(user=> { %>
+                            <tr>
+                                <td>
+                                    <%= user.E_ID %>
+                                </td>
+                                <td>
+                                    <%= user.E_NOM %>
+                                </td>
+                                <td>
+                                    <%= user.E_COURRIEL %>
+                                </td>
+                                <td>
+                                    <%= user.E_NUMBER %>
+                                </td>
+                                
+                                <td>
+                                    <!-- <%if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") { %> -->
+                                    <form action="/set-admin-status" method="post" id="adminForm">
+                                        <input type="hidden" name="userId" value="<%= user.E_ID %>">
+                                        <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>" <%= user.isAdmin ? 'checked' : '' %> onchange="this.form.submit()">
+                                    </form>
+                                    <!-- <%}%>-->
+                                </td>   
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <div class="container mt-5">
@@ -9,6 +55,7 @@
                 <h2>Clients</h2>
                 <table class="table">
                     <thead>
+
                         <tr>
                             <th>ID</th>
                             <th>Nom</th>
@@ -152,35 +199,12 @@
         timeframeSelect.addEventListener('change', fetchChartData);
         fetchChartData();
 
+    const checkboxes = document.querySelectorAll('input[name="adminCheckbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const userId = this.dataset.userId;
+            const isAdmin = this.checked;
 
-        const checkboxes = document.querySelectorAll('input[name="adminCheckbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                const userId = this.dataset.userId;
-                const isAdmin = this.checked;
-
-                // Here, you may send an AJAX request to your server to update admin status based on userId and isAdmin
-                // Example:
-                // fetch('/set-admin-status', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify({ userId, isAdmin })
-                // })
-                // .then(response => {
-                //     if (!response.ok) {
-                //         throw new Error('Network response was not ok');
-                //     }
-                //     return response.json();
-                // })
-                // .then(data => {
-                //     console.log('Admin status updated successfully');
-                // })
-                // .catch(error => {
-                //     console.error('There was a problem with your fetch operation:', error);
-                // });
-            });
         });
     </script>
 
