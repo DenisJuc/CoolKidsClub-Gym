@@ -34,12 +34,10 @@
                                 </td>
                                 
                                 <td>
-                                    <!-- <%if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") { %> -->
                                     <form action="/set-admin-status" method="post" id="adminForm">
                                         <input type="hidden" name="userId" value="<%= user.E_ID %>">
                                         <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>" <%= user.isAdmin ? 'checked' : '' %> onchange="this.form.submit()">
                                     </form>
-                                    <!-- <%}%>-->
                                 </td>   
                             </tr>
                         <% }); %>
