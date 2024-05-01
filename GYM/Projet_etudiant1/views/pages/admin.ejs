@@ -32,12 +32,15 @@
                                 <td>
                                     <%= user.E_NUMBER %>
                                 </td>
+                                
                                 <td>
+                                    <!-- <%if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") { %> -->
                                     <form action="/set-admin-status" method="post" id="adminForm">
                                         <input type="hidden" name="userId" value="<%= user.E_ID %>">
                                         <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>" <%= user.isAdmin ? 'checked' : '' %> onchange="this.form.submit()">
                                     </form>
-                                </td>
+                                    <!-- <%}%>-->
+                                </td>   
                             </tr>
                         <% }); %>
                     <% } else { %>
@@ -133,28 +136,6 @@
         checkbox.addEventListener('change', function() {
             const userId = this.dataset.userId;
             const isAdmin = this.checked;
-
-            // Here, you may send an AJAX request to your server to update admin status based on userId and isAdmin
-            // Example:
-            // fetch('/set-admin-status', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify({ userId, isAdmin })
-            // })
-            // .then(response => {
-            //     if (!response.ok) {
-            //         throw new Error('Network response was not ok');
-            //     }
-            //     return response.json();
-            // })
-            // .then(data => {
-            //     console.log('Admin status updated successfully');
-            // })
-            // .catch(error => {
-            //     console.error('There was a problem with your fetch operation:', error);
-            // });
         });
     });
 </script>

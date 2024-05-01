@@ -810,7 +810,7 @@ app.post('/set-admin-status', (req, res) => {
             req.session.user = userDetails[0];
                 req.session.user.isAdmin = true;
 
-            res.redirect('/admin-dashboard');
+            res.redirect('/event/admin');
         });
     });
 });
