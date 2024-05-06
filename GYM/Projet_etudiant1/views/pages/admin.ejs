@@ -1,4 +1,5 @@
 <%- include ("../partials/header.ejs") %>
+
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
     body {
@@ -46,100 +47,167 @@
                             </tr>
                         <% }); %>
                     <% } else { %>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <div class="container mt-5">
+        <h1 class="text-center">Admin Dashboard</h1>
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <h2>Clients</h2>
+                <table class="table">
+                    <thead>
+
                         <tr>
-                            <td colspan="5">Pas de Clients</td>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Courriel</th>
+                            <th>Number</th>
+                            <th>Admin</th> <!-- New header for admin checkbox -->
                         </tr>
-                    <% } %>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-6">
-            <h2>Revenu</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID Produit</th>
-                        <th>Nom</th>
-                        <th>Prix</th>
-                        <th>Catégorie</th>
-                        <th>Quantité</th>
-                        <th>ID Utilisateur</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (Array.isArray(products) && products.length>= 0) { %>
-                        <% products.forEach(product=> { %>
-                            <tr>
-                                <td>
-                                    <%= product.E_IDPRODUIT %>
-                                </td>
-                                <td>
-                                    <%= product.E_NOM %>
-                                </td>
-                                <td>
-                                    <%= product.E_PRIX %>
-                                </td>
-                                <td>
-                                    <%= product.E_CATEGORIE %>
-                                </td>
-                                <td>
-                                    <%= product.E_QUANTITE %>
-                                </td>
-                                <td>
-                                    <%= product.E_USER_ID %>
-                                </td>
-                            </tr>
-                        <% }); %>
-                    <% } else { %>
+                    </thead>
+                    <tbody>
+                        <% if (Array.isArray(userDetails) && userDetails.length>= 0) { %>
+                            <% userDetails.forEach(user=> { %>
+                                <tr>
+                                    <td>
+                                        <%= user.E_ID %>
+                                    </td>
+                                    <td>
+                                        <%= user.E_NOM %>
+                                    </td>
+                                    <td>
+                                        <%= user.E_COURRIEL %>
+                                    </td>
+                                    <td>
+                                        <%= user.E_NUMBER %>
+                                    </td>
+                                    <td>
+                                        <!-- Checkbox for admin privilege -->
+                                        <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>"
+                                            <%=user.isAdmin ? 'checked' : '' %>>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="5">Pas de Clients</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h2>Revenu</h2>
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td colspan="6">Pas de Produits</td>
+                            <th>ID Produit</th>
+                            <th>Purchase date uwu</th>
+                            <th>Nom</th>
+                            <th>Prix</th>
+                            <th>Catégorie</th>
+                            <th>Quantité</th>
+                            <th>ID Utilisateur</th>
                         </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <% if (Array.isArray(products) && products.length>= 0) { %>
+                            <% products.forEach(product=> { %>
+                                <tr>
+                                    <td>
+                                        <%= product.E_IDPRODUIT %>
+                                    </td>
+                                    <td>
+                                        <%= product.E_DATE_ACHAT %>
+                                    </td>
+                                    <td>
+                                        <%= product.E_NOM %>
+                                    </td>
+                                    <td>
+                                        <%= product.E_PRIX %>
+                                    </td>
+                                    <td>
+                                        <%= product.E_CATEGORIE %>
+                                    </td>
+                                    <td>
+                                        <%= product.E_QUANTITE %>
+                                    </td>
+                                    <td>
+                                        <%= product.E_USER_ID %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6">Pas de Produits</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-<select id="timeframe">
-    <option value="7days">Last 7 Days</option>
-    <option value="30days">Last 30 Days</option>
-    <option value="1year">Last 1 Year</option>
-</select>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<canvas id="myChart" width="400" height="200"></canvas>
-<script>
-    var labels = ["January", "February", "March", "April", "May", "June", "July"];
-    var data = [65, 59, 80, 81, 56, 55, 40];
+    <select id="timeframe">
+        <option value="7days">Last 7 Days</option>
+        <option value="30days">Last 30 Days</option>
+        <option value="1year">Last 1 Year</option>
+    </select>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script>
+        const timeframeSelect = document.getElementById('timeframe');
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let myChart;
 
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Produits Acheter',
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+        function fetchChartData() {
+            const timeframe = timeframeSelect.value;
+
+            fetch(`/product-purchases?timeframe=${timeframe}`)
+                .then(response => response.json())
+                .then(data => {
+                    const labels = data.labels;
+                    const values = data.data;
+
+                    myChart.data.labels = labels;
+                    myChart.data.datasets[0].data = values;
+
+                    myChart.update();
+                })
+                .catch(error => {
+                    console.error('Error fetching chart data:', error);
+                });
+        }
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Produits Acheter',
+                    data: [],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
+        });
+        timeframeSelect.addEventListener('change', fetchChartData);
+        fetchChartData();
 
     const checkboxes = document.querySelectorAll('input[name="adminCheckbox"]');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const userId = this.dataset.userId;
             const isAdmin = this.checked;
-        });
-    });
-</script>
 
-<% include ("../partials/footer") %>
+        });
+    </script>
+
+    <% include ("../partials/footer") %>

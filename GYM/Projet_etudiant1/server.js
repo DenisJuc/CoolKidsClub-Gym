@@ -161,7 +161,7 @@ app.get("/event/admin", (req, res) => {
     }
     console.log("kinda in");
     const userDetailsQuery = "SELECT * FROM e_compte";
-    const productQuery = "SELECT * FROM e_produit";
+    const productQuery = "SELECT * FROM e_produit_achat";
     con.query(userDetailsQuery, (err, userDetails) => {
         if (err) {
             console.error("Error executing userDetailsQuery:", err);
@@ -217,9 +217,10 @@ app.post('/event/panier', (req, res) => {
             });
         } else {
 
-            const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, ?, ?, ?)";
+            const insertSql = "INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID, E_DATE_ACHAT) VALUES (?, ?, ?, ?, ?, ?)";
+            const currentDate = new Date().toISOString().slice(0, 10);
 
-            const values = [productName, price, categorie, quantite, userId];
+            const values = [productName, price, categorie, quantite, userId, "Incoming"];
 
             con.query(insertSql, values, (insertErr, insertResult) => {
                 if (categorie === 'Equipement') {
@@ -500,15 +501,15 @@ app.post('/update-details', (req, res) => {
             }
 
             req.session.user = userDetails[0];
-                if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
-                    req.session.user.isAdmin = true;
-                }
+            if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
+                req.session.user.isAdmin = true;
+            }
 
             res.render("pages/detail", {
                 siteTitle: "Details",
                 pageTitle: "Details",
                 userDetails: req.session.user,
-                
+
             });
         });
     });
@@ -647,6 +648,56 @@ app.get("/event/confirmation", function (req, res) {
         });
     });
 });
+app.post('/event/confirmation', (req, res) => {
+    const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
+    if (!loggedInUserId) {
+        res.redirect('/event/connect');
+        return;
+    }
+
+    const currentDate = new Date().toISOString().slice(0, 10);
+    const updateSql = "INSERT INTO e_produit_achat (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID, E_DATE_ACHAT) SELECT E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID, ? AS E_DATE_ACHAT FROM e_produit WHERE E_USER_ID = ? AND E_DATE_ACHAT = 'Incoming'";
+    const deleteSql = "DELETE FROM e_produit WHERE E_USER_ID = ? AND E_DATE_ACHAT = 'Incoming'";
+
+    con.beginTransaction((err) => {
+        if (err) {
+            console.error("Transaction error:", err);
+            return res.status(500).send("Erreur");
+        }
+
+        con.query(updateSql, [currentDate, loggedInUserId], (updateErr, updateResult) => {
+            if (updateErr) {
+                con.rollback(() => {
+                    console.error("Error moving data to e_produit_achat:", updateErr);
+                    res.status(500).send("Erreur");
+                });
+            } else {
+                con.query(deleteSql, [loggedInUserId], (deleteErr, deleteResult) => {
+                    if (deleteErr) {
+                        con.rollback(() => {
+                            console.error("Error deleting data from e_produit:", deleteErr);
+                            res.status(500).send("Erreur");
+                        });
+                    } else {
+                        con.commit((commitErr) => {
+                            if (commitErr) {
+                                con.rollback(() => {
+                                    console.error("Commit error:", commitErr);
+                                    res.status(500).send("Erreur");
+                                });
+                            } else {
+                                res.redirect('/');
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+
+
+
 app.post('/update-quantity', (req, res) => {
     const productId = req.body.productId;
     const newQuantity = req.body.newQuantity;
@@ -757,11 +808,11 @@ app.get('/product-purchases', (req, res) => {
     switch (timeframe) {
         case '7days':
             startDate = new Date();
-            startDate.setDate(startDate.getDate() - 7);
+            startDate.setDate(startDate.getDate() - 6);
             break;
         case '30days':
             startDate = new Date();
-            startDate.setDate(startDate.getDate() - 30);
+            startDate.setDate(startDate.getDate() - 29);
             break;
         case '1year':
             startDate = new Date();
@@ -769,20 +820,25 @@ app.get('/product-purchases', (req, res) => {
             break;
         default:
             startDate = new Date();
-            startDate.setDate(startDate.getDate() - 30);
+            startDate.setDate(startDate.getDate() - 29);
             break;
     }
-//NEEDING TO GET FIXED
-    con.query('SELECT E_IDPRODUIT, COUNT(*) AS purchaseCount FROM e_produit WHERE purchaseDate BETWEEN ? AND ? GROUP BY E_IDPRODUIT', [startDate, endDate], (err, results) => {
+
+    con.query('SELECT DATE_FORMAT(E_DATE_ACHAT, "%Y-%m-%d") AS purchaseDate, COUNT(*) AS purchaseCount FROM e_produit_achat WHERE E_DATE_ACHAT BETWEEN ? AND ? GROUP BY purchaseDate', [startDate, endDate], (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json({ error: 'Internal server error' });
             return;
         }
 
-        res.json(results);
+        const labels = results.map(entry => entry.purchaseDate);
+        const data = results.map(entry => entry.purchaseCount);
+        const chartData = { labels, data };
+
+        res.json(chartData);
     });
 });
+
 
 app.post('/set-admin-status', (req, res) => {
     const { userId, adminCheckbox } = req.body;
@@ -816,8 +872,9 @@ app.post('/set-admin-status', (req, res) => {
 });
 
 
+=======
 // NEEDS MONGO CONNECTION
-/*
+
 
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
@@ -858,4 +915,3 @@ app.post('/submit-comment', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-*/

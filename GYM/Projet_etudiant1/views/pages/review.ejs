@@ -422,4 +422,26 @@
             </ul>
         </div>
 
+        
+<div class="review-list">
+    <ul>
+        <li>
+            <div class="d-flex">
+                <div class="left">
+                    <span>
+                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                            class="profile-pict-img img-fluid" alt="" />
+                    </span>
+                </div>
+                <div class="comment-section">
+                    <h4>Ajouter votre commentaire</h4>
+                    <form action="/submit-comment" method="POST">
+                        <div class="form-group">
+                            <label for="comment">Votre commentaire:</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+                
         <%- include("../partials/footer.ejs") %>
