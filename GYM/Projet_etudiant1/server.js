@@ -14,11 +14,12 @@ import Stripe from 'stripe';
 import { debug } from "console";
 import { MongoClient } from "mongodb";
 import { connectToMongo, createReview, findReviewByUsername, updateReviewByUsername, deleteReviewByUsername } from "../../src/gymCrud.js";
+
+
+
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-
 
 // Configure session middleware
 app.use(session({
@@ -468,8 +469,6 @@ app.post('/update-details', (req, res) => {
     const userId = req.body.userId;
     const updatedDetails = req.body;
     delete updatedDetails.userId;
-
-
     let updateQuery = "UPDATE e_compte SET ";
     const updateValues = [];
     for (const key in updatedDetails) {
@@ -574,8 +573,6 @@ app.post('/update-details', (req, res) => {
             });
         });
     });
-});
-
 
 app.post('/delete-account', (req, res) => {
     const userId = req.session.user.E_ID;
@@ -982,8 +979,6 @@ app.delete('/reviews/:username', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-
 
 
 // NEEDS MONGO CONNECTION
