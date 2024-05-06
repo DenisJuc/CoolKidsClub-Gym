@@ -1,7 +1,11 @@
 <%- include ("../partials/header.ejs") %>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+<style>
+    body {
+        font-family: 'Krona One';
+    }
+</style>
 <div class="container mt-5">
     <h1 class="text-center">Admin Dashboard</h1>
     <div class="row mt-5">
@@ -35,12 +39,10 @@
                                 </td>
                                 
                                 <td>
-                                    <!-- <%if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") { %> -->
                                     <form action="/set-admin-status" method="post" id="adminForm">
                                         <input type="hidden" name="userId" value="<%= user.E_ID %>">
                                         <input type="checkbox" name="adminCheckbox" data-user-id="<%= user.E_ID %>" <%= user.isAdmin ? 'checked' : '' %> onchange="this.form.submit()">
                                     </form>
-                                    <!-- <%}%>-->
                                 </td>   
                             </tr>
                         <% }); %>
