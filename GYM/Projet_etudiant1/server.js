@@ -365,8 +365,6 @@ app.post('/delete-item/:productId', (req, res) => {
     });
 });
 
-import bcrypt from 'bcrypt';
-
 app.post('/event/creationCompte', (req, res) => {
     const { nom, prénom, email, num, password } = req.body;
 
@@ -681,8 +679,6 @@ app.post('/event/add-subscription-to-cart', (req, res) => {
         });
 });
 
-import Stripe from 'stripe';
-import { debug } from "console";
 // This is your test secret API key.
 const stripe = new Stripe('sk_test_51OvgtJP5VwBXZgOXohPNaXkcg0PbJqdZm05VpQfzYgDpNZSA31iYGd18dnxJVREkqRapCb8vy8cmiyVAZvwgkqC5000DhDQ9Ut');
 
