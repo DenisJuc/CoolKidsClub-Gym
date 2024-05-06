@@ -194,16 +194,30 @@ app.get("/event/admin", (req, res) => {
 
 app.post('/event/panier', (req, res) => {
     const productName = req.body.productName;
-    const price = req.body.price;
     const categorie = req.body.categorie;
-    const quantite = req.body.quantite;
-    const poids = req.body.poids;
     const sexe = req.body.sexe;
     const color = req.body.color;
     const taille = req.body.taille;
 
     const userId = req.session.user ? req.session.user.E_ID : null;
+    let price,poids,quantite;
 
+    switch (categorie) {
+        case 'Equipement':
+            price = calculateEquipmentPrice(productName);
+            poids = poidsEquipement(productName);
+            quantite = 1;
+            break;
+        case 'Vetements':
+            price = calculateClothingPrice(productName);
+            quantite = 1;
+            break;
+        case 'Autre':
+            price = 55;
+            quantite = 1;
+        default:
+            break;
+    }
 
     const selectSql = "SELECT * FROM e_produit WHERE E_NOM = ? AND E_USER_ID = ?";
     con.query(selectSql, [productName, userId], (selectErr, selectResult) => {
@@ -258,7 +272,42 @@ app.post('/event/panier', (req, res) => {
         }
     });
 });
-
+function calculateEquipmentPrice(productName) {
+    switch (productName) {
+        case 'Haltère':
+            return 20;
+        case 'Plaque 20kg':
+            return 30;
+        case 'Barre W':
+            return 40;
+        default:
+            return 0;
+    }
+}
+function poidsEquipement(productName) {
+    switch (productName) {
+        case 'Haltère':
+            return '1kg-10kg';
+        case 'Plaque 20kg':
+            return '20kg';
+        case 'Barre W':
+            return '20.4kg';
+        default:
+            return 0;
+    }
+}
+function calculateClothingPrice(productName) {
+    switch (productName) {
+        case 'Chandail Peak Labs':
+            return 25;
+        case 'Hoodie Peak Labs':
+            return 35;
+        case 'Protein Powder Peak Labs':
+            return 55;
+        default:
+            return 0;
+    }
+}
 
 app.get("/event/panier", function (req, res) {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
@@ -656,9 +705,11 @@ const calculateOrderAmount = (items) => {
 
     var amount = 0;
     items.forEach(item => {
+        console.log(item.amount);
         amount += item.amount;
     });
     let orderAmount = amount;
+    console.log(orderAmount);
     return orderAmount;
 };
 

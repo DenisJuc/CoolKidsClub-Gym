@@ -261,6 +261,8 @@ data-product-id="<%= item.E_IDPRODUIT %>"
                   <p class="mb-2">Total (avec taxes)</p>
                   <p class="mb-2" id="total">$<%= (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) %></p>
                 </div>
+                <% itemsP.push({ id: 1, amount: (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) });
+    const items = itemsP; %>
                 <button id="myBtn">Payer <%= (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) %> $</button>
                 <div id="myModal" class="modal">
   
