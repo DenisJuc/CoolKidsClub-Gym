@@ -1,0 +1,109 @@
+<%- include ("../partials/header.ejs") %>
+
+<div id="menu">
+    <div id="menu-items">
+		<a href="/event/abonnement" class="menu-item">Abonnez-vous</a>
+		<a href="/event/boutique" class="menu-item">Boutique</a>
+		<a href="/event/apropos" class="menu-item">Pourquoi Peak Labs?</a>
+		<a target="_blank" href="https://maps.app.goo.gl/QSkSDLHHyr6wMgEL9" class="menu-item">Localisez-nous</a>
+    </div>
+    <div id="menu-background-pattern" style="margin-top: 10px;"></div>
+    <div id="menu-background-image"></div>
+
+</div>
+<img id="sam" src="/sam_sulek.png">
+<style>
+	#sam{
+		width: 1000px;
+		height: 1000px;
+		position: absolute;
+		top: 100px;
+		left: 800px;
+		z-index: 1;
+	}
+    body {
+        background-color: #41455D;
+        margin: 0px;
+		overflow: hidden;
+    }
+
+    #menu {
+        align-items: center;
+        display: flex;
+        height: 90vh;
+        width: 100vw;
+    }
+
+    #menu-items {
+        margin-left: clamp(4rem, 20vw, 48rem);
+        position: relative;
+        z-index: 2;
+    }
+
+    #menu[data-active-index="0"] > #menu-background-pattern {
+        background-position: 0% -25%;
+    }
+
+    #menu[data-active-index="1"] > #menu-background-pattern {
+        background-position: 0% -50%;
+    }
+
+    #menu[data-active-index="2"] > #menu-background-pattern {
+        background-position: 0% -75%;
+    }
+
+    #menu[data-active-index="3"] > #menu-background-pattern {
+        background-position: 0% -100%;
+    }
+
+    #menu-background-pattern {
+        background-image: url(/dumbell_sansbg.png);
+        background-position: 0% 0%;
+        opacity: 15%;
+        background-size: 20vmin 16vmin;
+        height: 92vh;
+        left: 0px;
+        position: absolute;
+        top: 70px;
+        transition: opacity 800ms ease, background-size 800ms ease, background-position 800ms ease;
+        width: 100vw;
+        z-index: 1;
+    }
+
+    #menu-items:hover ~ #menu-background-pattern {
+        background-size: 16vmin 12vmin;
+        opacity: 0.5;
+    }
+
+	#menu-items:hover > .menu-item {
+				opacity: 0.3;
+			}
+			
+			#menu-items:hover > .menu-item:hover {
+				opacity: 1;
+			}
+
+    .menu-item {
+        color: white;
+        cursor: pointer;
+        display: block;
+        font-family: 'Ibarra Real Nova', serif;
+        font-size: clamp(3rem, 8vw, 8rem);
+        padding: clamp(0.25rem, 0.5vw, 1rem) 0rem;
+        text-decoration: none;
+        transition: opacity 400ms ease;
+    }
+</style>
+
+
+<script>
+    const menu = document.getElementById("menu");
+
+    Array.from(document.getElementsByClassName("menu-item")).forEach((item, index) => {
+        item.onmouseover = () => {
+            menu.dataset.activeIndex = index;
+        }
+    });
+</script>
+
+

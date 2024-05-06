@@ -1,0 +1,154 @@
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
+    <style>
+        body {
+            font-family: 'Krona One';
+        }
+    </style>
+</head>
+<nav class="navbar navbar-expand-lg navbar-dark " style="background-color: #4F5268;">
+    <div class="container-fluid">
+        <a class="nav-link active" style="font-size: 25px;margin-left: 1%;" href="/">
+            <span class="notranslate">Peak Labs</span>
+            <img src="/gym-website-logo-without-a-person-upscaled.png" alt="" width="80px"
+                class="d-inline-block align-text-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <% if (userDetails) { %>
+                    <a class="nav-link active text-decoration-underline d-flex align-items-center" aria-current="page">
+                        Bienvenue <%= userDetails.E_PRENOM %> 
+
+                    </a>
+                <% } else { %>
+                    
+                <% } %>
+                <a class="nav-link active d-flex align-items-center toucher" href="/event/boutique">Boutique</a>
+
+                <!-- <a class="nav-link active d-flex align-items-center" href="#">en</a>
+                <a class="nav-link active d-flex align-items-center" href="#">fr</a> -->
+                <div style="padding-top: 20px;" id="google_translate_element"></div>
+
+
+                <a class="nav-link active" href="/event/panier">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40px" fill="#FFFFFF"
+                        class="bi bi-cart-fill align-items-center nav-link active d-flex "
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                    </svg>
+                </a>
+                <% if (userDetails) { %>
+                <!--<a class="nav-link active d-flex align-items-center" href="/event/detail" tabindex="-1"
+                    aria-disabled="true"><img src="/user-solid.png" alt=""
+                        style="filter: brightness(0%);" width="40px"></a>-->
+                        <div class="dropdown">
+                            <a class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
+                                <img src="/user-solid.png" alt="" style="filter: brightness(0%);" width="40px">
+                            </a>
+                            <ul style="margin-left: -140px;" class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
+                                <li><a class="dropdown-item" href="/event/detail">Détail</a></li>
+                                <li><a class="dropdown-item" href="/logout">Déconnecter</a></li>
+                                <% if (userDetails.isAdmin) { %>
+                                    <li><a class="dropdown-item" href="/event/admin">Admin</a></li>
+
+                                    <% } %>   
+                            </ul>
+                        </div>        
+
+                <% } else { %>
+                    <div class="dropdown">
+                        <a class="btn nav-link active text-decoration-underline d-flex align-items-center" role="button" id="dropdownMenuLink" onclick="toggleDropdown()" aria-expanded="false">
+                            <img src="/user-solid.png" alt="" style="filter: brightness(0%);" width="40px">
+                        </a>
+                        <ul style="margin-left: -140px;" class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
+                            <li><a class="dropdown-item" href="/event/connect">Se Connecter</a></li>
+                            <li><a class="dropdown-item" href="/event/creationCompte">Inscription</a></li>
+                        </ul>
+                    </div>
+                <% } %>
+                <div id="google_translate_element"></div>
+
+            </div>
+        </div>
+    </div>
+
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    function toggleDropdown() {
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        dropdownMenu.classList.toggle("show");
+    }
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'fr'}, 'google_translate_element');
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'fr'}, 'google_translate_element');
+    }
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<style>
+.goog-te-gadget{
+    color: transparent !important;
+}
+.VIpgJd-ZVi9od-l4eHX-hSRGPd{
+    display: none;
+}
+body > .skiptranslate > iframe.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+
+/* .navbar {
+    margin-top: -40px;
+} */
+
+</style>
+
+<script>
+// Function to show the selected language
+function showSelectedLanguage() {
+    // Get the select element
+    var languageDropdown = document.querySelector(".goog-te-combo");
+    
+    // Check if the language dropdown exists
+    if (languageDropdown) {
+        // Get the selected language value
+        var selectedLanguage = languageDropdown.value;
+        
+        // Check if the selected language is French
+        if (selectedLanguage === 'fr') {
+            // If the selected language is French, return without displaying the alert or applying CSS
+            return null;
+        } else {
+            // Display the selected language in an alert
+            alert("Selected language: " + selectedLanguage);
+            
+            // Apply the CSS to the navbar
+            document.querySelector('.navbar').style.marginTop = '-40px';
+            
+            // Return the selected language
+            return selectedLanguage;
+        }
+    }
+
+    // Return null if the language dropdown doesn't exist
+    return null;
+}
+</script>
+
+
+

@@ -1,0 +1,187 @@
+<%- include ("../partials/header.ejs") %>
+    <style>
+        .titre {
+            font-size: 64px;
+            color: white;
+            font-family: 'Khand';
+            flex-direction: column;
+            text-align: center;
+            margin-top: -50px;
+
+        }
+
+        body {
+            background-color: #41455D;
+        }
+
+        .items_page {
+            font-family: 'Khand';
+            flex-direction: column;
+            color: #FFFFFF;
+            font-size: 32px;
+        }
+
+        .form-signin {
+            width: 55%;
+            margin: -10;
+        }
+
+        .form-control {
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            background-color: grey;
+            border-color: grey;
+        }
+
+        .custom-inputs {
+            background-color: #D9D9D9;
+            width: 489px;
+            height: 35px;
+            border: none;
+            display: block;
+        }
+
+
+        .column {
+            float: left;
+            width: 50%;
+        }
+
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+
+    <link href="https://fonts.googleapis.com/css2?family=Khand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <div class="container">
+        <div class="alert alert-warning alert-dismissible
+           fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form>
+
+            <div class="titre">SE JOINDRE AU LAB</div>
+
+        </form>
+
+        <div class="row">
+
+
+
+            <div class="col-6">
+
+                <div class="items_page">
+
+
+                    <form id="registrationForm" method="post">
+                        <div class="form-signin">
+
+
+                            <label for="inputName" class="sr-only">Nom</label>
+                            <input class="form-control" type="nom" id="nom" name="nom" placeholder="nom" required="">
+
+                            <label for="inputPrenom" class="sr-only">Prenom</label>
+                            <input class="form-control" type="prénom" id="prénom" name="prénom" placeholder="prénom"
+                                required="">
+
+                            <label for="inputEmail" class="sr-only">Address Courriel</label>
+                            <input class="form-control" type="email" id="email" name="email"
+                                placeholder="Address Courriel" required="">
+
+                            <label for="inputNum" class="sr-only">Numéro de cellulaire</label>
+                            <input class="form-control" type="tel" id="num" name="num" placeholder="numero"
+                                pattern="[0-9]{10}" required="">
+
+                            <label for="inputPassword" class="sr-only">Mot de passe</label>
+                            <input class="form-control" type="password" id="password" name="password"
+                                placeholder="Mot de passe" required="">
+
+                            <label for="inputVFPassword" class="sr-only">Vérifier Mot de passe</label>
+                            <input class="form-control" type="password" id="VFpassword" name="VFpassword"
+                                placeholder="Vérifier Mot de passe" required="">
+                            <button class="btn btn-dark" type="submit">Créer compte</button>
+                        </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <img style="border-radius: 20x;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 60px; float: left;"
+                        src="/solarium.png" alt="muscle">
+                    <span
+                        style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px;">Salle
+                        de bronzage, sauna et piscines incluses</span>
+                </div>
+
+                <div>
+                    <img style="border-radius: 16px;height: 50px;width: 50px; float: left;" src="/wall-clock.png"
+                        alt="muscle">
+                    <span
+                        style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px; float: right;">Période
+                        d’essai de 7 jours, pas de frais d'annulation !</span>
+                </div>
+                <div style="margin-bottom:30px ;">
+                    <img style="border-radius: 16px;height: 50px;width: 50px;margin-right: 20px; margin-bottom: 60px; float: left;"
+                        src="/muscle.png" alt="muscle">
+                    <span
+                        style="display: inline-block; white-space: nowrap; overflow: hidden; margin-right: 20px; margin-bottom: 50px; ">Suivi
+                        intégral privé de votre entrainement <div style="font-size: 16px">* seulement avec
+                            l'abonnement Peak</div> </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        document.getElementById("registrationForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+            var password = formData.get('password');
+            var VFpassword = formData.get('VFpassword');
+
+            if (password !== VFpassword) {
+                showError("Les mots de passe ne correspondent pas.");
+            } else {
+                var jsonData = {};
+                formData.forEach((value, key) => {
+                    jsonData[key] = value;
+                });
+
+                fetch("/event/creationCompte", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(jsonData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                showError(data.message);
+                            });
+                        }
+                        window.location.href = "/event/connect";
+                    })
+                    .catch(error => {
+                        showError("Une erreur est survenue lors de la création du compte.");
+                    });
+            }
+        });
+        function showError(message) {
+            alert(message);
+        }
+    </script>
+
+
+    <%- include("../partials/footer.ejs") %>

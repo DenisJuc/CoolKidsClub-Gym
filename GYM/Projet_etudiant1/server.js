@@ -14,11 +14,11 @@ import Stripe from 'stripe';
 import { debug } from "console";
 import { MongoClient } from "mongodb";
 import { connectToMongo, createReview, findReviewByUsername, updateReviewByUsername, deleteReviewByUsername } from "../../src/gymCrud.js";
-
-
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
 
 // Configure session middleware
 app.use(session({
@@ -469,6 +469,7 @@ app.post('/update-details', (req, res) => {
     const updatedDetails = req.body;
     delete updatedDetails.userId;
 
+
     let updateQuery = "UPDATE e_compte SET ";
     const updateValues = [];
     for (const key in updatedDetails) {
@@ -520,6 +521,62 @@ app.post('/update-details', (req, res) => {
         });
     });
 });
+
+    con.query("SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_ID != ?", [updatedDetails.email, userId], (err, rows) => {
+        if (rows.length > 0) {
+            return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
+        }
+
+        let updateQuery = "UPDATE e_compte SET ";
+        const updateValues = [];
+        for (const key in updatedDetails) {
+            if (updatedDetails.hasOwnProperty(key)) {
+                // capitalize
+                const capitalizedKey = key.toUpperCase();
+                // change les trucs car sa bug
+                if (capitalizedKey === 'NAME') {
+                    updateQuery += `E_NOM = ?, `;
+                } else if (capitalizedKey === 'EMAIL') {
+                    updateQuery += `E_COURRIEL = ?, `;
+                } else if (capitalizedKey === 'NUM') {
+                    updateQuery += `E_NUMBER = ?, `;
+
+                } else {
+                    updateQuery += `E_${capitalizedKey} = ?, `;
+                }
+
+                updateValues.push(updatedDetails[key]);
+            }
+        }
+        updateQuery = updateQuery.slice(0, -2);
+        updateQuery += " WHERE E_ID = ?";
+        updateValues.push(userId);
+
+
+        con.query(updateQuery, updateValues, (err, result) => {
+            if (err) {
+                return res.status(500).send("Erreur lors de la mise à jour des détails");
+            }
+
+            const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+            con.query(userDetailsQuery, [userId], (err, userDetails) => {
+                if (err) {
+                    return res.status(500).send("Erreur lors de la récupération des détails de l'utilisateur");
+                }
+
+                req.session.user = userDetails[0];
+
+                res.render("pages/detail", {
+                    siteTitle: "Details",
+                    pageTitle: "Details",
+                    userDetails: req.session.user,
+                });
+            });
+        });
+    });
+});
+
+
 app.post('/delete-account', (req, res) => {
     const userId = req.session.user.E_ID;
     const deleteQuery = "DELETE FROM e_compte WHERE E_ID = ?";
@@ -877,6 +934,7 @@ app.post('/set-admin-status', (req, res) => {
     });
 });
 
+
 /*
     MongoDB connection
 */
@@ -926,6 +984,8 @@ app.delete('/reviews/:username', async (req, res) => {
 });
 
 
+
+
 // NEEDS MONGO CONNECTION
 /*
 
@@ -933,8 +993,12 @@ const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect('WHAT IS OUR CONNECTION', {
+
  useNewUrlParser: true,
  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+
 });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));

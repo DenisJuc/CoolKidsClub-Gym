@@ -1,0 +1,149 @@
+<%- include("../partials/header.ejs") %>
+      <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+      <link href="css/styles.css" rel="stylesheet">
+      <style>
+          .card {
+              margin-bottom: 20px;
+              transition-duration: 0.5s;
+          }
+
+      .card:hover,
+      .card.hover-effect {
+        transform: translateY(-5px) scale(1.2);
+      }
+
+      .card::after {
+        transform: translateY(-5px) scale(1.0);
+      }
+      </style>
+  </head>
+  <body>
+    <header class="py-5" style="background-color: transparent;">
+      <div class="container px-4 px-lg-5 my-5">
+          <div class="text-center text-white">
+              <h1 class="display-4 fw-bolder">Abonnement</h1>
+          </div>
+      </div>
+  </header>
+  
+      <section class="py-5">
+          <div class="container px-4 px-lg-5 mt-5">
+              <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
+                  <div class="col mb-5">
+                      <div class="card h-100" style="background: linear-gradient(to bottom, #FFC107, #FFECB3);">
+                          <div class="card-body p-4 text-center">
+                              <h5 class="fw-bolder" style="margin-bottom: 40px;">Essai Gratuit</h5>
+                              <p style="margin-bottom: 40px;">Cet abonnement vous donne accès à toutes les permissions qu'a l'abonnement standard, mais pour un temps limité.</p>
+                              $0.00
+                          </div>
+                          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                              <button class="btn btn-outline-dark mt-auto" onclick="addToCart('essai-gratuit')" >Ajouter au panier</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col mb-5">
+                      <div class="card h-100" style="background: linear-gradient(to bottom, #616161, #9E9E9E);">
+                          <div class="card-body p-4 text-center">
+                              <h5 class="fw-bolder" style="margin-bottom: 40px;">Standard</h5>
+                              <p style="margin-bottom: 40px;">Cet abonnement vous donne accès au gym, ainsi qu'un rabais de 5% sur certain de nos produits.</p>
+                              $14.99
+                          </div>
+                          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                              <button class="btn btn-outline-dark mt-auto" onclick="addToCart('standard')">Ajouter au panier</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col mb-5">
+                      <div class="card h-100" style="background: linear-gradient(to bottom, #00ACC1, #B2EBF2);">
+                          <div class="card-body p-4 text-center">
+                              <h5 class="fw-bolder" style="margin-bottom: 40px;">Peak</h5>
+                              <p style="margin-bottom: 40px;">Cet abonnement vous donne accès au gym de Peak Labs, ainsi qu'un rabais de 20% sur tout nos produits.</p>
+                              $35.99
+                          </div>
+                          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                              <button class="btn btn-outline-dark mt-auto" onclick="addToCart('peak')">Ajouter au panier</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <form id="subscriptionForm" action="/event/add-subscription-to-cart" method="post" style="display: none;">
+                  <input type="hidden" name="subscriptionType" id="subscriptionTypeInput" value="">
+                  <button type="submit" class="custom_butt">Confirmer</button>
+              </form>
+          </div>
+      </section>
+  
+      <script>
+          function addToCart(subscriptionType) {
+              document.getElementById('subscriptionTypeInput').value = subscriptionType;
+              document.getElementById('subscriptionForm').submit();
+          }
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+  </html>
+  
+
+  <style>
+    body {
+      background-color: #41455D;
+      font-family: 'Krona One';
+    }
+
+    .items_page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .titre {
+      font-size: 70px;
+      font-family: 'Khand', sans-serif;
+      text-align: center;
+      color: #FFFFFF;
+      margin-top: 50px;
+    }
+
+    .abonnement-option {
+      width: 100%;
+      font-family: 'Khand', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .subscription-option {
+      color: black;
+      padding: 20px;
+      font-family: 'Khand', sans-serif;
+      margin-top: 10px;
+      transition: transform 0.3s ease, border 0.3s ease;
+      cursor: pointer;
+      border-radius: 15px;
+    }
+
+    .subscription-option:hover {
+      transform: scale(1.05);
+    }
+
+    .selected {
+      border: 3px solid yellow;
+    }
+
+    .custom_butt {
+      background-color: black;
+      color: white;
+      padding: 10px 20px;
+      font-size: 20px;
+      margin-top: 30px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .custom_butt:hover {
+      background-color: #333;
+    }
+  </style>
+  <%- include("../partials/footer.ejs") %>

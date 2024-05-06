@@ -1,0 +1,411 @@
+<%- include ("../partials/header.ejs") %>
+
+  <head>
+    <link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
+    <style>
+      body {
+        font-family: 'Krona One';
+        background-color: #41455D;
+      }
+
+      .boite {
+        transition-duration: 0.5s;
+      }
+
+      .boite:hover,
+      .boite.hover-effect {
+        transform: translateY(-5px) scale(1.03);
+      }
+
+      .boite::after {
+        transform: translateY(-5px) scale(1.0);
+      }
+
+      .style-trier {
+        background-color: #4F5268;
+        padding: 5px;
+        margin-bottom: 5px;
+        display: block;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <div style="margin-top: 70px;">
+    <div>
+      <div class="container">
+        <div class="d-flex justify-content-start position-absolute translate-middle" style="top: 170px;left: 100px;">
+          <button id="filterButton" type="button" style="border-radius: 8px;" class="btn btn-light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-justify"
+              viewBox="0 0 16 16">
+              <path fill-rule="evenodd"
+                d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5" />
+            </svg> Filtrer & Trier
+          </button>
+        </div>
+        <div id="checkboxList" style="display: none;position: absolute; top: 200px; left: 10px;color: white;">
+          <div class="style-trier">
+
+            <!-- VETEMEMTNS-->
+            <div class="category-wrapper">
+
+              <h2><input checked="true" type="checkbox" id="vetementsCheckbox" onchange="filterItems('Vetements')">
+                Vêtements</h2>
+              <!-- Options de filtrage spécifiques aux vêtements (si nécessaire) 
+              <div>
+                <label>
+                  Couleur:
+                  <select id="colorFilter" onchange="filterItems()">
+                    <option name="color" value="noir">Noir</option>
+                    <option name="color" value="rouge">Rouge</option>
+                    <option name="color" value="bleu">Bleu</option>
+                    <option name="color" value="jaune">Jaune</option>
+                  </select>
+                </label><br>
+                <label>
+                  Sexe:
+                  <select id="sexeFilter" onchange="filterItems()">
+                    <option name="sexe" value="male">Male</option>
+                    <option name="sexe" value="femme">Femme</option>
+                    <option name="sexe" value="genreX">X</option>
+                  </select>
+                </label><br>
+                <label>
+                  Taille:
+                  <select id="tailleFilter" onchange="filterItems()">
+                    <option name="taille" value="small">S</option>
+                    <option name="taille" value="medium">M</option>
+                    <option name="taille" value="large">L</option>
+                    <option name="taille" value="xlarge">XL</option>
+                  </select>
+                </label><br>
+                <label>
+                  Prix: <span id="priceRange">0</span> - 100$ <br>
+                  <input type="range" min="0" max="100" value="0" oninput="updatePriceRange(this.value)">
+                </label><br>
+              </div>-->
+
+            </div>
+
+
+
+            <!-- EQUIPEMENTS -->
+
+            <div class="category-wrapper">
+              <h2><input checked="true" type="checkbox" id="equipmentsCheckbox" onchange="filterItems('Equipments')">
+                Équipements</h2>
+
+            </div>
+
+
+
+          </div>
+        </div>
+        <!-- EQUIPEMENTS -->
+        <div class="equipments category-container">
+
+
+          <div class="d-flex justify-content-end">
+            <div class="d-flex align-items-end" style="margin-right:-72px;">
+              <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;"
+                  src="/produit20.jpeg" /></div>
+              <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;"
+                  src="/produit30.jpeg" /></div>
+              <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;"
+                  src="/produit40.jpeg" /></div>
+            </div>
+          </div>
+          <div class="d-flex flex-row-reverse bd-highlight">
+            <div class="d-flex align-items-end" style="margin-bottom: -250px;margin-right:-70px;">
+              <div class="p-2 bd-highlight">
+                <p
+                  style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px;margin-right: 50px;">
+                  Nom :
+                  Haltère 1kg-10kg<br>Prix : 20 $</p>
+                <form id="insertForm" action="/event/panier" method="post">
+                  <input type="hidden" name="productName" value="Haltère">
+                  <input type="hidden" name="price" value="20">
+                  <input type="hidden" name="categorie" value="Equipement">
+                  <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="poids" value="1kg-10kg">
+                  <button type="submit" id="buttonhaltere" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
+                </form>
+              </div>
+              <div class="p-2 bd-highlight">
+                <p
+                  style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px;margin-right: 50px;">
+                  Nom : Plaque 20 kg<br>Prix : 30 $</p>
+                <form id="insertForm" action="/event/panier" method="post">
+                  <input type="hidden" name="productName" value="Plaque 20kg">
+                  <input type="hidden" name="price" value="30">
+                  <input type="hidden" name="categorie" value="Equipement">
+                  <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="poids" value="20kg">
+                  <button type="submit" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
+                </form>
+              </div>
+              <div class="p-2 bd-highlight">
+                <p
+                  style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px;margin-right: 50px;">
+                  Nom : Barre W 20.4kg<br>
+                  Prix : 40 $</p>
+                <form id="insertForm" action="/event/panier" method="post">
+                  <input type="hidden" name="productName" value="Barre W">
+                  <input type="hidden" name="price" value="40">
+                  <input type="hidden" name="categorie" value="Equipement">
+                  <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="poids" value="20.4kg">
+                  <button type="submit" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div class="vetements category-container">
+
+
+          <div class="d-flex justify-content-end">
+            <div class="d-flex align-items-end " style="margin-right: -70px;">
+              <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;"
+                  src="/produit25.jpeg" /></div>
+              <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;"
+                  src="/produit35.jpeg" /></div>
+              <div class="p-2 boite"><img style="border-radius: 16px;height: 375px;width: 248px;margin-right: 60px;"
+                  src="/produit55.jpeg" /></div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-row-reverse bd-highlight" style="margin-right: 75px;">
+            <div class="d-flex align-items-end">
+              <div class="p-2 bd-highlight">
+                <p style=" font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px;">Nom : Chandail
+                  Peak
+                  Labs<br>
+                  <label>
+                    Couleur:
+                    <select id="colorSelect" name="color">
+                      <option name="color" value="noir">Noir</option>
+                      <option name="color" value="rouge">Rouge</option>
+                      <option name="color" value="bleu">Bleu</option>
+                      <option name="color" value="jaune">Jaune</option>
+                    </select>
+                  </label><br>
+                  <label>
+                    Taille:
+                    <select id="tailleSelect" name="taille">
+                      <option name="taille" value="small">S</option>
+                      <option name="taille" value="medium">M</option>
+                      <option name="taille" value="large">L</option>
+                      <option name="taille" value="xlarge">XL</option>
+                    </select>
+                  </label><br>Prix : 25 $
+                </p>
+                <form id="insertForm" action="/event/panier" method="post">
+                  <input type="hidden" name="productName" value="Chandail Peak Labs">
+                  <input type="hidden" name="price" value="25">
+                  <input type="hidden" name="categorie" value="Vetements">
+                  <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" id="colorInput" name="color" value="">
+                  <input type="hidden" id="tailleInput" name="taille" value="">
+                  <input type="hidden" name="sexe" value="X">
+                  <button type="submit" class="btn btn-dark" style="margin-top: -600px;">Ajouter au panier</button>
+                </form>
+              </div>
+
+              <div class="p-2 bd-highlight">
+                <p
+                  style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px; margin-left: 23%;">
+                  Nom : Hoodie Peak Labs<br>
+                  <label>
+                    Couleur:
+                    <select id="colorSelect" name="color">
+                      <option value="noir">Noir</option>
+                      <option value="rouge">Rouge</option>
+                      <option value="bleu">Bleu</option>
+                      <option value="jaune">Jaune</option>
+                    </select>
+                  </label><br>
+                  <label>
+                    Taille:
+                    <select id="tailleSelect" name="taille">
+                      <option value="small">S</option>
+                      <option value="medium">M</option>
+                      <option value="large">L</option>
+                      <option value="xlarge">XL</option>
+                    </select>
+                  </label><br>
+                  Prix : 35 $
+                </p>
+                <form class="insertForm1" action="/event/panier" method="post">
+                  <input type="hidden" name="productName" value="Hoodie Peak Labs">
+                  <input type="hidden" name="price" value="35">
+                  <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="categorie" value="Vetements">
+                  <input type="hidden" id="colorInput1" name="color" value="">
+                  <input type="hidden" id="tailleInput1" name="taille" value="">
+                  <input type="hidden" name="sexe" value="X">
+
+                  <button type="submit" class="btn btn-dark"
+                    style="margin-top: -600px; margin-left: 25%;height: 37px; width: 210px;">Ajouter au panier</button>
+                </form>
+              </div>
+
+
+
+
+              <div class="p-2 bd-highlight">
+                <p
+                  style="font-size: 12px;color: white;border-radius: 16px;height: 375px;width: 248px; margin-left: 42%;">
+                  Nom : Protein Powder Peak Labs<br>
+                  Prix : 55 $</p>
+                <form id="insertForm" action="/event/panier" method="post">
+                  <input type="hidden" name="productName" value="Protein Powder Peak Labs">
+                  <input type="hidden" name="price" value="55">
+                  <input type="hidden" name="quantite" value="1">
+                  <input type="hidden" name="categorie" value="Autre">
+                  <button type="submit" class="btn btn-dark"
+                    style="margin-top: -600px; margin-left: 43%; height: 37px; width: 210px;">Ajouter au panier</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <%- include ("../partials/footer") %>
+        <script>
+          document.getElementById('filterButton').addEventListener('click', function () {
+            var checkboxList = document.getElementById('checkboxList');
+            checkboxList.style.display = checkboxList.style.display === 'none' ? 'block' : 'none';
+          });
+
+          document.addEventListener('DOMContentLoaded', function () {
+            const colorSelect = document.getElementById('colorSelect');
+            const tailleSelect = document.getElementById('tailleSelect');
+            const colorInput = document.getElementById('colorInput1');
+            const tailleInput = document.getElementById('tailleInput1');
+
+            colorSelect.addEventListener('change', function () {
+              colorInput.value = colorSelect.value;
+            });
+
+            tailleSelect.addEventListener('change', function () {
+              tailleInput.value = tailleSelect.value;
+            });
+          });
+
+          document.addEventListener('DOMContentLoaded', function () {
+            const colorSelect = document.getElementById('colorSelect');
+            const tailleSelect = document.getElementById('tailleSelect');
+            const colorInput = document.getElementById('colorInput');
+            const tailleInput = document.getElementById('tailleInput');
+
+            colorSelect.addEventListener('change', function () {
+              colorInput.value = colorSelect.value;
+              console.log(value);
+            });
+
+            tailleSelect.addEventListener('change', function () {
+              tailleInput.value = tailleSelect.value;
+            });
+          });
+
+          //function updatePriceRange(value) {
+          //  document.getElementById('priceRange').innerText = value;
+          // }
+
+          // function updatePriceRange2(value) {
+          //  document.getElementById('priceRange2').innerText = value;
+          //}
+
+          // function confirmSelection() {
+          //   var vetementsCheckbox = document.getElementById('vetementsCheckbox');
+          //   var equipmentsCheckbox = document.getElementById('equipmentsCheckbox');
+          //   var category = vetementsCheckbox.checked ? 'vetements' : 'equipments';
+
+          //   filterItems(category);
+
+          //   document.querySelectorAll('.colorSelect').forEach(function (select) {
+          //     select.addEventListener('change', function () {
+          //       var color = this.value;
+          //       this.closest('form').querySelector('.colorInput').value = color;
+          //     });
+          //   });
+
+          //   document.querySelectorAll('.tailleSelect').forEach(function (select) {
+          //     select.addEventListener('change', function () {
+          //       var size = this.value;
+          //       this.closest('form').querySelector('.tailleInput').value = size;
+          //     });
+          //   });
+          // }
+
+          // document.getElementById('confirmerButton').addEventListener('click', confirmSelection);
+
+          function filterItems(category) {
+            var checkbox = document.getElementById(category.toLowerCase() + 'Checkbox');
+            if (checkbox) {
+              var checked = checkbox.checked;
+              var items = document.querySelectorAll('.' + category.toLowerCase() + '.category-container');
+              items.forEach(function (item) {
+                item.style.display = checked ? 'block' : 'none';
+              });
+            }
+          }
+
+          then(response => {
+            if (!response.ok) {
+              return response.json().then(data => {
+                if (response.status === 401) {
+                  alert(data.message);
+                  window.location.href = "/event/connect?error=" + encodeURIComponent(data.message);
+                } else {
+                  showError(data.message);
+                }
+              });
+            }
+            window.location.href = "/event/connect";
+          })
+        </script>
+
+        <script>
+          // Function to add item to cart
+          // function addToCart() {
+          //   var isLoggedIn = true;
+
+          //   if (!isLoggedIn) {
+          //    var errorMessage = "<div class='alert alert-danger' role='alert'>Vous devez être connecté pour ajouter des articles au panier.</div>";
+          //     $('#errorMessageContainer').html(errorMessage);
+          //  } else {
+          //    $('#insertForm').submit();
+          //   }
+          //  }
+          
+        </script>
+
+
+        <!-- Pop-up modal for login prompt -->
+        <div id="loginPromptModal" class="modal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Connectez</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Il faut que vous soyez connecter</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="errorMessageContainer"></div>
+        
