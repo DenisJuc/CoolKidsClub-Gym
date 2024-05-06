@@ -1,5 +1,9 @@
 import { config } from "dotenv";
-import { executeStudentCrudOperations } from "./gymCrud.js";
+import { executeGymCrudOperations } from "./gymCrud.js";
 
 config();
-await executeGymCrudOperations();
+console.log("DB_URI:", process.env.DB_URI);
+
+await executeGymCrudOperations().catch(error => {
+    console.error('Error during gym CRUD operations:', error);
+});
