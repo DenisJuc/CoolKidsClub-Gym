@@ -463,57 +463,60 @@ app.post('/update-details', (req, res) => {
     const updatedDetails = req.body;
     delete updatedDetails.userId;
 
-    let updateQuery = "UPDATE e_compte SET ";
-    const updateValues = [];
-    for (const key in updatedDetails) {
-        if (updatedDetails.hasOwnProperty(key)) {
-            // capitalize
-            const capitalizedKey = key.toUpperCase();
-            // change les trucs car sa bug
-            if (capitalizedKey === 'NAME') {
-                updateQuery += `E_NOM = ?, `;
-            } else if (capitalizedKey === 'EMAIL') {
-                updateQuery += `E_COURRIEL = ?, `;
-            } else if (capitalizedKey === 'NUM') {
-                updateQuery += `E_NUMBER = ?, `;
+    con.query("SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_ID != ?", [updatedDetails.email, userId], (err, rows) => {
+        if (rows.length > 0) {
+            return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
+        }
 
-            } else {
-                updateQuery += `E_${capitalizedKey} = ?, `;
+        let updateQuery = "UPDATE e_compte SET ";
+        const updateValues = [];
+        for (const key in updatedDetails) {
+            if (updatedDetails.hasOwnProperty(key)) {
+                // capitalize
+                const capitalizedKey = key.toUpperCase();
+                // change les trucs car sa bug
+                if (capitalizedKey === 'NAME') {
+                    updateQuery += `E_NOM = ?, `;
+                } else if (capitalizedKey === 'EMAIL') {
+                    updateQuery += `E_COURRIEL = ?, `;
+                } else if (capitalizedKey === 'NUM') {
+                    updateQuery += `E_NUMBER = ?, `;
+
+                } else {
+                    updateQuery += `E_${capitalizedKey} = ?, `;
+                }
+
+                updateValues.push(updatedDetails[key]);
             }
-
-            updateValues.push(updatedDetails[key]);
         }
-    }
-    updateQuery = updateQuery.slice(0, -2);
-    updateQuery += " WHERE E_ID = ?";
-    updateValues.push(userId);
+        updateQuery = updateQuery.slice(0, -2);
+        updateQuery += " WHERE E_ID = ?";
+        updateValues.push(userId);
 
 
-    con.query(updateQuery, updateValues, (err, result) => {
-        if (err) {
-            return res.status(500).send("Erreur");
-        }
-
-        const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
-        con.query(userDetailsQuery, [userId], (err, userDetails) => {
+        con.query(updateQuery, updateValues, (err, result) => {
             if (err) {
-                return res.status(500).send("Erreur");
+                return res.status(500).send("Erreur lors de la mise à jour des détails");
             }
 
-            req.session.user = userDetails[0];
-            if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
-                req.session.user.isAdmin = true;
-            }
+            const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+            con.query(userDetailsQuery, [userId], (err, userDetails) => {
+                if (err) {
+                    return res.status(500).send("Erreur lors de la récupération des détails de l'utilisateur");
+                }
 
-            res.render("pages/detail", {
-                siteTitle: "Details",
-                pageTitle: "Details",
-                userDetails: req.session.user,
+                req.session.user = userDetails[0];
 
+                res.render("pages/detail", {
+                    siteTitle: "Details",
+                    pageTitle: "Details",
+                    userDetails: req.session.user,
+                });
             });
         });
     });
 });
+
 app.post('/delete-account', (req, res) => {
     const userId = req.session.user.E_ID;
     const deleteQuery = "DELETE FROM e_compte WHERE E_ID = ?";
@@ -872,9 +875,8 @@ app.post('/set-admin-status', (req, res) => {
 });
 
 
-=======
 // NEEDS MONGO CONNECTION
-
+/*
 
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
@@ -915,3 +917,4 @@ app.post('/submit-comment', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+*/
