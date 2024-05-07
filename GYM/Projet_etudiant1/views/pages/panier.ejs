@@ -198,6 +198,7 @@ button:disabled {
                 <td class="align-middle">
                   <p class="mb-0" style="font-weight: 500;"><%= item.E_CATEGORIE %></p>
                 </td>
+                
                 <td class="align-middle">
                   <div class="d-flex flex-row">
                     <input id="form1" min="0" name="quantity" value="<%= item.E_QUANTITE %>" type="number" class="form-control form-control-sm" style="width: 50px;" 
@@ -228,8 +229,6 @@ data-product-id="<%= item.E_IDPRODUIT %>"
               </tr>
             </tbody>
             <% totalPrice += parseFloat(item.E_PRIX)* item.E_QUANTITE; %>
-    <% itemsP.push({ id: item.E_IDPRODUIT, amount: parseFloat((item.E_PRIX* 100 * item.E_QUANTITE)*(1.14975)) });
-    const items = itemsP; %>
             <% }); %>
           </table>
         </div>
@@ -261,8 +260,8 @@ data-product-id="<%= item.E_IDPRODUIT %>"
                   <p class="mb-2">Total (avec taxes)</p>
                   <p class="mb-2" id="total">$<%= (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) %></p>
                 </div>
-                <% itemsP.push({ id: 1, amount: (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) });
-    const items = itemsP; %>
+                <% itemsP.push({ id: 1, amount: ((parseFloat(totalPrice) + (parseFloat(totalPrice) * 0.14975)).toFixed(2))*100 });
+                const items = itemsP; %>
                 <button id="myBtn">Payer <%= (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) * 0.14975)).toFixed(2) %> $</button>
                 <div id="myModal" class="modal">
   
@@ -335,9 +334,9 @@ data-product-id="<%= item.E_IDPRODUIT %>"
   // The items the customer wants to buy
   let items = [];
   <% itemsP.forEach(function(item) { %>
-    items.push({ id: "<%= item.id %>", amount: Math.ceil(<%= item.amount %>) });
+    items.push({ id: "<%= item.id %>", amount: Math.round(<%= item.amount %>) });
   <% }); %>
-  items.push({id:"shipping", amount: 1000})
+  items.push({ id: "shipping", amount: 1000 });
 let elements;
 
 initialize();

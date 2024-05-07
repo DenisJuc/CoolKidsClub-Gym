@@ -414,7 +414,6 @@ app.post('/event/connect', (req, res) => {
 
         const user = result[0];
 
-        // Compare the provided password with the hashed password from the database
         bcrypt.compare(password, user.E_PASSWORD, (compareErr, isMatch) => {
             if (compareErr) {
                 console.error("Error comparing passwords:", compareErr);
@@ -422,14 +421,9 @@ app.post('/event/connect', (req, res) => {
             }
 
             if (isMatch) {
-                // Passwords match, user is authenticated
                 req.session.user = user;
-                if (user.E_COURRIEL === "peaklabs1@gmail.com") {
-                    req.session.user.isAdmin = true;
-                }
                 res.redirect('/event/detail');
             } else {
-                // Passwords do not match
                 res.status(401).send("Incorrect password");
             }
         });
@@ -701,11 +695,9 @@ const calculateOrderAmount = (items) => {
 
     var amount = 0;
     items.forEach(item => {
-        console.log(item.amount);
         amount += item.amount;
     });
     let orderAmount = amount;
-    console.log(orderAmount);
     return orderAmount;
 };
 
