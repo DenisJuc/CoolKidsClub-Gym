@@ -13,7 +13,7 @@ import bcrypt from 'bcrypt';
 import Stripe from 'stripe';
 import { debug } from "console";
 import { MongoClient } from "mongodb";
-import { connectToMongo, createReview, findReviewByUsername, updateReviewByUsername, deleteReviewByUsername } from "../../src/gymCrud.js";
+//import { connectToMongo, createReview, findReviewByUsername, updateReviewByUsername, deleteReviewByUsername } from "../../src/gymCrud.js";
 
 
 
@@ -200,7 +200,7 @@ app.post('/event/panier', (req, res) => {
     const taille = req.body.taille;
 
     const userId = req.session.user ? req.session.user.E_ID : null;
-    let price,poids,quantite;
+    let price, poids, quantite;
 
     switch (categorie) {
         case 'Equipement':
@@ -562,58 +562,58 @@ app.post('/update-details', (req, res) => {
     });
 });
 
-    con.query("SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_ID != ?", [updatedDetails.email, userId], (err, rows) => {
-        if (rows.length > 0) {
-            return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
-        }
+// con.query("SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_ID != ?", [updatedDetails.email, userId], (err, rows) => {
+//     if (rows.length > 0) {
+//         return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
+//     }
 
-        let updateQuery = "UPDATE e_compte SET ";
-        const updateValues = [];
-        for (const key in updatedDetails) {
-            if (updatedDetails.hasOwnProperty(key)) {
-                // capitalize
-                const capitalizedKey = key.toUpperCase();
-                // change les trucs car sa bug
-                if (capitalizedKey === 'NAME') {
-                    updateQuery += `E_NOM = ?, `;
-                } else if (capitalizedKey === 'EMAIL') {
-                    updateQuery += `E_COURRIEL = ?, `;
-                } else if (capitalizedKey === 'NUM') {
-                    updateQuery += `E_NUMBER = ?, `;
+//     let updateQuery = "UPDATE e_compte SET ";
+//     const updateValues = [];
+//     for (const key in updatedDetails) {
+//         if (updatedDetails.hasOwnProperty(key)) {
+//             // capitalize
+//             const capitalizedKey = key.toUpperCase();
+//             // change les trucs car sa bug
+//             if (capitalizedKey === 'NAME') {
+//                 updateQuery += `E_NOM = ?, `;
+//             } else if (capitalizedKey === 'EMAIL') {
+//                 updateQuery += `E_COURRIEL = ?, `;
+//             } else if (capitalizedKey === 'NUM') {
+//                 updateQuery += `E_NUMBER = ?, `;
 
-                } else {
-                    updateQuery += `E_${capitalizedKey} = ?, `;
-                }
+//             } else {
+//                 updateQuery += `E_${capitalizedKey} = ?, `;
+//             }
 
-                updateValues.push(updatedDetails[key]);
-            }
-        }
-        updateQuery = updateQuery.slice(0, -2);
-        updateQuery += " WHERE E_ID = ?";
-        updateValues.push(userId);
+//             updateValues.push(updatedDetails[key]);
+//         }
+//     }
+//     updateQuery = updateQuery.slice(0, -2);
+//     updateQuery += " WHERE E_ID = ?";
+//     updateValues.push(userId);
 
 
-        con.query(updateQuery, updateValues, (err, result) => {
-            if (err) {
-                return res.status(500).send("Erreur lors de la mise à jour des détails");
-            }
+//     con.query(updateQuery, updateValues, (err, result) => {
+//         if (err) {
+//             return res.status(500).send("Erreur lors de la mise à jour des détails");
+//         }
 
-            const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
-            con.query(userDetailsQuery, [userId], (err, userDetails) => {
-                if (err) {
-                    return res.status(500).send("Erreur lors de la récupération des détails de l'utilisateur");
-                }
+//         const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+//         con.query(userDetailsQuery, [userId], (err, userDetails) => {
+//             if (err) {
+//                 return res.status(500).send("Erreur lors de la récupération des détails de l'utilisateur");
+//             }
 
-                req.session.user = userDetails[0];
+//             req.session.user = userDetails[0];
 
-                res.render("pages/detail", {
-                    siteTitle: "Details",
-                    pageTitle: "Details",
-                    userDetails: req.session.user,
-                });
-            });
-        });
-    });
+//             res.render("pages/detail", {
+//                 siteTitle: "Details",
+//                 pageTitle: "Details",
+//                 userDetails: req.session.user,
+//             });
+//         });
+//     });
+// });
 
 app.post('/delete-account', (req, res) => {
     const userId = req.session.user.E_ID;
@@ -830,37 +830,98 @@ const transporter = nodemailer.createTransport({
         pass: 'womv ulmb tpye yfsr'
     }
 });
+function generateVerificationCode() {
+    return Math.floor(100000 + Math.random() * 900000);
+}
 
+// Modify the send-reset-email endpoint to include the verification code and store it in the database
 app.post('/send-reset-email', (req, res) => {
     const email = req.body.email;
+    const verificationCode = generateVerificationCode();
 
-    const mailOptions = {
-        from: 'peaklabs',
-        to: email,
-        subject: 'Réinitialisation du mot de passe', // Sujet de l'e-mail
-        text: `Cher(e) Utilisateur,
-    
-    Nous avons reçu une demande de réinitialisation de votre mot de passe. Si vous n'avez pas effectué cette demande, vous pouvez ignorer cet e-mail.
-    
-    Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant :
-    http://localhost:4000/event/newpass
-    
-    Si le lien ne fonctionne pas, veuillez copier et coller l'URL dans la barre d'adresse de votre navigateur.
-    
-    Merci,
-    PeakLabs`
-    };
-    // Send the email
-    transporter.sendMail(mailOptions, function (error, info) {
+    // Store the verification code along with the email in your database
+    const storeVerificationCodeQuery = `INSERT INTO verification_codes (email, code) VALUES ('${email}', '${verificationCode}')`;
+    con.query(storeVerificationCodeQuery, (error, results) => {
         if (error) {
-            console.log(error);
+            console.error('Error storing verification code:', error);
             res.status(500).send('Error sending email');
         } else {
-            console.log('Email sent: ' + info.response);
-            res.status(200).send('Email sent successfully');
+            const mailOptions = {
+                from: 'peaklabs',
+                to: email,
+                subject: 'Réinitialisation du mot de passe',
+                text: `Cher(e) Utilisateur,
+    
+Nous avons reçu une demande de réinitialisation de votre mot de passe. Si vous n'avez pas effectué cette demande, vous pouvez ignorer cet e-mail.
+    
+Votre code de vérification est : ${verificationCode}
+    
+Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant :
+http://localhost:4000/event/newpass
+    
+Si le lien ne fonctionne pas, veuillez copier et coller l'URL dans la barre d'adresse de votre navigateur.
+    
+Merci,
+PeakLabs`
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.error('Error sending email:', error);
+                    res.status(500).send('Error sending email');
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    res.status(200).send('Email sent successfully');
+                }
+            });
         }
     });
 });
+
+app.post('/update-password', (req, res) => {
+    const email = req.body.email;
+    const newPassword = req.body.password;
+    const verificationCode = req.body.verificationCode;
+
+    const getStoredVerificationCodeQuery = `SELECT code FROM verification_codes WHERE email = '${email}'`;
+    con.query(getStoredVerificationCodeQuery, (error, results) => {
+        if (error) {
+            console.error('Error retrieving verification code:', error);
+            res.status(500).send('Error updating password');
+        } else {
+            if (results.length > 0) {
+                const storedVerificationCode = results[0].code;
+
+                if (verificationCode === storedVerificationCode) {
+                    // Update the password
+                    const updatePasswordQuery = `UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL = '${email}'`;
+                    con.query(updatePasswordQuery, (error, results) => {
+                        if (error) {
+                            console.error('Error updating password:', error);
+                            res.status(500).send('Error updating password');
+                        } else {
+                            console.log('Password updated successfully');
+                            const deleteVerificationCodeQuery = `DELETE FROM verification_codes WHERE email = '${email}'`;
+                            con.query(deleteVerificationCodeQuery, (error, results) => {
+                                if (error) {
+                                    console.error('Error deleting verification code:', error);
+                                }
+                                res.redirect("/event/connect");
+                            });
+                        }
+                    });
+                } else {
+                    // Invalid verification code
+                    res.status(400).json({ message: "INVALID VERIFICATION CODE" });
+                }
+            } else {
+                // No verification code found for the email
+                res.status(404).json({ message: "ACCOUNT NOT FOUND" });
+            }
+        }
+    });
+});
+
 app.get("/event/review", function (req, res) {
     res.render("pages/review", {
         siteTitle: "Review",
@@ -963,7 +1024,7 @@ app.post('/set-admin-status', (req, res) => {
             }
 
             req.session.user = userDetails[0];
-                req.session.user.isAdmin = true;
+            req.session.user.isAdmin = true;
 
             res.redirect('/event/admin');
         });
