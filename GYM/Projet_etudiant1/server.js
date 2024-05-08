@@ -961,9 +961,8 @@ app.post('/set-admin-status', (req, res) => {
 });
 
 
-/*
-    MongoDB connection
-*/
+// MongoDB connection
+
 async function getMongoDb() {
     const client = await connectToMongo(uri);
     return client.db("gym");
