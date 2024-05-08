@@ -1,23 +1,21 @@
-import request from 'supertest';
-import server from '../../server'; 
+
+
+const request = require('supertest');
+const server = require('../../server');
 
 describe('Test server endpoints', () => {
     let app;
 
     beforeAll(() => {
-        app = server; 
+        app = server.listen(3000);
     });
 
-    afterAll(done => {
- 
-        server.close(done);
+    afterAll(async () => {
+        await app.close();
     });
 
-    it('should return status 200 for GET /', async () => {
-        const res = await request(app).get('/');
-        expect(res.status).toBe(200);
+    it('should respond with 200 status code', async () => {
+        const response = await request(app).get('/');
+        expect(response.status).toBe(200);
     });
-
- 
 });
-

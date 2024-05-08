@@ -9,7 +9,7 @@ import mysql from "mysql";
 import { body, validationResult } from "express-validator";
 import dateFormat from "dateformat";
 import nodemailer from 'nodemailer';
-import bcrypt from 'bcrypt';
+import bcrypt, { compareSync } from 'bcrypt';
 import Stripe from 'stripe';
 import { debug } from "console";
 import { MongoClient } from "mongodb";
@@ -562,58 +562,7 @@ app.post('/update-details', (req, res) => {
     });
 });
 
-// con.query("SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_ID != ?", [updatedDetails.email, userId], (err, rows) => {
-//     if (rows.length > 0) {
-//         return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
-//     }
 
-//     let updateQuery = "UPDATE e_compte SET ";
-//     const updateValues = [];
-//     for (const key in updatedDetails) {
-//         if (updatedDetails.hasOwnProperty(key)) {
-//             // capitalize
-//             const capitalizedKey = key.toUpperCase();
-//             // change les trucs car sa bug
-//             if (capitalizedKey === 'NAME') {
-//                 updateQuery += `E_NOM = ?, `;
-//             } else if (capitalizedKey === 'EMAIL') {
-//                 updateQuery += `E_COURRIEL = ?, `;
-//             } else if (capitalizedKey === 'NUM') {
-//                 updateQuery += `E_NUMBER = ?, `;
-
-//             } else {
-//                 updateQuery += `E_${capitalizedKey} = ?, `;
-//             }
-
-//             updateValues.push(updatedDetails[key]);
-//         }
-//     }
-//     updateQuery = updateQuery.slice(0, -2);
-//     updateQuery += " WHERE E_ID = ?";
-//     updateValues.push(userId);
-
-
-//     con.query(updateQuery, updateValues, (err, result) => {
-//         if (err) {
-//             return res.status(500).send("Erreur lors de la mise à jour des détails");
-//         }
-
-//         const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
-//         con.query(userDetailsQuery, [userId], (err, userDetails) => {
-//             if (err) {
-//                 return res.status(500).send("Erreur lors de la récupération des détails de l'utilisateur");
-//             }
-
-//             req.session.user = userDetails[0];
-
-//             res.render("pages/detail", {
-//                 siteTitle: "Details",
-//                 pageTitle: "Details",
-//                 userDetails: req.session.user,
-//             });
-//         });
-//     });
-// });
 
 app.post('/delete-account', (req, res) => {
     const userId = req.session.user.E_ID;
@@ -687,11 +636,8 @@ const buildLineItem = (item) => {
     };
 };
 
-// Securely calculate the order amount, including tax
+
 const calculateOrderAmount = (items) => {
-    // Replace this constant with a calculation of the order's amount
-    // Calculate the order total with any exclusive taxes on the server to prevent
-    // people from directly manipulating the amount on the client
 
     var amount = 0;
     items.forEach(item => {
@@ -834,23 +780,23 @@ function generateVerificationCode() {
     return Math.floor(100000 + Math.random() * 900000);
 }
 
-// Modify the send-reset-email endpoint to include the verification code and store it in the database
+let storedVerificationCode = 0; // Variable to store the verification code
+let storeEmail;
+
 app.post('/send-reset-email', (req, res) => {
     const email = req.body.email;
     const verificationCode = generateVerificationCode();
 
-    // Store the verification code along with the email in your database
-    const storeVerificationCodeQuery = `INSERT INTO verification_codes (email, code) VALUES ('${email}', '${verificationCode}')`;
-    con.query(storeVerificationCodeQuery, (error, results) => {
-        if (error) {
-            console.error('Error storing verification code:', error);
-            res.status(500).send('Error sending email');
-        } else {
-            const mailOptions = {
-                from: 'peaklabs',
-                to: email,
-                subject: 'Réinitialisation du mot de passe',
-                text: `Cher(e) Utilisateur,
+    // Store the verification code in the variable
+    
+    storedVerificationCode = verificationCode;
+    storeEmail = email;
+
+    const mailOptions = {
+        from: 'peaklabs',
+        to: email,
+        subject: 'Réinitialisation du mot de passe',
+        text: `Cher(e) Utilisateur,
     
 Nous avons reçu une demande de réinitialisation de votre mot de passe. Si vous n'avez pas effectué cette demande, vous pouvez ignorer cet e-mail.
     
@@ -863,64 +809,47 @@ Si le lien ne fonctionne pas, veuillez copier et coller l'URL dans la barre d'ad
     
 Merci,
 PeakLabs`
-            };
+    };
 
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.error('Error sending email:', error);
-                    res.status(500).send('Error sending email');
-                } else {
-                    console.log('Email sent: ' + info.response);
-                    res.status(200).send('Email sent successfully');
-                }
-            });
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).send('Error sending email');
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200).send('Email sent successfully');
         }
     });
 });
 
-app.post('/update-password', (req, res) => {
+app.post('/update-password-verif', (req, res) => {
     const email = req.body.email;
     const newPassword = req.body.password;
     const verificationCode = req.body.verificationCode;
 
-    const getStoredVerificationCodeQuery = `SELECT code FROM verification_codes WHERE email = '${email}'`;
-    con.query(getStoredVerificationCodeQuery, (error, results) => {
-        if (error) {
-            console.error('Error retrieving verification code:', error);
-            res.status(500).send('Error updating password');
-        } else {
-            if (results.length > 0) {
-                const storedVerificationCode = results[0].code;
-
-                if (verificationCode === storedVerificationCode) {
-                    // Update the password
-                    const updatePasswordQuery = `UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL = '${email}'`;
-                    con.query(updatePasswordQuery, (error, results) => {
-                        if (error) {
-                            console.error('Error updating password:', error);
-                            res.status(500).send('Error updating password');
-                        } else {
-                            console.log('Password updated successfully');
-                            const deleteVerificationCodeQuery = `DELETE FROM verification_codes WHERE email = '${email}'`;
-                            con.query(deleteVerificationCodeQuery, (error, results) => {
-                                if (error) {
-                                    console.error('Error deleting verification code:', error);
-                                }
-                                res.redirect("/event/connect");
-                            });
-                        }
-                    });
-                } else {
-                    // Invalid verification code
-                    res.status(400).json({ message: "INVALID VERIFICATION CODE" });
-                }
+    console.log(verificationCode);
+    console.log(storedVerificationCode);
+    console.log(email);
+    console.log(storeEmail);
+    if (verificationCode == storedVerificationCode && email == storeEmail) {
+        // Update the password
+        const updatePasswordQuery = `UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL = '${email}'`;
+        con.query(updatePasswordQuery, (error, results) => {
+            if (error) {
+                console.error('Error updating password:', error);
+                res.status(500).send('Error updating password');
             } else {
-                // No verification code found for the email
-                res.status(404).json({ message: "ACCOUNT NOT FOUND" });
+                console.log('Password updated successfully');
+                res.redirect("/event/connect");
             }
-        }
-    });
+        });
+    } else {
+        // Invalid verification code
+        res.status(400).json({ message: "INVALID VERIFICATION CODE" });
+    }
 });
+
+
 
 app.get("/event/review", function (req, res) {
     res.render("pages/review", {
@@ -1079,52 +1008,3 @@ app.delete('/reviews/:username', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-
-// NEEDS MONGO CONNECTION
-/*
-
-const mongoose = require('mongoose');
-const PORT = process.env.PORT || 3000;
-
-mongoose.connect('WHAT IS OUR CONNECTION', {
-
- useNewUrlParser: true,
- useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-
-});
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
-
-const reviewSchema = new mongoose.Schema({
-  comment: String,
-  timestamp: { type: Date, default: Date.now },
-});
-const Review = mongoose.model('Review', reviewSchema);
-
-app.use(express.urlencoded({ extended: true }));
-
-app.post('/submit-comment', async (req, res) => {
-  const { comment } = req.body;
-  if (!comment) {
-    return res.status(400).json({ error: 'Comment is required' });
-  }
-  try {
-    const newReview = new Review({ comment });
-    await newReview.save();
-    return res.status(201).json({ message: 'Review added successfully' });
-  } catch (err) {
-    console.error('Error adding review:', err);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-*/
