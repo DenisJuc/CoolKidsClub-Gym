@@ -61,7 +61,7 @@ export async function deleteSubscriptionById(db, subscriptionId) {
 export async function executeGymCrudOperations() {
     const uri = process.env.DB_URI;
     if (!uri || uri.startsWith('undefined')) {
-        console.error("DB_URI is undefined. Check your environment variables.");
+        console.error("DB_URI pas defini (BUT HOWWWWW :'((((  ");
         process.exit(1);
     }
     let mongoClient;
@@ -77,7 +77,7 @@ export async function executeGymCrudOperations() {
         await createReview(db, {
             userId: "user1",
             username: "user1name",
-            comment: "Great experience!",
+            comment: "Great experience, trust",
             rating: 5,
             createdAt: new Date(),
             updatedAt: new Date()
@@ -89,7 +89,7 @@ export async function executeGymCrudOperations() {
 
         // update le review
         console.log("Updating a review...");
-        await updateReviewByUsername(db, "user1name", { comment: "Updated comment!", updatedAt: new Date() });
+        await updateReviewByUsername(db, "user1name", { comment: "Updated comment", updatedAt: new Date() });
 
         // delete le review
         console.log("Deleting a review...");
