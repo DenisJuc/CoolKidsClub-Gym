@@ -115,6 +115,22 @@ app.get("/event/boutique", function (req, res) {
         });
     });
 });
+app.get("/event/review", async (req, res) => {
+
+    var query = 'SELECT * FROM e_produit';
+    const db = await getMongoDb(); 
+    try {
+        const reviews = await db.collection('reviews').find({}).toArray();
+        res.render("pages/review", {
+            siteTitle: "Review",
+            pageTitle: "Review",
+            userDetails: req.session.user,
+            reviews: reviews
+        });
+    } catch (error) {
+        res.status(500).send('Erreur lors de la récupération des avis: ' + error.message);
+    }
+});
 app.get("/event/test", function (req, res) {
     res.render("pages/test", {
         siteTitle: "Boutique",
@@ -970,14 +986,25 @@ async function getMongoDb() {
 
 app.post('/reviews', async (req, res) => {
     const db = await getMongoDb();
+    const { username, rating, review } = req.body;
     try {
-        await createReview(db, req.body);
-        res.status(201).send('Review créé');
+        await createReview(db, {
+            username: username,
+            rating: parseInt(rating),
+            review: review,
+            createdAt: new Date()
+        });
+        res.redirect('/event/review');  // Redirige l'utilisateur vers la page des avis
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).send("Erreur lors de la création de l'avis: ' + error.message");
     }
 });
 
+/*
+const server = app.listen(4000, function () {
+    console.log("serveur fonctionne sur 4000... !");
+});
+*/
 app.get('/reviews/:username', async (req, res) => {
     const db = await getMongoDb();
     try {
