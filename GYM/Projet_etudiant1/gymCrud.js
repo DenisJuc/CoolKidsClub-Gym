@@ -72,12 +72,12 @@ export async function findSubscriptionsByUserId(db, userId) {
 
 export async function updateSubscriptionById(db, subscriptionId, updatedContent) {
     const collection = db.collection('subscriptions');
-    await collection.updateOne({ _id: ObjectId(subscriptionId) }, { $set: updatedContent });
+    await collection.updateOne({ _id: new ObjectId(subscriptionId) }, { $set: updatedContent });
 }
 
 export async function deleteSubscriptionById(db, subscriptionId) {
     const collection = db.collection('subscriptions');
-    await collection.deleteOne({ _id: ObjectId(subscriptionId) });
+    await collection.deleteOne({ _id: new ObjectId(subscriptionId) });
 }
 
 export async function executeGymCrudOperations() {

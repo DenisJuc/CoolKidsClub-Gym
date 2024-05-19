@@ -347,23 +347,35 @@ function calculateClothingPrice(productName) {
     }
 }
 
-app.get("/event/panier", function (req, res) {
-    const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
+app.get("/event/panier", async (req, res) => {
+    const userId = req.session.user ? req.session.user.E_ID : null;
 
-    if (!loggedInUserId) {
-        res.redirect('/event/connect');
-        return;
+    if (!userId) {
+        return res.redirect('/event/connect');
     }
-    con.query("SELECT * FROM e_produit WHERE E_USER_ID = ?", [loggedInUserId], function (err, result) {
-        if (err) throw err;
-        res.render("pages/panier", {
-            siteTitle: "Application simple",
-            pageTitle: "Liste d'événements",
-            userDetails: req.session.user,
-            items: result
+
+    try {
+        const db = await getMongoDb();
+        const mongoProducts = await db.collection('subscriptions').find({ userId }).toArray();
+
+        con.query("SELECT * FROM e_produit WHERE E_USER_ID = ?", [userId], function (err, sqlProducts) {
+            if (err) throw err;
+
+            const allProducts = [...sqlProducts, ...mongoProducts];
+
+            res.render("pages/panier", {
+                siteTitle: "Application simple",
+                pageTitle: "Liste d'événements",
+                userDetails: req.session.user,
+                items: allProducts
+            });
         });
-    });
+    } catch (error) {
+        console.error("Erreur fetching panier items", error);
+        res.status(500).send("Erreur");
+    }
 });
+
 
 app.post('/delete-payment', (req, res) => {
     const userId = req.session.user.E_ID;
@@ -600,8 +612,6 @@ app.post('/update-details', (req, res) => {
     });
 });
 
-
-
 app.post('/delete-account', (req, res) => {
     const userId = req.session.user.E_ID;
     const deleteQuery = "DELETE FROM e_compte WHERE E_ID = ?";
@@ -622,7 +632,7 @@ app.post('/delete-account', (req, res) => {
     });
 });
 
-app.post('/event/add-subscription-to-cart', (req, res) => {
+app.post('/event/add-subscription-to-cart', async (req, res) => {
     const { subscriptionType } = req.body;
     const userId = req.session.user ? req.session.user.E_ID : null;
 
@@ -642,23 +652,37 @@ app.post('/event/add-subscription-to-cart', (req, res) => {
         return res.redirect('/event/abonnement');
     }
 
-    con.query("DELETE FROM e_produit WHERE E_USER_ID = ? AND E_CATEGORIE = 'Abonnement'", [userId], deleteErr => {
-        if (deleteErr) {
-            console.error("Erreur", deleteErr);
-            return res.status(500).send("Erreur");
+    try {
+        const db = await getMongoDb();
+        // Ensure the client is connected
+        if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
+            console.log("Reconnecting to MongoDB...");
+            await mongoClient.connect();
         }
-    });
 
-    con.query("INSERT INTO e_produit (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID) VALUES (?, ?, 'Abonnement', 1, ?)",
-        [subscription.productName, subscription.price, userId], insertErr => {
-            if (insertErr) {
-                console.error("Erreur", insertErr);
-                return res.status(500).send("Erreur");
-            }
+        // Remove existing subscriptions for this user
+        await db.collection('subscriptions').deleteMany({ userId });
 
-            res.redirect('/event/panier');
-        });
+        // Add the new subscription
+        const newSubscription = {
+            userId,
+            productName: subscription.productName,
+            price: subscription.price,
+            category: 'Abonnement',
+            quantity: 1,
+            startDate: new Date(),
+            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1 year from start date
+            status: 'Active'
+        };
+        await db.collection('subscriptions').insertOne(newSubscription);
+
+        res.redirect('/event/panier');
+    } catch (error) {
+        console.error("Erreur", error);
+        res.status(500).send("Erreur");
+    }
 });
+
 
 // This is your test secret API key.
 const stripe = new Stripe('sk_test_51OvgtJP5VwBXZgOXohPNaXkcg0PbJqdZm05VpQfzYgDpNZSA31iYGd18dnxJVREkqRapCb8vy8cmiyVAZvwgkqC5000DhDQ9Ut');
@@ -715,22 +739,39 @@ const handlePaymentIntentSucceeded = async (paymentIntent) => {
 };
 
 
-app.get("/event/confirmation", function (req, res) {
+app.get("/event/confirmation", async (req, res) => {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
     if (!loggedInUserId) {
         res.redirect('/event/connect');
         return;
     }
-    con.query("SELECT * FROM e_produit WHERE E_USER_ID = ?", [loggedInUserId], function (err, result) {
-        if (err) throw err;
+
+    try {
+        const [sqlResults, mongoDb] = await Promise.all([
+            new Promise((resolve, reject) => {
+                con.query("SELECT * FROM e_produit WHERE E_USER_ID = ?", [loggedInUserId], (err, result) => {
+                    if (err) return reject(err);
+                    resolve(result);
+                });
+            }),
+            getMongoDb()
+        ]);
+
+        const mongoResults = await mongoDb.collection('subscriptions').find({ userId: loggedInUserId }).toArray();
+        const items = [...sqlResults, ...mongoResults];
+
         res.render("pages/confirmation", {
-            siteTitle: "Application simple",
-            pageTitle: "Liste d'événements",
+            siteTitle: "Confirmation",
+            pageTitle: "Confirmation",
             userDetails: req.session.user,
-            items: result
+            items: items
         });
-    });
+    } catch (error) {
+        console.error('Error fetching items:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
+
 app.post('/event/confirmation', (req, res) => {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
     if (!loggedInUserId) {

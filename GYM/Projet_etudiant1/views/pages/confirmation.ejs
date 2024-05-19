@@ -20,8 +20,7 @@
                         <span class="font-weight-bold d-block mt-4">
                             <% if (userDetails) { %>
                                 Salut <%= userDetails.E_PRENOM %>,
-                                    <% } else { %>
-                                        <% } %>
+                                    <% } %>
                         </span>
                         <span>Votre commande a été confirmée et sera expédiée dans les deux prochains jours !</span>
                         <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
@@ -32,7 +31,7 @@
                                             <div class="py-2">
                                                 <span class="d-block text-muted">Order Date</span>
                                                 <span>
-                                                    <%= new Date().toLocaleDateString()%>
+                                                    <%= new Date().toLocaleDateString() %>
                                                 </span>
                                             </div>
                                         </td>
@@ -64,30 +63,31 @@
                                     </tr>
                                 </thead>
                                 <% let total=0; %>
-                                    <% items.forEach(function(item){ %>
+                                    <% items.forEach(function(item) { %>
                                         <tbody>
                                             <tr>
                                                 <th>
-                                                    <img src="/produit<%= item.E_PRIX %>.jpeg"
+                                                    <img src="/produit<%= item.price || item.E_PRIX %>.jpeg"
                                                         class="img-fluid rounded-3" style="width: 40px;"
-                                                        alt="<%= item.E_NOM %>"
-                                                        onerror="this.onerror=null;this.src='/gym-website-logo-without-a-person-upscaled.png'; document.getElementById('quantityInput_<%= item.E_IDPRODUIT %>').disabled = true;">
+                                                        alt="<%= item.productName || item.E_NOM %>"
+                                                        onerror="this.onerror=null;this.src='/gym-website-logo-without-a-person-upscaled.png'; document.getElementById('quantityInput_<%= item._id || item.E_IDPRODUIT %>').disabled = true;">
                                                 </th>
                                                 <th scope="row">
-                                                    <%= item.E_NOM %>
+                                                    <%= item.productName || item.E_NOM %>
                                                 </th>
                                                 <td>
-                                                    <%= item.E_PRIX %> $
+                                                    <%= item.price || item.E_PRIX %> $
                                                 </td>
                                                 <td>
-                                                    <%= item.E_CATEGORIE %>
+                                                    <%= item.category || item.E_CATEGORIE %>
                                                 </td>
                                                 <td>
-                                                    <%= item.E_QUANTITE %>
+                                                    <%= item.quantity || item.E_QUANTITE %>
                                                 </td>
                                             </tr>
                                         </tbody>
-                                        <% total +=parseFloat(item.E_PRIX) * parseInt(item.E_QUANTITE); %>
+                                        <% total +=parseFloat(item.price || item.E_PRIX) * parseInt(item.quantity ||
+                                            item.E_QUANTITE); %>
                                             <% }); %>
                             </table>
                         </div>
@@ -104,7 +104,7 @@
                                             <td>
                                                 <div class="text-right">
                                                     <span>
-                                                        <%= total.toFixed(2)%>$
+                                                        <%= total.toFixed(2) %>$
                                                     </span>
                                                 </div>
                                             </td>
@@ -130,7 +130,7 @@
                                             <td>
                                                 <div class="text-right">
                                                     <span>
-                                                        <%= (total * 0.05).toFixed(2)%>$
+                                                        <%= (total * 0.05).toFixed(2) %>$
                                                     </span>
                                                 </div>
                                             </td>
@@ -169,8 +169,14 @@
                                 </table>
                             </div>
                         </div>
-                        <p class="font-weight-bold mb-0">Merci d'avoir supporter notre compagnie!</p>
-                        <form action="/event/confirmation" action="/delete-payment" method="post">
+                        <p class="font-weight-bold mb-0">Merci d'avoir supporté notre compagnie!</p>
+                        <form action="/event/confirmation" method="post">
                             <button type="submit" class="btn btn-primary">Procéder à l'accueil</button>
-
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/footer.ejs") %>
