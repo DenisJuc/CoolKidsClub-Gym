@@ -1,21 +1,43 @@
 import { MongoClient } from "mongodb";
+
+let mongoClient;
+let db;
+
 export async function connectToMongo(uri) {
-    let mongoClient;
- 
-    try {
-        console.log("URI used for MongoDB connection:", uri); // Ajout d un log pour vérifier l'URI utilisé
-        mongoClient = new MongoClient(uri);
-        mongoClient = new MongoClient(uri);
-        console.log("Connecting to MongoDB Atlas cluster...");
-        await mongoClient.connect();
-        console.log("Successfully connected to MongoDB Atlas!");
- 
-        return mongoClient;
-    } catch (error) {
-        console.error("Connection to MongoDB Atlas failed!", error);
-        process.exit();
+    if (!mongoClient) {
+        console.log("Creating new MongoClient instance...");
+        mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     }
+
+    if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
+        try {
+            console.log("Connecting to MongoDB Atlas cluster...");
+            await mongoClient.connect();
+            console.log("Successfully connected to MongoDB Atlas!");
+            db = mongoClient.db("gym");
+        } catch (error) {
+            console.error("Connection to MongoDB Atlas failed!", error);
+            process.exit(1);
+        }
+    }
+    return db;
 }
+
+export async function getMongoDb() {
+    if (!db) {
+        const uri = process.env.DB_URI;
+        if (!uri || uri.startsWith('undefined')) {
+            console.error("DB_URI not defined");
+            process.exit(1);
+        }
+        db = await connectToMongo(uri);
+    }
+    return db;
+}
+
+export { mongoClient };
+
+
 
 export async function createReview(db, review) {
     const collection = db.collection('reviews');
@@ -37,7 +59,7 @@ export async function deleteReviewByUsername(db, username) {
     await collection.deleteOne({ username });
 }
 
-// opérations CRUD pour abonnement
+// CRUD operations for subscriptions
 export async function createSubscription(db, subscription) {
     const collection = db.collection('subscriptions');
     await collection.insertOne(subscription);
@@ -61,18 +83,14 @@ export async function deleteSubscriptionById(db, subscriptionId) {
 export async function executeGymCrudOperations() {
     const uri = process.env.DB_URI;
     if (!uri || uri.startsWith('undefined')) {
-        console.error("DB_URI pas defini (BUT HOWWWWW :'((((  ");
+        console.error("DB_URI not defined");
         process.exit(1);
     }
-    let mongoClient;
 
     try {
-        mongoClient = await connectToMongo(uri);
-        const db = mongoClient.db("gym");
-        const reviewsCollection = db.collection("reviews");
-        const subscriptionsCollection = db.collection("subscriptions");
+        const db = await connectToMongo(uri);
 
-        // créer un review
+        // Create a review
         console.log("Creating a review...");
         await createReview(db, {
             userId: "user1",
@@ -83,19 +101,19 @@ export async function executeGymCrudOperations() {
             updatedAt: new Date()
         });
 
-        // localiser un review a laide du username
+        // Find a review by username
         console.log("Finding a review by username...");
         console.log(await findReviewByUsername(db, "user1name"));
 
-        // update le review
+        // Update the review
         console.log("Updating a review...");
         await updateReviewByUsername(db, "user1name", { comment: "Updated comment", updatedAt: new Date() });
 
-        // delete le review
+        // Delete the review
         console.log("Deleting a review...");
         await deleteReviewByUsername(db, "user1name");
 
-        // créer un abonnement
+        // Create a subscription
         console.log("Creating a subscription...");
         await createSubscription(db, {
             userId: "user1",
@@ -105,7 +123,7 @@ export async function executeGymCrudOperations() {
             status: "Active"
         });
 
-        // trouver abonnement par ID
+        // Find subscriptions by user ID
         console.log("Finding subscriptions by user ID...");
         console.log(await findSubscriptionsByUserId(db, "user1"));
 
@@ -114,6 +132,4 @@ export async function executeGymCrudOperations() {
             await mongoClient.close();
         }
     }
-    
 }
-// export { createReviewDocument, findReviewByName, updateReviewByName, deleteReviewByName };

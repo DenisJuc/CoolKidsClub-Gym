@@ -6,23 +6,19 @@ import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
 import mysql from "mysql";
-import { body, validationResult } from "express-validator";
-import dateFormat from "dateformat";
-import nodemailer from 'nodemailer';
-import bcrypt, { compareSync } from 'bcrypt';
+import bcrypt from 'bcrypt';
 import Stripe from 'stripe';
-import { debug } from "console";
-import { MongoClient } from "mongodb";
-//import { connectToMongo, createReview, findReviewByUsername, updateReviewByUsername, deleteReviewByUsername } from "../../src/gymCrud.js";
 import { config } from "dotenv";
+import nodemailer from 'nodemailer';
+import { getMongoDb, createReview, mongoClient } from "./gymCrud.js"; // Import mongoClient
 import { executeGymCrudOperations } from "./gymCrud.js";
 
 config();
-console.log("DB_URI:", process.env.DB_URI);
 
 await executeGymCrudOperations().catch(error => {
     console.error('Error during gym CRUD operations:', error);
 });
+
 
 
 
@@ -126,11 +122,16 @@ app.get("/event/boutique", function (req, res) {
     });
 });
 app.get("/event/review", async (req, res) => {
-
-    var query = 'SELECT * FROM e_produit';
-    const db = await getMongoDb();
     try {
+        const db = await getMongoDb();
+        // Ensure the client is connected
+        if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
+            console.log("Reconnecting to MongoDB...");
+            await mongoClient.connect();
+        }
+        console.log("Fetching reviews from MongoDB...");
         const reviews = await db.collection('reviews').find({}).toArray();
+        console.log("Fetched reviews:", reviews);
         res.render("pages/review", {
             siteTitle: "Review",
             pageTitle: "Review",
@@ -138,9 +139,20 @@ app.get("/event/review", async (req, res) => {
             reviews: reviews
         });
     } catch (error) {
-        res.status(500).send('Erreur lors de la récupération des avis: ' + error.message);
+        console.error('Error fetching reviews:', error);
+        res.status(500).send('Error fetching reviews: ' + error.message);
     }
 });
+
+process.on('SIGINT', async () => {
+    if (mongoClient && mongoClient.topology && mongoClient.topology.isConnected()) {
+        await mongoClient.close();
+    }
+    process.exit(0);
+});
+
+
+
 app.get("/event/test", function (req, res) {
     res.render("pages/test", {
         siteTitle: "Boutique",
@@ -802,6 +814,7 @@ const transporter = nodemailer.createTransport({
         pass: 'womv ulmb tpye yfsr'
     }
 });
+
 function generateVerificationCode() {
     return Math.floor(100000 + Math.random() * 900000);
 }
@@ -892,29 +905,26 @@ app.get("/event/apply", function (req, res) {
     });
 });
 
-app.post('/event/soumettre-avis', (req, res) => {
-    const { userName, userRating, userCountry, userReview } = req.body;
 
-    console.log("nom:", userName);
-    console.log("etoiles:", userRating);
-    console.log("pays:", userCountry);
-    console.log("commentaire:", userReview);
-    const newReview = new Review({
-        name: userName,
-        rating: userRating,
-        country: userCountry,
-        review: userReview
-    });
+app.post('/event/soumettre-avis', async (req, res) => {
+    const { userName, userRating, userReview } = req.body;
 
-    newReview.save((err, savedReview) => {
-        if (err) {
-            console.error("Error saving review:", err);
-            return res.status(500).send("Internal Server Error");
-        }
-        res.status(201).json(savedReview); // Assuming you want to send back the saved review
-    });
+    const newReview = {
+        username: userName,
+        rating: parseInt(userRating),
+        review: userReview,
+        createdAt: new Date()
+    };
+
+    try {
+        const db = await getMongoDb();
+        await createReview(db, newReview);
+        res.redirect('/event/review');
+    } catch (error) {
+        console.error("Error saving review:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });
-
 app.get('/product-purchases', (req, res) => {
     const { timeframe } = req.query;
 
@@ -986,13 +996,6 @@ app.post('/set-admin-status', (req, res) => {
     });
 });
 
-
-// MongoDB connection
-
-async function getMongoDb() {
-    const client = await connectToMongo(uri);
-    return client.db("gym");
-}
 
 app.post('/reviews', async (req, res) => {
     const db = await getMongoDb();

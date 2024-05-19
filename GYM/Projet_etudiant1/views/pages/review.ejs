@@ -1,81 +1,88 @@
 <%- include("../partials/header.ejs") %>
 
-<style>
-    body {
-        margin-top: 20px;
-        background: #eee;
-    }
+    <style>
+        body {
+            margin-top: 20px;
+            background: #eee;
+        }
 
-    .container {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-    }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
 
-    .form-group {
-        margin-bottom: 15px;
-    }
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-    label {
-        font-weight: bold;
-    }
+        label {
+            font-weight: bold;
+        }
 
-    .review {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #dedede;
-        border-radius: 5px;
-    }
+        .review {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #dedede;
+            border-radius: 5px;
+        }
 
-    .review h4 {
-        color: #4a73e8;
-    }
+        .review h4 {
+            color: #4a73e8;
+        }
 
-    .review p {
-        font-size: 16px;
-        color: #666;
-    }
-</style>
+        .review p {
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
 
-<div class="container">
-    <h2>Laisser un avis</h2>
-    <form action="/reviews" method="post" class="review-form">
-        <div class="form-group">
-            <label for="username">Nom d'utilisateur:</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+    <div class="container">
+        <h2>Laisser un avis</h2>
+        <form action="/event/soumettre-avis" method="POST" class="review-form">
+            <div class="form-group">
+                <label for="userName">Nom d'utilisateur:</label>
+                <input type="text" class="form-control" id="userName" name="userName" required>
+            </div>
+            <div class="form-group">
+                <label for="userRating">Évaluation:</label>
+                <select class="form-control" id="userRating" name="userRating">
+                    <option value="1">1 Étoile</option>
+                    <option value="2">2 Étoiles</option>
+                    <option value="3">3 Étoiles</option>
+                    <option value="4">4 Étoiles</option>
+                    <option value="5">5 Étoiles</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="userReview">Commentaire:</label>
+                <textarea class="form-control" id="userReview" name="userReview" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Soumettre</button>
+        </form>
+
+        <!-- Liste des avis existants -->
+        <div class="review-list">
+            <% if (reviews && reviews.length> 0) { %>
+                <% reviews.forEach(function(review) { %>
+                    <div class="review">
+                        <h4>
+                            <%= review.username %>
+                        </h4>
+                        <p>Évaluation: <%= review.rating %> Étoiles</p>
+                        <p>Pays: <%= review.country %>
+                        </p>
+                        <p>
+                            <%= review.review %>
+                        </p>
+                        <p>Date: <%= new Date(review.createdAt).toDateString() %>
+                        </p>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <p>Aucun avis disponible.</p>
+                            <% } %>
         </div>
-        <div class="form-group">
-            <label for="rating">Évaluation:</label>
-            <select class="form-control" id="rating" name="rating">
-                <option value="1">1 Étoile</option>
-                <option value="2">2 Étoiles</option>
-                <option value="3">3 Étoiles</option>
-                <option value="4">4 Étoiles</option>
-                <option value="5">5 Étoiles</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="review">Commentaire:</label>
-            <textarea class="form-control" id="review" name="review" rows="3" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Soumettre</button>
-    </form>
-
-    <!-- Liste des avis existants -->
-    <div class="review-list">
-        <% if(reviews && reviews.length > 0) { %>
-            <% reviews.forEach(function(review) { %>
-                <div class="review">
-                    <h4><%= review.username %></h4>
-                    <p>Évaluation: <%= review.rating %> Étoiles</p>
-                    <p><%= review.review %></p>
-                    <hr>
-                </div>
-            <% }); %>
-        <% } else { %>
-            <p>Aucun avis disponible.</p>
-        <% } %>
     </div>
-</div>
 
-<%- include("../partials/footer.ejs") %>
+    <%- include("../partials/footer.ejs") %>
