@@ -199,32 +199,49 @@ app.get("/event/newpass", function (req, res) {
     });
 });
 
-app.get("/event/admin", (req, res) => {
-
+app.get("/event/admin", async (req, res) => {
     if (!req.session.user || !req.session.user.isAdmin) {
         return res.status(403).send("Forbidden");
     }
+
     console.log("kinda in");
     const userDetailsQuery = "SELECT * FROM e_compte";
     const productQuery = "SELECT * FROM e_produit_achat";
+
     con.query(userDetailsQuery, (err, userDetails) => {
         if (err) {
             console.error("Error executing userDetailsQuery:", err);
             return res.status(500).send("Internal Server Error");
         }
 
-        con.query(productQuery, (err, products) => {
+        con.query(productQuery, async (err, products) => {
             if (err) {
                 console.error("Error executing productQuery:", err);
                 return res.status(500).send("Internal Server Error");
             }
 
-            res.render("pages/admin", {
-                siteTitle: "Admin",
-                pageTitle: "Admin",
-                userDetails: userDetails,
-                products: products
-            });
+            try {
+                const mongoDb = await getMongoDb();
+
+                // Ensure the client is connected
+                if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
+                    console.log("Reconnecting to MongoDB...");
+                    await mongoClient.connect();
+                }
+
+                const subscriptions = await mongoDb.collection('subscriptions').find({}).toArray();
+
+                res.render("pages/admin", {
+                    siteTitle: "Admin",
+                    pageTitle: "Admin",
+                    userDetails: userDetails,
+                    products: products,
+                    subscriptions: subscriptions
+                });
+            } catch (mongoError) {
+                console.error("Error fetching subscriptions:", mongoError);
+                return res.status(500).send("Internal Server Error");
+            }
         });
     });
 });
