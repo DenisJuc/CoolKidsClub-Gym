@@ -14,6 +14,16 @@ import Stripe from 'stripe';
 import { debug } from "console";
 import { MongoClient } from "mongodb";
 //import { connectToMongo, createReview, findReviewByUsername, updateReviewByUsername, deleteReviewByUsername } from "../../src/gymCrud.js";
+import { config } from "dotenv";
+import { executeGymCrudOperations } from "./gymCrud.js";
+
+config();
+console.log("DB_URI:", process.env.DB_URI);
+
+await executeGymCrudOperations().catch(error => {
+    console.error('Error during gym CRUD operations:', error);
+});
+
 
 
 
@@ -118,7 +128,7 @@ app.get("/event/boutique", function (req, res) {
 app.get("/event/review", async (req, res) => {
 
     var query = 'SELECT * FROM e_produit';
-    const db = await getMongoDb(); 
+    const db = await getMongoDb();
     try {
         const reviews = await db.collection('reviews').find({}).toArray();
         res.render("pages/review", {
@@ -804,7 +814,7 @@ app.post('/send-reset-email', (req, res) => {
     const verificationCode = generateVerificationCode();
 
     // Store the verification code in the variable
-    
+
     storedVerificationCode = verificationCode;
     storeEmail = email;
 
