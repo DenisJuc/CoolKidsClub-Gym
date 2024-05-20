@@ -11,17 +11,10 @@ import Stripe from 'stripe';
 import { config } from "dotenv";
 import nodemailer from 'nodemailer';
 import { getMongoDb, createReview, mongoClient } from "./gymCrud.js"; // Import mongoClient
-import { executeGymCrudOperations } from "./gymCrud.js";
+import { MongoClient, ObjectId } from 'mongodb';
+//import { executeGymCrudOperations } from "./gymCrud.js";
 
 config();
-
-await executeGymCrudOperations().catch(error => {
-    console.error('Error during gym CRUD operations:', error);
-});
-
-
-
-
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -124,7 +117,6 @@ app.get("/event/boutique", function (req, res) {
 app.get("/event/review", async (req, res) => {
     try {
         const db = await getMongoDb();
-        // Ensure the client is connected
         if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
             console.log("Reconnecting to MongoDB...");
             await mongoClient.connect();
@@ -229,7 +221,7 @@ app.get("/event/admin", async (req, res) => {
                     await mongoClient.connect();
                 }
 
-                const subscriptions = await mongoDb.collection('subscriptions').find({}).toArray();
+                const subscriptions = await mongoDb.collection('activeSubscriptions').find({}).toArray();
 
                 res.render("pages/admin", {
                     siteTitle: "Admin",
@@ -407,30 +399,49 @@ app.post('/delete-payment', (req, res) => {
     });
 });
 
-app.post('/delete-item/:productId', (req, res) => {
+app.post('/delete-item/:productId', async (req, res) => {
     const productId = req.params.productId;
 
-    // Quantité de produit
-    con.query("SELECT E_QUANTITE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (selectErr, selectResult) => {
-        if (selectErr) {
-            console.error("Error retrieving product quantity:", selectErr);
-            return res.status(500).send("Error retrieving product quantity");
-        }
+    try {
+        const db = await getMongoDb();
 
-        if (selectResult.length === 0) {
-            return res.status(404).send("Erreur");
-        }
+        // Check if the productId is a valid MySQL ID
+        if (!isNaN(productId)) {
+            con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], async (deleteErr, deleteResult) => {
+                if (deleteErr) {
+                    console.error("Error deleting from MySQL:", deleteErr);
+                    return res.status(500).send("Error deleting from MySQL");
+                }
 
-        const currentQuantity = selectResult[0].E_QUANTITE;
-        con.query("DELETE FROM e_produit WHERE E_IDPRODUIT = ?", [productId], (deleteErr, deleteResult) => {
-            if (deleteErr) {
-                return res.status(500).send("Erreur");
+                // If MySQL deletion was not successful, attempt MongoDB deletion
+                if (deleteResult.affectedRows === 0) {
+                    try {
+                        await db.collection('subscriptions').deleteOne({ _id: new ObjectId(productId) });
+                        return res.redirect('/event/panier');
+                    } catch (mongoErr) {
+                        console.error("Error deleting from MongoDB:", mongoErr);
+                        return res.status(500).send("Error deleting from MongoDB");
+                    }
+                }
+
+                res.redirect('/event/panier');
+            });
+        } else {
+            // Attempt MongoDB deletion if productId is not a valid MySQL ID
+            try {
+                await db.collection('subscriptions').deleteOne({ _id: new ObjectId(productId) });
+                return res.redirect('/event/panier');
+            } catch (mongoErr) {
+                console.error("Error deleting from MongoDB:", mongoErr);
+                return res.status(500).send("Error deleting from MongoDB");
             }
-            res.redirect('/event/panier');
-        });
-
-    });
+        }
+    } catch (error) {
+        console.error("Erreur deleting item", error);
+        res.status(500).send("Erreur deleting item");
+    }
 });
+
 
 app.post('/event/creationCompte', (req, res) => {
     const { nom, prénom, email, num, password } = req.body;
@@ -671,13 +682,11 @@ app.post('/event/add-subscription-to-cart', async (req, res) => {
 
     try {
         const db = await getMongoDb();
-        // Ensure the client is connected
         if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
             console.log("Reconnecting to MongoDB...");
             await mongoClient.connect();
         }
 
-        // Remove existing subscriptions for this user
         await db.collection('subscriptions').deleteMany({ userId });
 
         // Add the new subscription
@@ -789,7 +798,7 @@ app.get("/event/confirmation", async (req, res) => {
     }
 });
 
-app.post('/event/confirmation', (req, res) => {
+app.post('/event/confirmation', async (req, res) => {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
     if (!loggedInUserId) {
         res.redirect('/event/connect');
@@ -800,41 +809,61 @@ app.post('/event/confirmation', (req, res) => {
     const updateSql = "INSERT INTO e_produit_achat (E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID, E_DATE_ACHAT) SELECT E_NOM, E_PRIX, E_CATEGORIE, E_QUANTITE, E_USER_ID, ? AS E_DATE_ACHAT FROM e_produit WHERE E_USER_ID = ? AND E_DATE_ACHAT = 'Incoming'";
     const deleteSql = "DELETE FROM e_produit WHERE E_USER_ID = ? AND E_DATE_ACHAT = 'Incoming'";
 
-    con.beginTransaction((err) => {
-        if (err) {
-            console.error("Transaction error:", err);
-            return res.status(500).send("Erreur");
+    try {
+        const db = await getMongoDb();
+
+        // Move subscriptions from 'subscriptions' to 'activeSubscriptions'
+        const subscriptions = await db.collection('subscriptions').find({ userId: loggedInUserId }).toArray();
+
+        if (subscriptions.length > 0) {
+            const activeSubscriptions = subscriptions.map(subscription => ({
+                ...subscription,
+                status: 'Active'
+            }));
+
+            await db.collection('activeSubscriptions').insertMany(activeSubscriptions);
+            await db.collection('subscriptions').deleteMany({ userId: loggedInUserId });
         }
 
-        con.query(updateSql, [currentDate, loggedInUserId], (updateErr, updateResult) => {
-            if (updateErr) {
-                con.rollback(() => {
-                    console.error("Error moving data to e_produit_achat:", updateErr);
-                    res.status(500).send("Erreur");
-                });
-            } else {
-                con.query(deleteSql, [loggedInUserId], (deleteErr, deleteResult) => {
-                    if (deleteErr) {
-                        con.rollback(() => {
-                            console.error("Error deleting data from e_produit:", deleteErr);
-                            res.status(500).send("Erreur");
-                        });
-                    } else {
-                        con.commit((commitErr) => {
-                            if (commitErr) {
-                                con.rollback(() => {
-                                    console.error("Commit error:", commitErr);
-                                    res.status(500).send("Erreur");
-                                });
-                            } else {
-                                res.redirect('/');
-                            }
-                        });
-                    }
-                });
+        con.beginTransaction((err) => {
+            if (err) {
+                console.error("Transaction error:", err);
+                return res.status(500).send("Erreur");
             }
+
+            con.query(updateSql, [currentDate, loggedInUserId], (updateErr, updateResult) => {
+                if (updateErr) {
+                    con.rollback(() => {
+                        console.error("Error moving data to e_produit_achat:", updateErr);
+                        res.status(500).send("Erreur");
+                    });
+                } else {
+                    con.query(deleteSql, [loggedInUserId], (deleteErr, deleteResult) => {
+                        if (deleteErr) {
+                            con.rollback(() => {
+                                console.error("Error deleting data from e_produit:", deleteErr);
+                                res.status(500).send("Erreur");
+                            });
+                        } else {
+                            con.commit((commitErr) => {
+                                if (commitErr) {
+                                    con.rollback(() => {
+                                        console.error("Commit error:", commitErr);
+                                        res.status(500).send("Erreur");
+                                    });
+                                } else {
+                                    res.redirect('/');
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         });
-    });
+    } catch (error) {
+        console.error("Erreur during subscription confirmation", error);
+        res.status(500).send("Erreur during subscription confirmation");
+    }
 });
 
 
