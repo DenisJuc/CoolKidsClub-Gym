@@ -159,14 +159,6 @@ app.get("/event/abonnement", function (req, res) {
         userDetails: req.session.user,
     });
 });
-app.get("/event/detail", function (req, res) {
-    res.render("pages/detail", {
-        siteTitle: "Details",
-        pageTitle: "Details",
-        userDetails: req.session.user,
-    });
-});
-
 app.get("/event/mdp_oublie", function (req, res) {
     res.render("pages/mdp_oublie", {
         siteTitle: "Changer Mot de passe",
@@ -510,7 +502,7 @@ app.post('/event/connect', (req, res) => {
 
 
 
-app.get("/event/detail", (req, res) => {
+app.get("/event/detail", async (req, res) => {
     const loggedInUserId = req.session.user ? req.session.user.E_ID : null;
 
     if (!loggedInUserId) {
@@ -518,25 +510,38 @@ app.get("/event/detail", (req, res) => {
         return;
     }
 
-    const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
-    con.query(userDetailsQuery, [loggedInUserId], (err, userDetails) => {
-        if (err) {
-            res.status(500).send("Erreur");
-            return;
-        }
+    try {
+        const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+        const db = await getMongoDb();
 
-        if (userDetails.length === 0) {
-            res.status(404).send("Erreur");
-            return;
-        }
+        // Fetch user details from MySQL
+        con.query(userDetailsQuery, [loggedInUserId], async (err, userDetails) => {
+            if (err) {
+                res.status(500).send("Erreur");
+                return;
+            }
 
-        res.render("pages/detail", {
-            siteTitle: "Details",
-            pageTitle: "Details",
-            userDetails: req.session.user,
+            if (userDetails.length === 0) {
+                res.status(404).send("Erreur");
+                return;
+            }
+
+            // Fetch user subscriptions from MongoDB
+            const subscriptions = await db.collection('activeSubscriptions').find({ userId: loggedInUserId }).toArray();
+
+            res.render("pages/detail", {
+                siteTitle: "Details",
+                pageTitle: "Details",
+                userDetails: req.session.user,
+                subscriptions: subscriptions
+            });
         });
-    });
+    } catch (error) {
+        console.error("Erreur fetching user details and subscriptions:", error);
+        res.status(500).send("Erreur");
+    }
 });
+
 
 app.get('/logout', (req, res) => {
     // Detruit la session
