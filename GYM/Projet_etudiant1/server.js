@@ -152,13 +152,35 @@ app.get("/event/test", function (req, res) {
         userDetails: req.session.user,
     });
 });
-app.get("/event/abonnement", function (req, res) {
+app.get("/event/abonnement", async (req, res) => {
+    const userId = req.session.user ? req.session.user.E_ID : null;
+
+    let activeSubscriptions = null;
+
+    if (userId) {
+        try {
+            const db = await getMongoDb();
+            if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
+                console.log("Reconnecting to MongoDB...");
+                await mongoClient.connect();
+            }
+
+            // Fetch the user's current subscription from the activeSubscriptions collection
+            activeSubscriptions = await db.collection('activeSubscriptions').findOne({ userId });
+
+        } catch (error) {
+            console.error("Error fetching current subscription:", error);
+        }
+    }
+
     res.render("pages/abonnement", {
         siteTitle: "Abonnement",
-        pageTitle: "Abonnement",
+        pageTitle: userId ? "Améliorez votre adhésion" : "Abonnement",
         userDetails: req.session.user,
+        activeSubscriptions: activeSubscriptions
     });
 });
+
 app.get("/event/mdp_oublie", function (req, res) {
     res.render("pages/mdp_oublie", {
         siteTitle: "Changer Mot de passe",
@@ -435,11 +457,11 @@ app.post('/delete-item/:productId', async (req, res) => {
 });
 
 
-app.post('/event/creationCompte', (req, res) => {
+app.post('/event/creationCompte', async (req, res) => {
     const { nom, prénom, email, num, password } = req.body;
 
     const checkEmailQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
-    con.query(checkEmailQuery, [email], (checkErr, checkResult) => {
+    con.query(checkEmailQuery, [email], async (checkErr, checkResult) => {
         if (checkErr) {
             return res.status(500).send("Erreur");
         }
@@ -448,24 +470,45 @@ app.post('/event/creationCompte', (req, res) => {
             return res.status(400).json({ message: "L'adresse courriel est déjà inscrite." });
         }
 
-        bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+        bcrypt.hash(password, 10, async (hashErr, hashedPassword) => {
             if (hashErr) {
                 return res.status(500).send("Erreur lors du hachage du mot de passe.");
             }
 
-
             const insertQuery = `INSERT INTO e_compte (E_NOM, E_LOCATION, E_PRENOM, E_COURRIEL, E_PASSWORD, E_NUMBER) VALUES (?, ?, ?, ?, ?, ?)`;
             const values = [nom, " ", prénom, email, hashedPassword, num];
 
-            con.query(insertQuery, values, (insertErr, insertResult) => {
+            con.query(insertQuery, values, async (insertErr, insertResult) => {
                 if (insertErr) {
                     return res.status(500).send("Erreur lors de l'insertion des données.");
                 }
+
+                // After creating the user, assign the free trial subscription
+                const userId = insertResult.insertId;
+                const freeTrialSubscription = {
+                    userId,
+                    productName: 'Essai Gratuit',
+                    price: 0.00,
+                    category: 'Abonnement',
+                    quantity: 1,
+                    startDate: new Date(),
+                    endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1 year from start date
+                    status: 'Active'
+                };
+
+                try {
+                    const db = await getMongoDb();
+                    await db.collection('activeSubscriptions').insertOne(freeTrialSubscription);
+                } catch (error) {
+                    console.error("Erreur lors de l'ajout de l'abonnement d'essai gratuit:", error);
+                }
+
                 res.redirect('/event/connect');
             });
         });
     });
 });
+
 
 
 app.post('/event/connect', (req, res) => {
@@ -692,9 +735,10 @@ app.post('/event/add-subscription-to-cart', async (req, res) => {
             await mongoClient.connect();
         }
 
-        await db.collection('subscriptions').deleteMany({ userId });
+        // Remove the current active subscription if it exists
+        await db.collection('activeSubscriptions').deleteMany({ userId });
 
-        // Add the new subscription
+        // Add the new subscription to the cart
         const newSubscription = {
             userId,
             productName: subscription.productName,
@@ -703,8 +747,13 @@ app.post('/event/add-subscription-to-cart', async (req, res) => {
             quantity: 1,
             startDate: new Date(),
             endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1 year from start date
-            status: 'Active'
+            status: 'Active',
+            inCart: true
         };
+
+        // Remove previous subscriptions from the cart
+        await db.collection('subscriptions').deleteMany({ userId, inCart: true });
+
         await db.collection('subscriptions').insertOne(newSubscription);
 
         res.redirect('/event/panier');
@@ -713,6 +762,7 @@ app.post('/event/add-subscription-to-cart', async (req, res) => {
         res.status(500).send("Erreur");
     }
 });
+
 
 
 // This is your test secret API key.
@@ -1137,5 +1187,23 @@ app.delete('/reviews/:username', async (req, res) => {
         res.status(200).send('Review effacé');
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/event/cancel-subscription', async (req, res) => {
+    const userId = req.session.user ? req.session.user.E_ID : null;
+
+    if (!userId) {
+        return res.redirect('/event/connect');
+    }
+
+    try {
+        const db = await getMongoDb();
+        await db.collection('activeSubscriptions').deleteMany({ userId });
+
+        res.redirect('/event/abonnement');
+    } catch (error) {
+        console.error("Erreur lors de l'annulation de l'abonnement:", error);
+        res.status(500).send("Erreur");
     }
 });

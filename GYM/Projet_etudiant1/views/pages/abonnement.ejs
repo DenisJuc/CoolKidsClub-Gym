@@ -1,89 +1,126 @@
 <%- include("../partials/header.ejs") %>
-      <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
-      <link href="css/styles.css" rel="stylesheet">
-      <style>
-          .card {
-              margin-bottom: 20px;
-              transition-duration: 0.5s;
-          }
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <style>
+    .card {
+      margin-bottom: 20px;
+      transition-duration: 0.5s;
+    }
 
-      .card:hover,
-      .card.hover-effect {
-        transform: translateY(-5px) scale(1.2);
-      }
+    .card:hover,
+    .card.hover-effect {
+      transform: translateY(-5px) scale(1.2);
+    }
 
-      .card::after {
-        transform: translateY(-5px) scale(1.0);
-      }
-      </style>
+    .card::after {
+      transform: translateY(-5px) scale(1.0);
+    }
+  </style>
   </head>
+
   <body>
     <header class="py-5" style="background-color: transparent;">
       <div class="container px-4 px-lg-5 my-5">
-          <div class="text-center text-white">
-              <h1 class="display-4 fw-bolder">Abonnement</h1>
-          </div>
+        <div class="text-center text-white">
+          <h1 class="display-4 fw-bolder">
+            <%= pageTitle %>
+          </h1>
+        </div>
       </div>
-  </header>
-  
-      <section class="py-5">
-          <div class="container px-4 px-lg-5 mt-5">
-              <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
-                  <div class="col mb-5">
-                      <div class="card h-100" style="background: linear-gradient(to bottom, #FFC107, #FFECB3);">
-                          <div class="card-body p-4 text-center">
-                              <h5 class="fw-bolder" style="margin-bottom: 40px;">Essai Gratuit</h5>
-                              <p style="margin-bottom: 40px;">Cet abonnement vous donne accès à toutes les permissions qu'a l'abonnement standard, mais pour un temps limité.</p>
-                              $0.00
-                          </div>
-                          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
-                              <button class="btn btn-outline-dark mt-auto" onclick="addToCart('essai-gratuit')" >Ajouter au panier</button>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col mb-5">
-                      <div class="card h-100" style="background: linear-gradient(to bottom, #616161, #9E9E9E);">
-                          <div class="card-body p-4 text-center">
-                              <h5 class="fw-bolder" style="margin-bottom: 40px;">Standard</h5>
-                              <p style="margin-bottom: 40px;">Cet abonnement vous donne accès au gym, ainsi qu'un rabais de 5% sur certain de nos produits.</p>
-                              $14.99
-                          </div>
-                          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
-                              <button class="btn btn-outline-dark mt-auto" onclick="addToCart('standard')">Ajouter au panier</button>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col mb-5">
-                      <div class="card h-100" style="background: linear-gradient(to bottom, #00ACC1, #B2EBF2);">
-                          <div class="card-body p-4 text-center">
-                              <h5 class="fw-bolder" style="margin-bottom: 40px;">Peak</h5>
-                              <p style="margin-bottom: 40px;">Cet abonnement vous donne accès au gym de Peak Labs, ainsi qu'un rabais de 20% sur tout nos produits.</p>
-                              $35.99
-                          </div>
-                          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
-                              <button class="btn btn-outline-dark mt-auto" onclick="addToCart('peak')">Ajouter au panier</button>
-                          </div>
-                      </div>
-                  </div>
+    </header>
+
+    <section class="py-5">
+      <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
+          <!-- Free Trial Card -->
+          <div class="col mb-5">
+            <div class="card h-100" style="background: linear-gradient(to bottom, #FFC107, #FFECB3);">
+              <div class="card-body p-4 text-center">
+                <h5 class="fw-bolder" style="margin-bottom: 40px;">Essai Gratuit</h5>
+                <p style="margin-bottom: 40px;">Cet abonnement vous donne accès à toutes les permissions qu'a
+                  l'abonnement standard, mais pour un temps limité.</p>
+                $0.00
               </div>
-              <form id="subscriptionForm" action="/event/add-subscription-to-cart" method="post" style="display: none;">
-                  <input type="hidden" name="subscriptionType" id="subscriptionTypeInput" value="">
-                  <button type="submit" class="custom_butt">Confirmer</button>
-              </form>
+              <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                <% if (!userDetails) { %>
+                  <button class="btn btn-outline-dark mt-auto"
+                    onclick="window.location.href='/event/creationCompte'">Créer un compte pour essayer</button>
+                  <% } else if (activeSubscriptions && activeSubscriptions.productName==='Essai Gratuit' ) { %>
+                    <span>Abonnement actuel</span>
+                    <% } else if (activeSubscriptions && activeSubscriptions.productName !=='Essai Gratuit' ) { %>
+                      <span>L'essai gratuit est terminé</span>
+                      <% } else { %>
+                        <button class="btn btn-outline-dark mt-auto" onclick="addToCart('essai-gratuit')">Ajouter au
+                          panier</button>
+                        <% } %>
+              </div>
+            </div>
           </div>
-      </section>
-  
-      <script>
-          function addToCart(subscriptionType) {
-              document.getElementById('subscriptionTypeInput').value = subscriptionType;
-              document.getElementById('subscriptionForm').submit();
-          }
-      </script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+          <!-- Standard Subscription Card -->
+          <div class="col mb-5">
+            <div class="card h-100" style="background: linear-gradient(to bottom, #616161, #9E9E9E);">
+              <div class="card-body p-4 text-center">
+                <h5 class="fw-bolder" style="margin-bottom: 40px;">Standard</h5>
+                <p style="margin-bottom: 40px;">Cet abonnement vous donne accès au gym, ainsi qu'un rabais de 5% sur
+                  certains de nos produits.</p>
+                $14.99
+              </div>
+              <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                <% if (activeSubscriptions && activeSubscriptions.productName==='Abonnement Standard' ) { %>
+                  <span>Abonnement actuel</span>
+                  <% } else { %>
+                    <button class="btn btn-outline-dark mt-auto" onclick="addToCart('standard')">Ajouter au
+                      panier</button>
+                    <% } %>
+              </div>
+            </div>
+          </div>
+          <!-- Peak Subscription Card -->
+          <div class="col mb-5">
+            <div class="card h-100" style="background: linear-gradient(to bottom, #00ACC1, #B2EBF2);">
+              <div class="card-body p-4 text-center">
+                <h5 class="fw-bolder" style="margin-bottom: 40px;">Peak</h5>
+                <p style="margin-bottom: 40px;">Cet abonnement vous donne accès au gym de Peak Labs, ainsi qu'un rabais
+                  de 20% sur tous nos produits.</p>
+                $35.99
+              </div>
+              <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                <% if (activeSubscriptions && activeSubscriptions.productName==='Abonnement Peak' ) { %>
+                  <span>Abonnement actuel</span>
+                  <% } else { %>
+                    <button class="btn btn-outline-dark mt-auto" onclick="addToCart('peak')">Ajouter au panier</button>
+                    <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% if (userDetails && activeSubscriptions) { %>
+          <div class="text-center mt-5">
+            <form action="/event/cancel-subscription" method="post">
+              <button type="submit" class="btn btn-danger">Annuler l'abonnement</button>
+            </form>
+          </div>
+          <% } %>
+            <form id="subscriptionForm" action="/event/add-subscription-to-cart" method="post" style="display: none;">
+              <input type="hidden" name="subscriptionType" id="subscriptionTypeInput" value="">
+              <button type="submit" class="custom_butt">Confirmer</button>
+            </form>
+      </div>
+    </section>
+
+
+
+    <script>
+      function addToCart(subscriptionType) {
+        document.getElementById('subscriptionTypeInput').value = subscriptionType;
+        document.getElementById('subscriptionForm').submit();
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
+
   </html>
-  
 
   <style>
     body {
