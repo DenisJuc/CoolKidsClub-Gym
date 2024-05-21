@@ -1,42 +1,5 @@
 <%- include("../partials/header.ejs") %>
 
-    <style>
-        body {
-            margin-top: 20px;
-            background: #eee;
-        }
-
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        .review {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #dedede;
-            border-radius: 5px;
-        }
-
-        .review h4 {
-            color: #4a73e8;
-        }
-
-        .review p {
-            font-size: 16px;
-            color: #666;
-        }
-    </style>
-
     <div class="container">
         <h2>Laisser un avis</h2>
         <form action="/event/soumettre-avis" method="POST" class="review-form">
@@ -46,13 +9,12 @@
             </div>
             <div class="form-group">
                 <label for="userRating">Évaluation:</label>
-                <select class="form-control" id="userRating" name="userRating">
-                    <option value="1">1 Étoile</option>
-                    <option value="2">2 Étoiles</option>
-                    <option value="3">3 Étoiles</option>
-                    <option value="4">4 Étoiles</option>
-                    <option value="5">5 Étoiles</option>
-                </select>
+                <div class="star-rating">
+                    <% for (let i=1; i <=5; i++) { %>
+                        <span class="star" data-rating="<%= i %>">&#9733;</span>
+                        <% } %>
+                </div>
+                <input type="hidden" id="userRating" name="userRating" required>
             </div>
             <div class="form-group">
                 <label for="userReview">Commentaire:</label>
@@ -66,17 +28,20 @@
             <% if (reviews && reviews.length> 0) { %>
                 <% reviews.forEach(function(review) { %>
                     <div class="review">
-                        <h4>
-                            <%= review.username %>
-                        </h4>
-                        <p>Évaluation: <%= review.rating %> Étoiles</p>
-                        <p>Pays: <%= review.country %>
-                        </p>
-                        <p>
-                            <%= review.review %>
-                        </p>
-                        <p>Date: <%= new Date(review.createdAt).toDateString() %>
-                        </p>
+                        <img src="https://via.placeholder.com/60" alt="Profile Image">
+                        <div class="review-content">
+                            <h4>
+                                <%= review.username %>
+                            </h4>
+                            <p>Évaluation: <%= review.rating %> Étoiles</p>
+                            <p>Pays: <%= review.country %>
+                            </p>
+                            <p>
+                                <%= review.review %>
+                            </p>
+                            <p class="review-meta">Date: <%= new Date(review.createdAt).toLocaleDateString() %>
+                            </p>
+                        </div>
                     </div>
                     <% }); %>
                         <% } else { %>
@@ -86,3 +51,122 @@
     </div>
 
     <%- include("../partials/footer.ejs") %>
+
+        <style>
+            body {
+                margin-top: 20px;
+                background: #f5f5f5;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                font-weight: bold;
+            }
+
+            .star-rating {
+                display: flex;
+                align-items: center;
+            }
+
+            .star {
+                font-size: 2rem;
+                color: #ccc;
+                cursor: pointer;
+            }
+
+            .star.selected,
+            .star.hover {
+                color: #f5a623;
+            }
+
+            .review {
+                display: flex;
+                align-items: flex-start;
+                margin-top: 20px;
+                padding: 15px;
+                border: 1px solid #dedede;
+                border-radius: 5px;
+                background: #fff;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .review img {
+                border-radius: 50%;
+                margin-right: 15px;
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+            }
+
+            .review h4 {
+                color: #4a73e8;
+                margin: 0 0 5px;
+            }
+
+            .review p {
+                font-size: 14px;
+                color: #666;
+                margin: 0;
+            }
+
+            .review .review-content {
+                flex: 1;
+            }
+
+            .review .review-meta {
+                font-size: 12px;
+                color: #999;
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const stars = document.querySelectorAll('.star-rating .star');
+                const ratingInput = document.getElementById('userRating');
+
+                function setStars(rating) {
+                    stars.forEach(star => {
+                        if (star.getAttribute('data-rating') <= rating) {
+                            star.classList.add('selected');
+                        } else {
+                            star.classList.remove('selected');
+                        }
+                    });
+                }
+
+                function clearHover() {
+                    stars.forEach(star => {
+                        star.classList.remove('hover');
+                    });
+                }
+
+                stars.forEach(star => {
+                    star.addEventListener('click', function () {
+                        const rating = this.getAttribute('data-rating');
+                        ratingInput.value = rating;
+                        setStars(rating);
+                    });
+
+                    star.addEventListener('mouseover', function () {
+                        clearHover();
+                        const rating = this.getAttribute('data-rating');
+                        stars.forEach(star => {
+                            if (star.getAttribute('data-rating') <= rating) {
+                                star.classList.add('hover');
+                            } else {
+                                star.classList.remove('hover');
+                            }
+                        });
+                    });
+
+                    star.addEventListener('mouseout', function () {
+                        clearHover();
+                        const rating = ratingInput.value;
+                        setStars(rating);
+                    });
+                });
+            });
+        </script>
