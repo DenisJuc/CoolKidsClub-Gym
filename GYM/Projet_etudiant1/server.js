@@ -62,7 +62,65 @@ const con = mysql.createConnection({
 con.connect(function (err) {
     if (err) throw err;
     console.log("connected!");
+    createAdminAccount();
 });
+
+async function createAdminAccount() {
+    const adminEmail = 'peaklabs1@gmail.com';
+    const adminPassword = 'a';
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+
+    const checkAdminQuery = "SELECT * FROM e_compte WHERE E_COURRIEL = ?";
+    con.query(checkAdminQuery, [adminEmail], async (err, result) => {
+        if (err) {
+            console.error("Error checking for existing admin account:", err);
+            return;
+        }
+
+        if (result.length === 0) {
+            const insertAdminQuery = `INSERT INTO e_compte (E_NOM, E_PRENOM, E_PASSWORD, E_LOCATION, E_COURRIEL, E_NUMBER, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+            const values = ['Labs', 'Peak', hashedPassword, '', adminEmail, '5142222222', true];
+
+            con.query(insertAdminQuery, values, async (insertErr, insertResult) => {
+                if (insertErr) {
+                    console.error("Error inserting admin account:", insertErr);
+                } else {
+                    console.log("Admin account created successfully.");
+
+                    // Get the userId of the newly created admin account
+                    const userId = insertResult.insertId;
+
+                    // Create a free trial subscription for the admin account
+                    const freeTrialSubscription = {
+                        userId,
+                        productName: 'Essai Gratuit',
+                        price: 0.00,
+                        category: 'Abonnement',
+                        quantity: 1,
+                        startDate: new Date(),
+                        endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1 year from start date
+                        status: 'Active'
+                    };
+
+                    try {
+                        const db = await getMongoDb();
+                        if (!mongoClient.topology || !mongoClient.topology.isConnected()) {
+                            console.log("Reconnecting to MongoDB...");
+                            await mongoClient.connect();
+                        }
+
+                        await db.collection('activeSubscriptions').insertOne(freeTrialSubscription);
+                        console.log("Free trial subscription assigned to admin account.");
+                    } catch (error) {
+                        console.error("Error assigning free trial subscription to admin account:", error);
+                    }
+                }
+            });
+        } else {
+            console.log("Admin account already exists.");
+        }
+    });
+}
 
 /*
     Description des routes
