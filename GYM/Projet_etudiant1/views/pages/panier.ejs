@@ -183,6 +183,18 @@
         min-width: initial;
       }
     }
+
+    /* Custom styles for cart items */
+    .table td,
+    .table th {
+      vertical-align: middle;
+    }
+
+    .table img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+    }
   </style>
   <section class="h-100 h-custom">
     <div class="container h-100 py-5">
@@ -259,9 +271,6 @@
             <div class="card-body p-4">
               <% if(totalPrice !=0){ %>
                 <div class="row" style="display: flex;justify-content: flex-end;">
-
-
-
                   <div class="col-lg-4 col-xl-3">
                     <div class="d-flex justify-content-between" style="font-weight: 500;">
                       <p class="mb-2">Subtotal</p>
@@ -291,17 +300,13 @@
                       <button id="myBtn">Payer <%= (parseFloat(totalPrice) + 10 + (parseFloat(totalPrice) *
                           0.14975)).toFixed(2) %> $</button>
                       <div id="myModal" class="modal">
-
                         <!-- Modal content -->
                         <div class="modal-content"
                           style="width: 20%; margin: auto;position: fixed; top: 50%;left: 50%; transform: translateY(-50%) translateX(-50%);padding: 20px; padding-top: 40px;padding-bottom: 40px;">
                           <span class="close">&times;</span>
-
                           <div style="width: 100%;">
                             <form class="payment-form" id="payment-form">
-                              <div id="payment-element">
-
-                              </div>
+                              <div id="payment-element"></div>
                               <div style="text-align: right;">
                                 <button type="submit" id="submit">
                                   <div class="spinner hidden" id="spinner"></div>
@@ -312,12 +317,9 @@
                             </form>
                           </div>
                         </div>
-
                       </div>
                   </div>
-
                 </div>
-
                 <script>
                   // Get the modal
                   var modal = document.getElementById("myModal");
@@ -351,7 +353,6 @@
         <%}%>
       </div>
     </div>
-
     </div>
     </div>
     </div>
