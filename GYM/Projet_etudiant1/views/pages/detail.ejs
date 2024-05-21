@@ -1,143 +1,186 @@
 <%- include("../partials/header.ejs") %>
-<link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
-    
-<style>
-      body {
-        font-family: 'Krona One';
-        background-color: #41455D;
-      }
-</style>
-<hr>
-<div class="container bootstrap snippet">
-    <div class="row">
-  		<div class="col-sm-10"><h1>Mon profil</h1></div>
-    	<div class="col-sm-2"><a class="pull-right"><img title="profile image" class="img-circle img-responsive" src="/gym-website-logo-without-a-person-upscaled.png"></a></div>
-    </div>
-    <div class="row">
-  		<div class="col-sm-3"><!--left col-->
-              
+    <link href='https://fonts.googleapis.com/css?family=Krona One' rel='stylesheet'>
 
-      <div class="text-center">
-        <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar">
-      </div></hr><br>
-          
-        </div><!--/col-3-->
-    	<div class="col-sm-9">
+    <style>
+        body {
+            font-family: 'Krona One';
+            background-color: #41455D;
+        }
+    </style>
+    <hr>
+    <div class="container bootstrap snippet">
+        <div class="row">
+            <div class="col-sm-10">
+                <h1>Mon profil</h1>
+            </div>
+            <div class="col-sm-2"><a class="pull-right"><img title="profile image" class="img-circle img-responsive"
+                        src="/gym-website-logo-without-a-person-upscaled.png"></a></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3"><!--left col-->
 
-              
-          <div class="tab-content">
-            <div class="tab-pane active" id="home">
-                <hr>
-                  <form class="form" action="/update-details" method="post" id="registrationForm">
-                    <div class="form-group" style="margin-top: 20px;">
-                        <div class="col-xs-6">
-                            <label for="first_name"><h4>Votre identifiant</h4></label>
-                            <input type="number" class="form-control" name="userId" value="<%= userDetails.E_ID %>" readonly title="Your identifier" >
-                        </div>
-                    </div>
-                      <div class="form-group" style="margin-top: 20px;">
-                          
-                          <div class="col-xs-6">
-                              <label for="first_name"><h4>Prénom</h4></label>
-                              <input type="text" class="form-control" name="prenom"  value="<%= userDetails.E_PRENOM %>" title="enter your first name if any.">
-                          </div>
-                      </div>
-                      <div class="form-group" style="margin-top: 20px;">
-                          
-                          <div class="col-xs-6">
-                            <label for="last_name"><h4>Last name</h4></label>
-                              <input type="text" class="form-control" name="name"  value="<%= userDetails.E_NOM %>">
-                          </div>
-                      </div>
-          
-                      <div class="form-group" style="margin-top: 20px;">
-                          
-                          <div class="col-xs-6">
-                              <label for="phone"><h4>Numéro de téléphone</h4></label>
-                              <input type="number" class="form-control" id="num" name="num" maxlength="10" value="<%= userDetails.E_NUMBER %>">
-                          </div>
-                      </div>
-          
-                      <div class="form-group" style="margin-top: 20px;">
-                          
-                          <div class="col-xs-6">
-                              <label for="email"><h4>Courriel</h4></label>
-                              <input type="email" class="form-control" id="email" name="email" value="<%= userDetails.E_COURRIEL %>">
-                          </div>
-                      </div>
-                      <div class="form-group">
-                           <div class="col-xs-12">
-                                <br>
-                              	<button class="btn btn-lg btn-success" type="submit">
-                                    <i class="glyphicon glyphicon-ok-sign"></i>Sauver les modifications
-                            </button> 
-                            </div>
-                        </div>
-                      
-              	</form>
-                  <div class="form-group" style="margin-top: 20px;">
-                    <div class="col-xs-12">
-                        <form action="/delete-account" method="post">
-                            <button type="submit" class="btn btn-lg btn-danger">Supprimer mon compte</button>  
-                            </form>                 
-                    </div>
-                  </div>
-                  <div class="form-group" style="margin-top: 20px;">
-                    <div class="col-xs-12">
-                        <a class="btn btn-info" target="__blank" href="/logout">Se déconnecter</a>
-                    </div>
-                  </div>
-                  <div class="form-group" style="margin-top: 20px;">
-                    <div class="col-xs-12">
-                        <% if (userDetails.isAdmin) { %>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <a href="/event/admin" class="btn btn-primary">Admin</a>
+                <div class="text-center">
+                    <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail"
+                        alt="avatar">
+                </div>
+                </hr><br>
+
+            </div><!--/col-3-->
+            <div class="col-sm-9">
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home">
+                        <hr>
+                        <form class="form" action="/update-details" method="post" id="registrationForm">
+                            <div class="form-group" style="margin-top: 20px;">
+                                <div class="col-xs-6">
+                                    <label for="first_name">
+                                        <h4>Votre identifiant</h4>
+                                    </label>
+                                    <input type="number" class="form-control" name="userId"
+                                        value="<%= userDetails.E_ID %>" readonly title="Your identifier">
                                 </div>
                             </div>
-                            <% } %>                 
-                    </div>
-                  </div>
-                  
-              <hr>
-              
-             </div><!--/tab-pane-->
-  <script>
-    $(document).ready(function() {
+                            <div class="form-group" style="margin-top: 20px;">
 
-    
-var readURL = function(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
+                                <div class="col-xs-6">
+                                    <label for="first_name">
+                                        <h4>Prénom</h4>
+                                    </label>
+                                    <input type="text" class="form-control" name="prenom"
+                                        value="<%= userDetails.E_PRENOM %>" title="enter your first name if any.">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-top: 20px;">
 
-        reader.onload = function (e) {
-            $('.avatar').attr('src', e.target.result);
-        }
+                                <div class="col-xs-6">
+                                    <label for="last_name">
+                                        <h4>Last name</h4>
+                                    </label>
+                                    <input type="text" class="form-control" name="name"
+                                        value="<%= userDetails.E_NOM %>">
+                                </div>
+                            </div>
 
-        reader.readAsDataURL(input.files[0]);
-    }
-}
+                            <div class="form-group" style="margin-top: 20px;">
+
+                                <div class="col-xs-6">
+                                    <label for="phone">
+                                        <h4>Numéro de téléphone</h4>
+                                    </label>
+                                    <input type="number" class="form-control" id="num" name="num" maxlength="10"
+                                        value="<%= userDetails.E_NUMBER %>">
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 20px;">
+
+                                <div class="col-xs-6">
+                                    <label for="email">
+                                        <h4>Courriel</h4>
+                                    </label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="<%= userDetails.E_COURRIEL %>">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <br>
+                                    <button class="btn btn-lg btn-success" type="submit">
+                                        <i class="glyphicon glyphicon-ok-sign"></i>Sauver les modifications
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <div class="col-xs-12">
+                                <form action="/delete-account" method="post">
+                                    <button type="submit" class="btn btn-lg btn-danger">Supprimer mon compte</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <div class="col-xs-12">
+                                <a class="btn btn-info" target="__blank" href="/logout">Se déconnecter</a>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <div class="col-xs-12">
+                                <% if (userDetails.isAdmin) { %>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <a href="/event/admin" class="btn btn-primary">Admin</a>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <div class="col-xs-12">
+                                <h4>Abonnements Actifs</h4>
+                                <% if (subscriptions && subscriptions.length> 0) { %>
+                                    <ul class="list-group">
+                                        <% subscriptions.forEach(subscription=> { %>
+                                            <li class="list-group-item">
+                                                <strong>Nom:</strong>
+                                                <%= subscription.productName %> <br>
+                                                    <strong>Prix:</strong>
+                                                    <%= subscription.price %> $ <br>
+                                                        <strong>Début:</strong>
+                                                        <%= new Date(subscription.startDate).toLocaleDateString() %>
+                                                            <br>
+                                                            <strong>Fin:</strong>
+                                                            <%= new Date(subscription.endDate).toLocaleDateString() %>
+                                            </li>
+                                            <% }) %>
+                                    </ul>
+                                    <% } else { %>
+                                        <p>Pas d'abonnements actifs</p>
+                                        <% } %>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                    </div><!--/tab-pane-->
+                    <script>
+                        $(document).ready(function () {
 
 
-$(".file-upload").on('change', function(){
-    readURL(this);
-});
-});
+                            var readURL = function (input) {
+                                if (input.files && input.files[0]) {
+                                    var reader = new FileReader();
 
-function validatePhoneNumber(input) {
-                var phoneNumberPattern = /^\d{10}$/;
-                return phoneNumberPattern.test(input);
-            }
+                                    reader.onload = function (e) {
+                                        $('.avatar').attr('src', e.target.result);
+                                    }
 
-            document.querySelector("form[action='/update-details']").addEventListener("submit", function (event) {
-                var numInput = document.getElementById("num");
-                var phoneNumber = numInput.value;
+                                    reader.readAsDataURL(input.files[0]);
+                                }
+                            }
 
-                if (!validatePhoneNumber(phoneNumber)) {
-                    event.preventDefault();
-                    alert("Veuillez entrer un numéro de téléphone valide de 10 chiffres.");
-                }
-            });
 
-        </script>
- <%- include("../partials/footer.ejs") %>
+                            $(".file-upload").on('change', function () {
+                                readURL(this);
+                            });
+                        });
+
+                        function validatePhoneNumber(input) {
+                            var phoneNumberPattern = /^\d{10}$/;
+                            return phoneNumberPattern.test(input);
+                        }
+
+                        document.querySelector("form[action='/update-details']").addEventListener("submit", function (event) {
+                            var numInput = document.getElementById("num");
+                            var phoneNumber = numInput.value;
+
+                            if (!validatePhoneNumber(phoneNumber)) {
+                                event.preventDefault();
+                                alert("Veuillez entrer un numéro de téléphone valide de 10 chiffres.");
+                            }
+                        });
+
+                    </script>
+                    <%- include("../partials/footer.ejs") %>
