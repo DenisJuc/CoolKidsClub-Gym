@@ -241,12 +241,14 @@
                               || item.E_CATEGORIE==='Abonnement' )) { %>
                             disabled
                             <% } %>
+                            onChange="updateQuantity(this)"
                               />
                               <% if (item.category !=='Abonnement' && item.E_CATEGORIE !=='Abonnement' ) { %>
                                 <form action="/update-page" method="post" style="margin-left: 10px;">
                                   <button type="submit" class="btn btn-success">Confirmer</button>
                                 </form>
                                 <% } %>
+                                
                           </div>
                         </td>
                         <td class="align-middle">
