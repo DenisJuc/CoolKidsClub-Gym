@@ -1,55 +1,100 @@
 <%- include ("../partials/header.ejs") %>
 
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <form action="/update-password" method="post" id="updatePasswordForm">
+<div class="row justify-content-center mt-5">
+    <div class="col-sm-8 col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h3 class="card-title text-center">Modifier le mot de passe</h3>
+                <form action="/update-password" method="post" id="updatePasswordForm">
+                    <div class="form-group">
                         <label for="email">Courriel:</label>
-                        <input type="email" id="email" name="email">
-                        <div id="emailError" style="color: red;"></div> <!-- Placeholder for error message -->
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div id="emailError" class="text-danger mt-1"></div>
+                    </div>
 
+                    <div class="form-group">
                         <label for="verificationCode">Code de vérification:</label>
-                        <input type="text" id="verificationCode" name="verificationCode">
-                        <div id="verificationCodeError" style="color: red;"></div>
-                        <!-- Placeholder for verification code error message -->
+                        <input type="text" class="form-control" id="verificationCode" name="verificationCode" required>
+                        <div id="verificationCodeError" class="text-danger mt-1"></div>
+                    </div>
 
-                        <label for="password">Mot De Passe:</label>
-                        <input type="password" id="password" name="password">
-                        <button type="button" id="submit" class="btn btn-info" onclick="updatePassword()">Modifier mes
-                            détails</button>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <button type="button" id="submit" class="btn btn-dark btn-block" onclick="updatePassword()">Modifier mes détails</button>
+                </form>
             </div>
         </div>
     </div>
-    <%- include("../partials/footer.ejs") %>
+</div>
 
-        <script>
-            function updatePassword() {
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const verificationCode = document.getElementById('verificationCode').value;
+<%- include("../partials/footer.ejs") %>
 
-                fetch('/update-password-verif', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email: email, password: password, verificationCode: verificationCode })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === "INVALID VERIFICATION CODE") {
-                            document.getElementById('verificationCodeError').innerText = "Invalid verification code!";
-                        } else if (data.message === "ACCOUNT NOT FOUND") {
-                            document.getElementById('emailError').innerText = "ACCOUNT NOT FOUND!";
-                        } else {
-                            window.location.href = "/event/connect";
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+<style>
+    body {
+        overflow-x: hidden;
+    }
+
+    .card {
+        border: none;
+    }
+
+    .card-title {
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .text-danger {
+        font-size: 0.875rem;
+    }
+
+    .mt-5 {
+        margin-top: 3rem;
+    }
+
+    .mt-1 {
+        margin-top: 0.25rem;
+    }
+
+    .mt-4 {
+        margin-top: 1.5rem;
+    }
+</style>
+
+<script>
+    function updatePassword() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const verificationCode = document.getElementById('verificationCode').value;
+
+        fetch('/update-password-verif', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email, password: password, verificationCode: verificationCode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Add logging to see the response
+            if (data.message === "INVALID VERIFICATION CODE") {
+                document.getElementById('verificationCodeError').innerText = "Invalid verification code!";
+            } else if (data.message === "ACCOUNT NOT FOUND") {
+                document.getElementById('emailError').innerText = "ACCOUNT NOT FOUND!";
+            } else if (data.message === "SUCCESS") {
+                alert("Votre mot de passe a été modifié avec succès !");
+                window.location.href = "/event/connect";
+            } else {
+                console.error("Unexpected response:", data);
             }
-        </script>
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>

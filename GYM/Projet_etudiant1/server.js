@@ -618,27 +618,34 @@ app.get("/event/detail", async (req, res) => {
         // Fetch user details from MySQL
         con.query(userDetailsQuery, [loggedInUserId], async (err, userDetails) => {
             if (err) {
+                console.error("MySQL error:", err);
                 res.status(500).send("Erreur");
                 return;
             }
 
             if (userDetails.length === 0) {
+                console.error("User not found");
                 res.status(404).send("Erreur");
                 return;
             }
 
             // Fetch user subscriptions from MongoDB
-            const subscriptions = await db.collection('activeSubscriptions').find({ userId: loggedInUserId }).toArray();
+            try {
+                const subscriptions = await db.collection('activeSubscriptions').find({ userId: loggedInUserId }).toArray();
 
-            res.render("pages/detail", {
-                siteTitle: "Details",
-                pageTitle: "Details",
-                userDetails: req.session.user,
-                subscriptions: subscriptions
-            });
+                res.render("pages/detail", {
+                    siteTitle: "Details",
+                    pageTitle: "Details",
+                    userDetails: req.session.user,
+                    subscriptions: subscriptions
+                });
+            } catch (mongoError) {
+                console.error("MongoDB error:", mongoError);
+                res.status(500).send("Erreur");
+            }
         });
     } catch (error) {
-        console.error("Erreur fetching user details and subscriptions:", error);
+        console.error("Error fetching user details and subscriptions:", error);
         res.status(500).send("Erreur");
     }
 });
@@ -690,7 +697,7 @@ app.post('/update-password', (req, res) => {
     });
 });
 
-app.post('/update-details', (req, res) => {
+app.post('/update-details', async (req, res) => {
     const userId = req.body.userId;
     const updatedDetails = req.body;
     delete updatedDetails.userId;
@@ -707,7 +714,6 @@ app.post('/update-details', (req, res) => {
                 updateQuery += `E_COURRIEL = ?, `;
             } else if (capitalizedKey === 'NUM') {
                 updateQuery += `E_NUMBER = ?, `;
-
             } else {
                 updateQuery += `E_${capitalizedKey} = ?, `;
             }
@@ -719,14 +725,13 @@ app.post('/update-details', (req, res) => {
     updateQuery += " WHERE E_ID = ?";
     updateValues.push(userId);
 
-
-    con.query(updateQuery, updateValues, (err, result) => {
+    con.query(updateQuery, updateValues, async (err, result) => {
         if (err) {
             return res.status(500).send("Erreur");
         }
 
         const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
-        con.query(userDetailsQuery, [userId], (err, userDetails) => {
+        con.query(userDetailsQuery, [userId], async (err, userDetails) => {
             if (err) {
                 return res.status(500).send("Erreur");
             }
@@ -736,12 +741,21 @@ app.post('/update-details', (req, res) => {
                 req.session.user.isAdmin = true;
             }
 
-            res.render("pages/detail", {
-                siteTitle: "Details",
-                pageTitle: "Details",
-                userDetails: req.session.user,
+            // Fetch user subscriptions from MongoDB
+            try {
+                const db = await getMongoDb();
+                const subscriptions = await db.collection('activeSubscriptions').find({ userId: userId }).toArray();
 
-            });
+                res.render("pages/detail", {
+                    siteTitle: "Details",
+                    pageTitle: "Details",
+                    userDetails: req.session.user,
+                    subscriptions: subscriptions
+                });
+            } catch (mongoError) {
+                console.error("MongoDB error:", mongoError);
+                return res.status(500).send("Erreur");
+            }
         });
     });
 });
@@ -1070,17 +1084,24 @@ app.post('/update-password-verif', (req, res) => {
     console.log(storedVerificationCode);
     console.log(email);
     console.log(storeEmail);
+
     if (verificationCode == storedVerificationCode && email == storeEmail) {
-        // Update the password
-        const updatePasswordQuery = `UPDATE e_compte SET E_PASSWORD = '${newPassword}' WHERE E_COURRIEL = '${email}'`;
-        con.query(updatePasswordQuery, (error, results) => {
-            if (error) {
-                console.error('Error updating password:', error);
-                res.status(500).send('Error updating password');
-            } else {
-                console.log('Password updated successfully');
-                res.redirect("/event/connect");
+        bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+            if (err) {
+                console.error('Error hashing password:', err);
+                res.status(500).send('Error hashing password');
+                return;
             }
+            const updatePasswordQuery = `UPDATE e_compte SET E_PASSWORD = '${hashedPassword}' WHERE E_COURRIEL = '${email}'`;
+            con.query(updatePasswordQuery, (error, results) => {
+                if (error) {
+                    console.error('Error updating password:', error);
+                    res.status(500).send('Error updating password');
+                } else {
+                    console.log('Password updated successfully');
+                    res.json({ message: "SUCCESS" });
+                }
+            });
         });
     } else {
         // Invalid verification code
