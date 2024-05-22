@@ -41,6 +41,12 @@
                             </p>
                             <p class="review-meta">Date: <%= new Date(review.createdAt).toLocaleDateString() %>
                             </p>
+                            <button class="btn btn-secondary update-review"
+                                data-username="<%= review.username %>">Update</button>
+
+                            <!-- Delete Button -->
+                            <button class="btn btn-danger delete-review"
+                                data-username="<%= review.username %>">Delete</button>
                         </div>
                     </div>
                     <% }); %>
@@ -166,6 +172,53 @@
                         clearHover();
                         const rating = ratingInput.value;
                         setStars(rating);
+                    });
+                });
+            });
+            document.addEventListener('DOMContentLoaded', function () {
+                // Handle Delete Review
+                document.querySelectorAll('.delete-review').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const username = this.getAttribute('data-username');
+                        if (confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')) {
+                            fetch(`/reviews/${username}`, {
+                                method: 'DELETE',
+                            })
+                                .then(response => response.text())
+                                .then(data => {
+                                    alert(data);
+                                    location.reload(); // Reload the page to reflect changes
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
+                    });
+                });
+
+                // Handle Update Review
+                document.querySelectorAll('.update-review').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const username = this.getAttribute('data-username');
+                        const newRating = prompt('Entrez une nouvelle note (1-5) :');
+                        const newReview = prompt('Entrez le nouveau texte de révision :');
+
+                        if (newRating && newReview) {
+                            fetch(`/reviews/${username}`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    rating: parseInt(newRating),
+                                    review: newReview
+                                })
+                            })
+                                .then(response => response.text())
+                                .then(data => {
+                                    alert(data);
+                                    location.reload(); // Reload the page to reflect changes
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
                     });
                 });
             });

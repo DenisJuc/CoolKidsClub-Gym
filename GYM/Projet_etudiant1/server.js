@@ -10,7 +10,8 @@ import bcrypt from 'bcrypt';
 import Stripe from 'stripe';
 import { config } from "dotenv";
 import nodemailer from 'nodemailer';
-import { getMongoDb, createReview, mongoClient } from "./gymCrud.js"; // Import mongoClient
+import { getMongoDb, createReview, updateReviewByUsername, deleteReviewByUsername, mongoClient } from "./gymCrud.js";
+
 import { MongoClient, ObjectId } from 'mongodb';
 //import { executeGymCrudOperations } from "./gymCrud.js";
 
@@ -1302,5 +1303,27 @@ app.post('/event/cancel-subscription', async (req, res) => {
     } catch (error) {
         console.error("Erreur lors de l'annulation de l'abonnement:", error);
         res.status(500).send("Erreur");
+    }
+});
+
+// Update review route
+app.patch('/reviews/:username', async (req, res) => {
+    const db = await getMongoDb();
+    try {
+        await updateReviewByUsername(db, req.params.username, req.body);
+        res.status(200).send('Review updated successfully');
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Delete review route
+app.delete('/reviews/:username', async (req, res) => {
+    const db = await getMongoDb();
+    try {
+        await deleteReviewByUsername(db, req.params.username);
+        res.status(200).send('Review deleted successfully');
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });

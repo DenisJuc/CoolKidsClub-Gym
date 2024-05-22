@@ -54,6 +54,7 @@ export async function updateReviewByUsername(db, username, updatedContent) {
     await collection.updateOne({ username }, { $set: updatedContent });
 }
 
+// Delete review by username
 export async function deleteReviewByUsername(db, username) {
     const collection = db.collection('reviews');
     await collection.deleteOne({ username });
