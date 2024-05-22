@@ -103,6 +103,16 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="home">
                         <hr>
+                        <% if (typeof errorMessage !== 'undefined') { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= errorMessage %>
+                            </div>
+                        <% } %>
+                        <% if (typeof successMessage !== 'undefined') { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= successMessage %>
+                            </div>
+                        <% } %>
                         <form class="form" action="/update-details" method="post" id="registrationForm">
                             <div class="form-group">
                                 <div class="col-xs-6">
@@ -136,7 +146,7 @@
                                     <label for="phone">
                                         <h4>Numéro de téléphone</h4>
                                     </label>
-                                    <input type="number" class="form-control" id="num" name="num" maxlength="10"
+                                    <input type="tel" class="form-control" id="num" name="num" maxlength="10"
                                         value="<%= userDetails.E_NUMBER %>">
                                 </div>
                             </div>
