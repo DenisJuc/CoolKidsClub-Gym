@@ -697,68 +697,86 @@ app.post('/update-password', (req, res) => {
     });
 });
 
-app.post('/update-details', async (req, res) => {
+app.post('/update-details', (req, res) => {
     const userId = req.body.userId;
     const updatedDetails = req.body;
     delete updatedDetails.userId;
-    let updateQuery = "UPDATE e_compte SET ";
-    const updateValues = [];
-    for (const key in updatedDetails) {
-        if (updatedDetails.hasOwnProperty(key)) {
-            // capitalize
-            const capitalizedKey = key.toUpperCase();
-            // change les trucs car sa bug
-            if (capitalizedKey === 'NAME') {
-                updateQuery += `E_NOM = ?, `;
-            } else if (capitalizedKey === 'EMAIL') {
-                updateQuery += `E_COURRIEL = ?, `;
-            } else if (capitalizedKey === 'NUM') {
-                updateQuery += `E_NUMBER = ?, `;
-            } else {
-                updateQuery += `E_${capitalizedKey} = ?, `;
-            }
 
-            updateValues.push(updatedDetails[key]);
-        }
-    }
-    updateQuery = updateQuery.slice(0, -2);
-    updateQuery += " WHERE E_ID = ?";
-    updateValues.push(userId);
-
-    con.query(updateQuery, updateValues, async (err, result) => {
+    // Check if the email already exists in the database
+    con.query("SELECT * FROM e_compte WHERE E_COURRIEL = ? AND E_ID != ?", [updatedDetails.email, userId], (err, rows) => {
         if (err) {
-            return res.status(500).send("Erreur");
+            return res.status(500).send("Erreur lors de la vérification de l'adresse e-mail");
+        }
+        if (rows.length > 0) {
+            return res.render("pages/detail", {
+                siteTitle: "Details",
+                pageTitle: "Details",
+                userDetails: req.session.user,
+                errorMessage: "L'adresse courriel est déjà inscrite.",
+                subscriptions: [] // Pass empty array to avoid undefined error
+            });
         }
 
-        const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
-        con.query(userDetailsQuery, [userId], async (err, userDetails) => {
+        // Proceed with updating the user details
+        let updateQuery = "UPDATE e_compte SET ";
+        const updateValues = [];
+        for (const key in updatedDetails) {
+            if (updatedDetails.hasOwnProperty(key)) {
+                // capitalize
+                const capitalizedKey = key.toUpperCase();
+                // Adjust key names
+                if (capitalizedKey === 'NAME') {
+                    updateQuery += `E_NOM = ?, `;
+                } else if (capitalizedKey === 'EMAIL') {
+                    updateQuery += `E_COURRIEL = ?, `;
+                } else if (capitalizedKey === 'NUM') {
+                    updateQuery += `E_NUMBER = ?, `;
+                } else {
+                    updateQuery += `E_${capitalizedKey} = ?, `;
+                }
+                updateValues.push(updatedDetails[key]);
+            }
+        }
+        updateQuery = updateQuery.slice(0, -2);
+        updateQuery += " WHERE E_ID = ?";
+        updateValues.push(userId);
+
+        con.query(updateQuery, updateValues, (err, result) => {
             if (err) {
-                return res.status(500).send("Erreur");
+                return res.status(500).send("Erreur lors de la mise à jour des détails");
             }
 
-            req.session.user = userDetails[0];
-            if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
-                req.session.user.isAdmin = true;
-            }
+            const userDetailsQuery = "SELECT * FROM e_compte WHERE E_ID = ?";
+            con.query(userDetailsQuery, [userId], async (err, userDetails) => {
+                if (err) {
+                    return res.status(500).send("Erreur lors de la récupération des détails de l'utilisateur");
+                }
 
-            // Fetch user subscriptions from MongoDB
-            try {
-                const db = await getMongoDb();
-                const subscriptions = await db.collection('activeSubscriptions').find({ userId: userId }).toArray();
+                req.session.user = userDetails[0];
+                if (req.session.user.E_COURRIEL === "peaklabs1@gmail.com") {
+                    req.session.user.isAdmin = true;
+                }
+                // Fetch user subscriptions from MongoDB
+                try {
+                    const db = await getMongoDb();
+                    const subscriptions = await db.collection('activeSubscriptions').find({ userId: userId }).toArray();
 
-                res.render("pages/detail", {
-                    siteTitle: "Details",
-                    pageTitle: "Details",
-                    userDetails: req.session.user,
-                    subscriptions: subscriptions
-                });
-            } catch (mongoError) {
-                console.error("MongoDB error:", mongoError);
-                return res.status(500).send("Erreur");
-            }
+                    res.render("pages/detail", {
+                        siteTitle: "Details",
+                        pageTitle: "Details",
+                        userDetails: req.session.user,
+                        subscriptions: subscriptions,
+                        successMessage: "Détails mis à jour avec succès."
+                    });
+                } catch (mongoError) {
+                    console.error("MongoDB error:", mongoError);
+                    return res.status(500).send("Erreur");
+                }
+            });
         });
     });
 });
+
 
 app.post('/delete-account', (req, res) => {
     const userId = req.session.user.E_ID;
